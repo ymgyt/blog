@@ -1,0 +1,18 @@
+[package]
+name = "blogd"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "^1.0"
+async-graphql = "^3.0"
+async-graphql-axum = "^3.0"
+axum = { version = "0.4", features = ["http1", "http2", "json", "tower-log"], default-features = false}
+chrono = "0.4"
+dotenv = "0.15"
+thiserror = "^1.0"
+tokio = { version = "1.16.1", features = ["rt", "rt-multi-thread", "macros", "net", "signal", "sync"], default-features = false}
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["time", "local-time", "env-filter"] }
+tower = "0.4.10"
+tower-http = { version = "0.2", features = ["trace"], default-features = false}
