@@ -1,0 +1,17 @@
+"""
+BlogEntry is a main contents which author write.
+"""
+type BlogEntry {
+	"""
+	Title of this entry.
+	"""
+	title: String!
+	body: String!
+}
+type Query {
+	blogEntry(id: ID!): BlogEntry!
+}
+schema {
+	query: Query
+}
+

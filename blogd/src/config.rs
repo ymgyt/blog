@@ -1,6 +1,8 @@
 use std::env;
 use std::net::{IpAddr, SocketAddr};
+use std::str::FromStr;
 
+pub const ENV_BIND_IP: &'static str = "BLOGD_IP";
 pub const ENV_BIND_PORT: &'static str = "BLOGD_PORT";
 pub const ENV_LOG: &'static str = "BLOGD_LOG";
 
@@ -26,17 +28,32 @@ impl Config {
     pub fn load_from_env() -> Result<Self, ConfigError> {
         let mut cfg = Config::default();
 
-        if let Some(bind_port) = env::var(ENV_BIND_PORT).ok() {
+        if let Some(bind_ip) = Config::read_env(ENV_BIND_IP)? {
+            cfg.bind_ip = bind_ip
+        }
+        if let Some(bind_port) = Config::read_env(ENV_BIND_PORT)? {
             cfg.bind_port = bind_port
-                .parse()
-                .map_err(|e| ConfigError::InvalidConfigValue {
-                    key: ENV_BIND_PORT.to_owned(),
-                    found: bind_port,
-                    source: anyhow::Error::from(e),
-                })?;
         }
 
         Ok(cfg)
+    }
+
+    fn read_env<T>(key: &str) -> Result<Option<T>, ConfigError>
+    where
+        T: FromStr,
+        <T as FromStr>::Err: std::error::Error + Send + Sync + 'static,
+    {
+        match env::var(key).ok() {
+            Some(env_value) => env_value
+                .parse::<T>()
+                .map_err(|e| ConfigError::InvalidConfigValue {
+                    key: key.to_owned(),
+                    found: env_value,
+                    source: anyhow::Error::from(e),
+                })
+                .map(Some),
+            None => Ok(None),
+        }
     }
 
     pub fn socket_addr(&self) -> Result<impl Into<SocketAddr>, ConfigError> {

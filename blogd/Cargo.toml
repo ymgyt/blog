@@ -2,6 +2,7 @@
 name = "blogd"
 version = "0.1.0"
 edition = "2021"
+default-run = "blogd"
 
 [dependencies]
 anyhow = "^1.0"
@@ -16,3 +17,11 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["time", "local-time", "env-filter"] }
 tower = "0.4.10"
 tower-http = { version = "0.2", features = ["trace"], default-features = false}
+
+[[bin]]
+name = "blogd"
+path = "src/main.rs"
+
+[[bin]]
+name = "print-sdl"
+path = "src/bin/print_sdl.rs"

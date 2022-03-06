@@ -1,0 +1,3 @@
+[tasks.update_sdl]
+command = "bash"
+args = ["-c", "cargo run --bin print-sdl --quiet > ./dist/schema.graphql"]

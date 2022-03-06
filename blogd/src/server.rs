@@ -3,10 +3,7 @@ use std::{
     net::{SocketAddr, TcpListener},
 };
 
-use async_graphql::{
-    http::{playground_source, GraphQLPlaygroundConfig},
-    EmptyMutation, EmptySubscription,
-};
+use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
 use axum::{
     extract::Extension,
@@ -17,16 +14,14 @@ use axum::{
 use tower_http::trace::TraceLayer;
 use tracing::info;
 
-use crate::gql::{AppSchema, QueryRoot};
+use crate::gql::{self, AppSchema};
 
 async fn graphql_handler(schema: Extension<AppSchema>, req: GraphQLRequest) -> GraphQLResponse {
     schema.execute(req.into_inner()).await.into()
 }
 
 async fn graphql_playground() -> impl IntoResponse {
-    response::Html(playground_source(GraphQLPlaygroundConfig::new(
-        "/graphql/playground",
-    )))
+    response::Html(playground_source(GraphQLPlaygroundConfig::new("/graphql")))
 }
 
 async fn healthcheck() -> &'static str {
@@ -53,7 +48,7 @@ pub async fn run_with_listener(
     listener: TcpListener,
     shutdown: impl Future<Output = ()>,
 ) -> Result<(), anyhow::Error> {
-    let schema = AppSchema::build(QueryRoot, EmptyMutation, EmptySubscription).finish();
+    let schema = gql::build_schema().finish();
 
     let app = Router::new()
         .route("/graphql", post(graphql_handler))
