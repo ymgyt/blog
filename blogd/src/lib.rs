@@ -1,5 +1,7 @@
 pub mod config;
 pub use config::*;
 
-pub mod gql;
-pub mod server;
+pub mod domain;
+pub mod inbound;
+
+pub use inbound::gql::print_sdl;

@@ -10,6 +10,7 @@ type BlogEntry {
 }
 type Query {
 	blogEntry(id: ID!): BlogEntry!
+	blogEntries(after: String, first: Int): [BlogEntry!]!
 }
 schema {
 	query: Query

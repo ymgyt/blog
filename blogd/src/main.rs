@@ -5,7 +5,7 @@ async fn main() -> Result<(), anyhow::Error> {
 
     tracing_subscriber::fmt()
         .with_env_filter(tracing_subscriber::EnvFilter::from_env(
-            blogd::config::ENV_LOG,
+            blogd::config::env::LOG,
         ))
         .with_file(true)
         .with_line_number(true)
@@ -21,7 +21,7 @@ async fn main() -> Result<(), anyhow::Error> {
         tracing::info!("receive SIGINT");
     };
 
-    blogd::server::run(cfg.socket_addr()?, signal).await?;
+    blogd::inbound::http::serve(cfg.socket_addr()?, signal).await?;
 
     Ok(())
 }

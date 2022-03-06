@@ -8,6 +8,7 @@ default-run = "blogd"
 anyhow = "^1.0"
 async-graphql = "^3.0"
 async-graphql-axum = "^3.0"
+async-trait = "0.1.52"
 axum = { version = "0.4", features = ["http1", "http2", "json", "tower-log"], default-features = false}
 chrono = "0.4"
 dotenv = "0.15"

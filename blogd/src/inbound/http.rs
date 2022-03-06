@@ -14,7 +14,8 @@ use axum::{
 use tower_http::trace::TraceLayer;
 use tracing::info;
 
-use crate::gql::{self, AppSchema};
+use crate::domain::usecase::mock::MockUsecase;
+use crate::inbound::gql::{self, AppSchema};
 
 async fn graphql_handler(schema: Extension<AppSchema>, req: GraphQLRequest) -> GraphQLResponse {
     schema.execute(req.into_inner()).await.into()
@@ -32,7 +33,7 @@ async fn sdl(schema: Extension<AppSchema>) -> impl IntoResponse {
     schema.sdl()
 }
 
-pub async fn run(
+pub async fn serve(
     addr: impl Into<SocketAddr>,
     shutdown: impl Future<Output = ()>,
 ) -> Result<(), anyhow::Error> {
@@ -41,14 +42,14 @@ pub async fn run(
 
     info!(?addr, "listening");
 
-    run_with_listener(listener, shutdown).await
+    serve_with_listener(listener, shutdown).await
 }
 
-pub async fn run_with_listener(
+pub async fn serve_with_listener(
     listener: TcpListener,
     shutdown: impl Future<Output = ()>,
 ) -> Result<(), anyhow::Error> {
-    let schema = gql::build_schema().finish();
+    let schema = gql::build_schema().data(MockUsecase::new()).finish();
 
     let app = Router::new()
         .route("/graphql", post(graphql_handler))

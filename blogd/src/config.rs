@@ -1,10 +1,7 @@
-use std::env;
 use std::net::{IpAddr, SocketAddr};
 use std::str::FromStr;
 
-pub const ENV_BIND_IP: &'static str = "BLOGD_IP";
-pub const ENV_BIND_PORT: &'static str = "BLOGD_PORT";
-pub const ENV_LOG: &'static str = "BLOGD_LOG";
+pub mod env;
 
 #[derive(thiserror::Error, Debug)]
 pub enum ConfigError {
@@ -28,10 +25,10 @@ impl Config {
     pub fn load_from_env() -> Result<Self, ConfigError> {
         let mut cfg = Config::default();
 
-        if let Some(bind_ip) = Config::read_env(ENV_BIND_IP)? {
+        if let Some(bind_ip) = Config::read_env(env::BIND_IP)? {
             cfg.bind_ip = bind_ip
         }
-        if let Some(bind_port) = Config::read_env(ENV_BIND_PORT)? {
+        if let Some(bind_port) = Config::read_env(env::BIND_PORT)? {
             cfg.bind_port = bind_port
         }
 
@@ -43,7 +40,7 @@ impl Config {
         T: FromStr,
         <T as FromStr>::Err: std::error::Error + Send + Sync + 'static,
     {
-        match env::var(key).ok() {
+        match std::env::var(key).ok() {
             Some(env_value) => env_value
                 .parse::<T>()
                 .map_err(|e| ConfigError::InvalidConfigValue {
@@ -60,7 +57,7 @@ impl Config {
         self.bind_ip
             .parse::<IpAddr>()
             .map_err(|err| ConfigError::InvalidConfigValue {
-                key: ENV_BIND_PORT.to_owned(),
+                key: env::BIND_PORT.to_owned(),
                 found: self.bind_ip.clone(),
                 source: err.into(),
             })
