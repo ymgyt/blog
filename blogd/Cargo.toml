@@ -11,13 +11,14 @@ async-graphql-axum = "^3.0"
 async-trait = "0.1.52"
 axum = { version = "0.4", features = ["http1", "http2", "json", "tower-log"], default-features = false}
 chrono = "0.4"
-dotenv = "0.15"
 thiserror = "^1.0"
 tokio = { version = "1.16.1", features = ["rt", "rt-multi-thread", "macros", "net", "signal", "sync"], default-features = false}
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["time", "local-time", "env-filter"] }
 tower = "0.4.10"
 tower-http = { version = "0.2", features = ["trace"], default-features = false}
+uuid = { version = "0.8.2", features = ["v4"] }
+blogir = { path = "../blogir" }
 
 [[bin]]
 name = "blogd"

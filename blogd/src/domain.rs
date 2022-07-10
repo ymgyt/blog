@@ -1,2 +1,3 @@
-pub mod model;
-pub mod usecase;
+pub mod blog;
+
+mod shared;

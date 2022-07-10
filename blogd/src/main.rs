@@ -1,8 +1,5 @@
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
-    // find and load environment variables from .env
-    dotenv::dotenv().ok();
-
     tracing_subscriber::fmt()
         .with_env_filter(tracing_subscriber::EnvFilter::from_env(
             blogd::config::env::LOG,
@@ -20,8 +17,6 @@ async fn main() -> Result<(), anyhow::Error> {
             .expect("failed to handle signal");
         tracing::info!("receive SIGINT");
     };
-
-    blogd::inbound::http::serve(cfg.socket_addr()?, signal).await?;
 
     Ok(())
 }

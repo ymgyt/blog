@@ -2,4 +2,5 @@
 
 members = [
 	"blogd",
+    "blogir",
 ]
