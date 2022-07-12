@@ -1,11 +1,16 @@
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Heading {
     level: HeadingLevel,
+    text: String,
 }
 
 impl Heading {
-    pub fn new(level: HeadingLevel) -> Self {
-        Self { level }
+    // NOTE: want to guarantee text is not empty.
+    pub fn new(level: HeadingLevel, text: impl Into<String>) -> Self {
+        let text = text.into();
+        debug_assert!(!text.is_empty());
+
+        Self { level, text }
     }
 }
 
