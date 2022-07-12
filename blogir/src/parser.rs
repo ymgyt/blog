@@ -4,11 +4,12 @@ use nom::sequence::terminated;
 use nom::{combinator, multi, sequence};
 use nom::{IResult, Parser as _};
 
+use nom::bytes::complete::{tag, take_until1};
 use std::fmt;
 use std::fmt::Formatter;
 
 use crate::parser::errors::ParseError;
-use crate::{Document, Heading, HeadingLevel};
+use crate::{Document, Heading, HeadingLevel, InlineCode, NewLine};
 
 mod errors;
 
@@ -39,6 +40,18 @@ fn heading(input: &str) -> NomResult<Heading> {
     )
     .map(|(level, text)| Heading::new(level, text))
     .parse(input)
+}
+
+fn inline_code(input: &str) -> NomResult<InlineCode> {
+    sequence::delimited(char('`'), take_until1("`"), char('`'))
+        .map(|inline_code| InlineCode::new(inline_code))
+        .parse(input)
+}
+
+fn new_line(input: &str) -> NomResult<NewLine> {
+    sequence::tuple((char(' '), char(' '), newline))
+        .map(|_| NewLine::new())
+        .parse(input)
 }
 
 #[cfg(test)]
@@ -98,5 +111,18 @@ mod tests {
             heading("# 見出し1\n\ncontent..."),
             Ok(("\ncontent...", heading_gen!(1, "見出し1"))),
         );
+    }
+
+    #[test]
+    fn should_parse_inline_code() {
+        assert_eq!(
+            inline_code("`Result<T,E>`"),
+            Ok(("", InlineCode::new("Result<T,E>"))),
+        );
+    }
+
+    #[test]
+    fn should_parse_new_line() {
+        assert_eq!(new_line("  \ncontent"), Ok(("content", NewLine::new())),);
     }
 }

@@ -1,6 +1,12 @@
 mod heading;
 pub use heading::{Heading, HeadingLevel};
 
+mod inline_code;
+pub use inline_code::InlineCode;
+
+mod new_line;
+pub use new_line::NewLine;
+
 #[derive(Debug)]
 pub struct Document {
     sections: Vec<Section>,
@@ -14,9 +20,11 @@ pub struct Section {
 
 #[derive(Debug)]
 pub enum Element {
-    Text(Text),
+    PlainText(PlainText),
+    InlineCode(InlineCode),
     Link(Link),
-    NewLine,
+    NewLine(NewLine),
+    BlankLine(BlankLine),
     Image(Image),
     OrderedList(OrderedList),
     UnOrderedList(UnOrderedList),
@@ -25,7 +33,7 @@ pub enum Element {
 }
 
 #[derive(Debug)]
-pub struct Text;
+pub struct PlainText;
 
 #[derive(Debug)]
 pub struct Link;
@@ -44,3 +52,6 @@ pub struct Quote;
 
 #[derive(Debug)]
 pub struct CodeBlock;
+
+#[derive(Debug)]
+pub struct BlankLine;
