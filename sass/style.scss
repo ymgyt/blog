@@ -1,0 +1,269 @@
+@import "normalize.scss";
+@import "color.scss";
+@import "font.scss";
+@import "footer.scss";
+
+$padding: 8px;
+
+@mixin dimmed {
+  opacity: 0.6;
+}
+
+@mixin aTag {
+  a {
+    word-break: break-all;
+    border: none;
+    box-shadow: inset 0 -1px 0 $text;
+    transition-property: background-color;
+
+  }
+}
+
+html {
+	background: $light-grey;
+	line-height: 1.6;
+	letter-spacing: 0.05em;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  color: $text;
+  font-family: $fonts;
+}
+
+body {
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-areas:
+    "header"
+    "main"
+    "footer";
+}
+
+header {
+  padding: $padding $padding 0 $padding;
+
+  grid-area: header;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  nav {
+    ul {
+      list-style: none;
+
+      li {
+        display: inline;
+        padding-left: 0.5em;
+      }
+    }
+  }
+  .icon {
+    display: inline-block;
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+main {
+  padding: $padding;
+  grid-area: main;
+}
+
+footer {
+  grid-area: footer;
+
+  padding: 0 $padding $padding $padding;
+
+ display: flex;
+ justify-content: center;
+ align-items: center;
+  
+  text-align: center;
+  font-size: 0.9em;
+  margin-bottom: 32px;
+  margin-top: 64px;
+
+  p {
+    margin: 0;
+  }
+}
+
+pre,
+code,
+pre tt {
+  font-family: $code-fonts;
+}
+
+pre {
+  max-height: 100em;
+  padding: 0.7em 1.0em;
+  overflow: auto;
+  font-size: 0.9em;
+  line-height: 1.2;
+  letter-spacing: normal;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: #eee;
+  border-radius: 5px;
+
+  code {
+    padding: 0;
+    margin: 0;
+    background: $midnightblue;
+  }
+}
+
+code {
+  color: #eee;
+  background: $highlight-grey;
+  border-radius: 3px;
+  padding: 0 3px;
+  margin: 0 4px;
+  word-break: break-all;
+  letter-spacing: normal;
+}
+
+blockquote {
+  border-left: 0.25em solid;
+  margin: 1em;
+  padding: 0 1em;
+  font-style: italic;
+
+  // cite {
+  //   font-weight: bold;
+  //   font-style: normal;
+
+  //   &::before {
+  //     content: "—— ";
+  //   }
+  // }
+}
+
+a {
+  color: $text;
+  text-decoration: none;
+  border: none;
+  transition-property: color;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+
+  &:hover {
+    color: #fff;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+hr {
+  opacity: 0.2;
+  border-width: 0 0 5px 0;
+  border-style: dashed;
+  background: transparent;
+  width: 50%;
+  margin: 1.8em auto;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  empty-cells: show;
+  width: 100%;
+  max-width: 100%;
+
+  th,
+  td {
+    padding: 1.5%;
+    border: 1px solid;
+  }
+
+  th {
+    font-weight: 700;
+    vertical-align: bottom;
+  }
+}
+
+.logo {
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.content {
+  margin: 0 auto;
+  max-width: 860px;
+  width: 93%;
+}
+
+.icon {
+  display: inline-block;
+  vertical-align: -0.125em;
+  width: 1em;
+  height: 1em;
+}
+
+.entry-group {
+  display: flex;
+
+  .entry-year {
+    font-size: 1.6em;
+    padding-top: 6px;
+    @include dimmed;
+  }
+
+  .entry-list {
+    list-style: none;
+    flex-grow: 1;
+    margin: 0;
+  }
+
+  .entry-item {
+    border-bottom: 1px $highlight-grey dashed;
+
+    a {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 12px 0;
+    }
+  }
+
+  .entry-day {
+    flex-shrink: 0;
+    margin-left: 1em;
+    @include dimmed;
+  }
+}
+
+.entry-meta {
+  font-size: 1em;
+  line-height: normal;
+  @include dimmed;
+
+  p {
+    margin: 0.8em 0;
+  }
+
+  a:hover {
+    border-bottom: 1px solid $text;
+  }
+}
+
+.tag {
+  margin-right: 0.5em;
+
+  &::before {
+    content: "#";
+  }
+}
+
+.entry-content {
+  text-align: justify;
+  @include aTag;
+}

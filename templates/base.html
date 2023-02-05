@@ -1,0 +1,59 @@
+{% import "macro.html" as macro %}
+<!DOCTYPE html>
+<html lang="ja">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png" />
+  <link rel="icon" href={{ get_url(path="images/favicon/favicon.ico") }} />
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ get_url(path=config.feed_filename, trailing_slash=false) }}">
+
+  <title>Happy Developing</title>
+
+  <body>
+  <div class="content">
+
+    <header>
+      <div>
+        <a href="{{ config.base_url }}" class="logo">{{ config.title }}</a>
+      </div>
+      <div>
+        <nav>
+          <ul>
+            <li><a href="{{ config.base_url }}/entry/">Entries</a></li>
+            <li><a href="{{ config.base_url }}/about/">About</a></li>
+            <li>
+              <a href="https://github.com/{{ config.extra.author.github }}">
+                <img class="icon" src="/images/icon/github.svg" alt="Github">
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/{{ config.extra.author.twitter }}">
+                <img class="icon" src="/images/icon/twitter.svg" alt="Twitter">
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+    </header>
+  
+    <main>
+      {% block content %}
+      {% endblock content %} 
+    </main>
+
+    <footer>
+      <p>
+        &copy; {{ now() |date(format="%Y") }} <a href="{{ config.base_url }}"> {{ config.extra.author.name }} </a>
+        |  <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a> 
+        | Made with <a href="https://www.getzola.org" target="_blank" rel="noopener">Zola</a>
+        | <a href="{{ get_url(path=config.feed_filename, trailing_slash=false) }}" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+      </p>
+    </footer>
+  </div>
+  </body>
+</html>

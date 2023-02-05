@@ -1,0 +1,62 @@
+# The URL the site will be built for
+base_url = "https://blog.ymgyt.io"
+
+title = "Happy developing"
+
+# Whether to automatically compile all Sass files in the sass directory
+compile_sass = true
+
+# Whether to build a search index to be used later on by a JavaScript library
+# https://www.getzola.org/documentation/content/search/
+build_search_index = false
+
+output_dir = "public"
+
+hard_link_static = false
+
+# search index for language ja which is not supported
+default_language = "ja"
+
+# Feed configuration
+generate_feed = true
+feed_filename = "atom.xml"
+
+taxonomies = [
+  { name = "tags", feed = true },
+]
+
+[markdown]
+# Whether to do syntax highlighting
+# Theme can be customised by setting the `highlight_theme` variable to a theme supported by Zola
+highlight_code = true
+
+# The theme to use for code highlighting.
+# See below for list of allowed values.
+highlight_theme = "base16-ocean-dark"
+
+# When set to "true", emoji aliases translated to their corresponding
+# Unicode emoji equivalent in the rendered Markdown files. (e.g.: :smile: => 😄)
+render_emoji = false
+
+# Various slugification strategies
+[slugify]
+paths = "on"
+taxonomies = "on"
+anchors = "on"
+
+[link_checker]
+
+# Treat internal link problems as either "error" or "warn", default is "error"
+internal_level = "error"
+
+# Treat external link problems as either "error" or "warn", default is "error"
+external_level = "error"
+
+[extra]
+# Put all your custom variables here
+
+[extra.author]
+name = "ymgyt"
+github = "ymgyt"
+twitter = "YAmaguchixt "
+

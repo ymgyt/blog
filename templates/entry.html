@@ -1,0 +1,23 @@
+{% import "macro.html" as macro %}
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Entries</h1>
+
+{% for year, pages in section.pages | group_by(attribute="year") %}
+<div class="entry-group">
+  <div class="entry-year">{{ year }}</div>
+  <ul class="entry-list">
+    {% for page in pages %}
+    <li class="entry-item">
+      <a href="{{ page.permalink | safe }}"
+        <span class="entry-title">{{ page.title }}</span>
+        <span class="entry-day">{{ page.date | date(format="%m/%d") }}</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endfor %}
+
+{% endblock content %}
