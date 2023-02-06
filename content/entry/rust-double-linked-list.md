@@ -1,5 +1,5 @@
 +++
-title = "Rustでdoubly linked list"
+title = "🔗 Rustでdoubly linked list"
 slug = "rust-doubly-linked-list"
 date = "2019-08-17"
 draft = false

@@ -1,0 +1,68 @@
+@import "normalize.scss";
+
+* {
+	box-sizing: border-box;
+}
+
+:root {
+	font-size: calc(1rem + 0.5vw);
+}
+
+$gratio: 1.61803398875;
+$ratio: 1.5;
+
+$s0: 1rem;
+$s1: $s0 * $ratio;
+$s2: $s1 * $ratio;
+$s3: $s2 * $ratio;
+$s4: $s3 * $ratio;
+$s5: $s4 * $ratio;
+
+
+$measure: 60ch;
+$stack-space: 1rem / $ratio;
+
+* {
+	max-width: $measure
+}
+
+html,body,div,header,nav,main,footer {
+	max-width: none;
+}
+
+.stack {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+
+	> * {
+  	margin-top: 0;
+		margin-bottom: 0;
+	}
+
+	> * + * {
+  	margin-top: $stack-space;
+	}
+}
+
+.box {
+	padding: $s1;
+}
+
+.center {
+	max-width: $measure;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.flexbox {
+	display: flex;
+}
+
+.flex-item {
+ list-style: none;
+ background: #ffbb1e;
+ color: #fff;
+ padding: 10px;
+ margin: 10px;
+}

@@ -4,6 +4,7 @@
 @import "footer.scss";
 
 $padding: 8px;
+$h_border_line: #5c93bb2b;
 
 @mixin dimmed {
   opacity: 0.6;
@@ -18,6 +19,17 @@ $padding: 8px;
 
   }
 }
+
+$measure: 45rem;
+
+* {
+  max-width: $measure
+}
+
+html,body,div,header,nav,main,footer {
+	max-width: none;
+}
+
 
 html {
 	background: $light-grey;
@@ -123,10 +135,18 @@ code {
   color: #eee;
   background: $highlight-grey;
   border-radius: 3px;
-  padding: 0 3px;
-  margin: 0 4px;
+  padding: 0 2px;
+  margin: 0;
   word-break: break-all;
   letter-spacing: normal;
+
+  transition-property: color;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+
+  &:hover {
+    color: $midnightblue;
+  }
 }
 
 blockquote {
@@ -197,8 +217,6 @@ table {
 
 .content {
   margin: 0 auto;
-  max-width: 1200px;
-  width: 90%;
 }
 
 .icon {
@@ -266,6 +284,33 @@ table {
 .entry-content {
   text-align: justify;
   @include aTag;
+
+  h2 {
+    border-bottom: 1px solid $h_border_line;
+  }
+
+  figure {
+    text-align: center;
+    margin-right: 0;
+    margin-left: 0;
+
+    .fig-images-row {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+    }
+
+    img {
+      display: block;
+      border-radius: 4px;
+    }
+
+    figcaption {
+      margin-top: 1rem;
+      font-style: italic;
+      @include dimmed;
+    }
+  }
 }
 
 #toc {
@@ -281,6 +326,7 @@ table {
   ul {
     padding-left: 1em;
     margin: 0;
+    padding: 0;
   }
 
   & > ul {
