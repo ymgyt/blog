@@ -47,6 +47,11 @@ textarea {
 }
 
 body {
+  hyphens: auto;
+  line-break: strict;
+  overflow-wrap: break-word;
+  word-break: break-word;
+
   display: grid;
   grid-template-columns: auto;
   grid-template-areas:
@@ -131,6 +136,14 @@ pre {
   }
 }
 
+a {
+  code {
+    &:hover {
+      color: $midnightblue;
+    }
+  }
+}
+
 code {
   color: #eee;
   background: $highlight-grey;
@@ -143,10 +156,6 @@ code {
   transition-property: color;
   transition-duration: 0.2s;
   transition-timing-function: ease-out;
-
-  &:hover {
-    color: $midnightblue;
-  }
 }
 
 blockquote {
