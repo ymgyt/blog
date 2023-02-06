@@ -6,6 +6,10 @@
 $padding: 8px;
 $h_border_line: #5c93bb2b;
 
+
+$ratio: 1.5;
+$stack-space: 1rem / $ratio;
+
 @mixin dimmed {
   opacity: 0.6;
 }
@@ -30,7 +34,6 @@ html,body,div,header,nav,main,footer {
 	max-width: none;
 }
 
-
 html {
 	background: $light-grey;
 	line-height: 1.6;
@@ -51,20 +54,33 @@ body {
   line-break: strict;
   overflow-wrap: break-word;
   word-break: break-word;
-  display: grid;
-  grid-template-columns: auto;
-  grid-template-areas:
-    "header"
-    "main"
-    "footer";
+
 }
 
-header {
-  padding: $padding $padding 0 $padding;
+.stack {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
 
-  grid-area: header;
+	> * {
+  	margin-top: 0;
+		margin-bottom: 0;
+	}
 
+	> * + * {
+  	margin-top: $stack-space;
+	}
+}
+
+.blog-layout {
+  align-items: center;
+}
+
+.blog-header-container {
+  width: 100%;
+  max-width: $measure;
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
 
@@ -86,13 +102,22 @@ header {
   }
 }
 
-main {
-  padding: $padding;
-  grid-area: main;
+.blog-logo {
+  a {
+    flex-basis: 20%;
+    font-size: 26px;
+    font-weight: bold;
+  }
 }
 
-footer {
-  grid-area: footer;
+.blog-nav {
+}
+
+.blog-main {
+  padding: $padding;
+}
+
+.blog-footer {
 
   padding: 0 $padding $padding $padding;
 
@@ -162,15 +187,6 @@ blockquote {
   margin: 1em;
   padding: 0 1em;
   font-style: italic;
-
-  // cite {
-  //   font-weight: bold;
-  //   font-style: normal;
-
-  //   &::before {
-  //     content: "—— ";
-  //   }
-  // }
 }
 
 a {
@@ -216,15 +232,6 @@ table {
     font-weight: 700;
     vertical-align: bottom;
   }
-}
-
-.logo {
-    font-size: 26px;
-    font-weight: bold;
-}
-
-.content {
-  margin: 0 auto;
 }
 
 .icon {
