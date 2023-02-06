@@ -2,7 +2,7 @@
   <div class="fig-images-row">
     {% for src in images %}
     <img 
-      src="{{ src }}" 
+      src="{{ get_url(path=src) }}" 
       alt="", 
       {% if width  %} width="{{ width }},"  {% endif %} 
       {% if height %} height="{{ height }}" {% endif %}
