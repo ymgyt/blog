@@ -2,6 +2,9 @@
 title = "Rustのenv_loggerに色をつける"
 slug = "rust_env_logger_colored_output"
 date = "2019-08-09"
+draft = false
+[taxonomies]
+tags = ["rust"]
 +++
 
 env_loggerの出力に色をつけたかったのですが、exampleが見つからず、docを読んだ結果以下のような処理になりました。

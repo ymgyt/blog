@@ -2,7 +2,9 @@
 title = "Rustでdoubly linked list"
 slug = "rust-doubly-linked-list"
 date = "2019-08-17"
-draft = true
+draft = false
+[taxonomies]
+tags = ["rust"]
 +++
 
 Rustでdoubly linked listを書いてみました。
@@ -217,5 +219,5 @@ impl<T: Clone> DoubleEndedIterator for Iter<T> {
 
 ## 参考
 
-[asin:178899552X:detail]
+* [Hands-On Data Structures and Algorithms with Rust](https://www.amazon.co.jp/dp/178899552X)
 

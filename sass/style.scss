@@ -197,8 +197,8 @@ table {
 
 .content {
   margin: 0 auto;
-  max-width: 860px;
-  width: 93%;
+  max-width: 1200px;
+  width: 90%;
 }
 
 .icon {
@@ -266,4 +266,32 @@ table {
 .entry-content {
   text-align: justify;
   @include aTag;
+}
+
+#toc {
+  // position: fixed;
+  // right: 50px;
+  // top: 100px;
+  // display: block;
+  // max-width: 220px;
+
+  font-size: 0.8em;
+  @include dimmed;
+
+  ul {
+    padding-left: 1em;
+    margin: 0;
+  }
+
+  & > ul {
+    list-style-type: none;
+  }
+
+  ul ul {
+    font-size: 0.9em;
+  }
+
+  a:hover {
+    border-bottom: 1px solid $text;
+  }
 }
