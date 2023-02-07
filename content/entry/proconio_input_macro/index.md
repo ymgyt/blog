@@ -24,7 +24,7 @@ https://github.com/rust-lang-ja/atcoder-rust-resources/wiki/2020-Update
 例えば、出題として、m * nの行列が以下の形式であたえられるときの処理はこう書けます。
 
 こんなstdinが与えられるとして
-```text
+```
 3
 3
 1 2 3
@@ -450,7 +450,7 @@ fn main() {
 `#![feature(trace_macros)]`を有効化して、`input!`の前後に`trace_macros!`を追加します。  
 `cargo +nightly run` のように`nightly`で実行すると、以下の出力を得ます。
 
-```text
+```sh
 ❯ cargo +nightly run
    Compiling proconio-handson v0.1.0 (/Users/ymgyt/rs/proconio-handson)
 note: trace_macro
