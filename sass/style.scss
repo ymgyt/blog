@@ -24,7 +24,7 @@ $stack-space: 1rem / $ratio;
   }
 }
 
-$measure: 45rem;
+$measure: 50rem;
 
 * {
   max-width: $measure
@@ -142,14 +142,17 @@ pre tt {
 }
 
 pre {
-  max-height: 100em;
+  // max-height: 100em;
   padding: 0.7em 1.0em;
-  overflow: auto;
   font-size: 0.9em;
   line-height: 1.2;
   letter-spacing: normal;
-  white-space: pre-wrap;
+
+  // white-spaceを無効にして,overflow:autoにしておくとscrollして表示される
+  // white-space: pre-wrap;
+  overflow: auto;
   word-wrap: break-word;
+
   color: #eee;
   border-radius: 5px;
 
@@ -333,9 +336,8 @@ table {
   @include dimmed;
 
   ul {
-    padding-left: 1em;
-    margin: 0;
     padding: 0;
+    margin: 0;
   }
 
   & > ul {
@@ -344,6 +346,9 @@ table {
 
   ul ul {
     font-size: 0.9em;
+    list-style-position: inside;
+    list-style-type: "-";
+    padding-left: 1ch;
   }
 
   a:hover {

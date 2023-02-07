@@ -1,13 +1,19 @@
+{% if href %}
+<a href="{{ href }}">
+{% endif %}
 <figure class="{% if class %} {{ class }} {% endif %}">
   <div class="fig-images-row">
     {% for src in images %}
     <img 
-      src="{{ get_url(path=src) }}" 
+      src="{{ src }}" 
       alt="", 
       {% if width  %} width="{{ width }},"  {% endif %} 
       {% if height %} height="{{ height }}" {% endif %}
     >
     {% endfor %}
   </div>
-  <figcaption>{{ caption }}</figcaption>
+  {% if caption %}<figcaption>{{ caption }}</figcaption>{% endif %}
 </figure>
+{% if href %}
+</a>
+{% endif %}

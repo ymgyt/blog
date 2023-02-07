@@ -40,7 +40,8 @@ render_emoji = false
 
 # Various slugification strategies
 [slugify]
-paths = "on"
+# Respect entry "_" for compability
+paths = "safe"
 taxonomies = "on"
 anchors = "on"
 
