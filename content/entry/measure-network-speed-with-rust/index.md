@@ -32,7 +32,7 @@ cargo install netspeed
 事前にEC2上で`netspeed server run`を実行してserverを起動してあります。defaultではこのserverへの接続を試みます。
 
 
-```console
+```sh
 netspeed  
 INFO  Connecting to "netspeed.ymgyt.io:5555"
 INFO  Start downstream duration: 3 seconds
@@ -289,7 +289,7 @@ localで試すには以下のようにします。
 
 
 terminal1
-```console
+```sh
 netspeed server run  
 INFO  2020-02-15T13:01:56.892922+00:00 Listening on "0.0.0.0:5555" max threads: 100
 INFO  2020-02-15T13:02:04.785769+00:00 Pass concurrent threads check. (0/100)
@@ -302,7 +302,7 @@ INFO  2020-02-15T13:02:10.840054+00:00 (Worker:127.0.0.1:53013) => Successfully 
 
 terminal2
 
-```console
+```sh
 netspeed --addr 127.0.0.1:5555
 INFO  Connecting to "127.0.0.1:5555"
 INFO  Start downstream duration: 3 seconds

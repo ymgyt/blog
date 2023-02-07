@@ -39,7 +39,7 @@ releaseが作成されると、Assetsにリンクが生成されます。
 
 `homebrew-mysqlpinger` という名前のrepositoryをgithub上に作成して、cloneしてきます。
 
-```console
+```sh
 $ cd homebrew-mysqlpinger
 $ exa -T
 .
@@ -69,7 +69,7 @@ end
 
 ## Install
 
-```console
+```sh
 $ brew tap ymgyt/mysqlpinger
 $ brew install mysqlpinger
 $ mysqlpinger --version

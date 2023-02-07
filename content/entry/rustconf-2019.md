@@ -32,7 +32,7 @@ Rustに関わっておられる方々がにどんな人達なのか実際に見�
 ## 1日目
 
 RustConfは２日に渡って開催され、1日目は、いくつかの[Training Course](https://rustconf.com/training/)が用意されています。
-あらかじめ、参加したいcourseのticketを購入しておく必要があり、今回は[Async](https://rustconf.com/training/#async)のcourseを選択しました。(これ以外は全て売り切れていました。)
+あらかじめ、参加したいcourseのticketを購入しておく必要があり、今回は[Async](https://rustconf.com/training/)のcourseを選択しました。(これ以外は全て売り切れていました。)
 
 
 {{ figure(caption="Conferenceの様子", images=[
@@ -81,13 +81,13 @@ openingとclosingのkeynote以外は、２つの会場でSessionが行われ、�
 
 自分は以下のsessionに参加しました。sessionの内容はそのうちyoutubeにupされるかと思います。
 
-* [CLASS FIXES; OR, YOU BECOME THE RUST COMPILER](https://rustconf.com/schedule/#class-fixes-or-you-become-the-rust-compiler)
-* [Syscalls for Rustaceans](https://rustconf.com/schedule/#syscalls-for-rustaceans)
-* [IS THIS MAGIC!? FERRIS EXPLORES RUSTC!](https://rustconf.com/schedule/#is-this-magic-ferris-explores-rustc)
-* [MONOTRON - BUILDING A RETRO COMPUTER IN EMBEDDED RUST](https://rustconf.com/schedule/#monotron-building-a-retro-computer-in-embedded-rust)
-* [From Electron, to WASM, to Rust (aaand back to Electron)](https://rustconf.com/schedule/#from-electron-to-wasm-to-rust-aaand-back-to-electron)
-* [BRINGING RUST HOME TO MEET THE PARENTS](https://rustconf.com/schedule/#bringing-rust-home-to-meet-the-parents)
-* [THE RUST 2018 MODULE SYSTEM](https://rustconf.com/schedule/#the-rust-2018-module-system)
+* [CLASS FIXES; OR, YOU BECOME THE RUST COMPILER](https://rustconf.com/schedule/)
+* [Syscalls for Rustaceans](https://rustconf.com/schedule/)
+* [IS THIS MAGIC!? FERRIS EXPLORES RUSTC!](https://rustconf.com/schedule/)
+* [MONOTRON - BUILDING A RETRO COMPUTER IN EMBEDDED RUST](https://rustconf.com/schedule/)
+* [From Electron, to WASM, to Rust (aaand back to Electron)](https://rustconf.com/schedule/)
+* [BRINGING RUST HOME TO MEET THE PARENTS](https://rustconf.com/schedule/)
+* [THE RUST 2018 MODULE SYSTEM](https://rustconf.com/schedule/)
 
 特に印象的(理解できた)だったのは
 

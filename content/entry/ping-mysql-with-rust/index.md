@@ -14,7 +14,7 @@ local環境でdocker-compose等を利用してDBを立ち上げた際に、DBの
 
 
 flagは以下のような感じです。
-```console
+```sh
 $ mysqlpinger --help
 mysqlpinger 0.2.1
 Ping to mysql server
@@ -52,7 +52,7 @@ Example:
 
 接続のための情報とどれくらいretryするかを指定して、pingが通るまでblockします。
 
-```console
+```sh
 $ docker run --rm -t --network=network  ymgyt/mysqlpinger:latest --pass=secret --host=db --forever
 INFO ping -> addr:db:3306 user:root db:sys
 INFO 1/♾  Connection refused (os error 111)

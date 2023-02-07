@@ -286,7 +286,7 @@ where
     T::Output: Send + 'static, 
 ```
 
-　ここで`T: 'static`となっているとそれは"lives forever"と[よく誤解されている](https://github.com/pretzelhammer/rust-blog/blob/master/posts/common-rust-lifetime-misconceptions.md#2-if-t-static-then-t-must-be-valid-for-the-entire-program)がそうではないという注意があります。(このCommon Rust Lifetime Misconceptionsは非常に参考になったので別で記事を書こうと思っています。)   
+　ここで`T: 'static`となっているとそれは"lives forever"と[よく誤解されている](https://github.com/pretzelhammer/rust-blog/blob/master/posts/common-rust-lifetime-misconceptions.md)がそうではないという注意があります。(このCommon Rust Lifetime Misconceptionsは非常に参考になったので別で記事を書こうと思っています。)   
 　`T: 'static`はTの所有者はTを保持している限りデータが無効になることはないと保証されているので、プログラムの終了までを含めて無期限にデータを保持できると読めて、"T is bounded by a 'static lifetime"と読むべきで、"T has a 'static lifetime"と読まないと自分は理解しています。  
 　要は`T: 'static`だったらTはowned typeか`'static lifetime`の参照しかfieldにもたない型ということ。
 
@@ -691,7 +691,7 @@ protocolは常に`\r\n`(CRLF)でterminated
 clientに例外として扱われ、内容はエラーメッセージ。  
 `-Error message\r\n`
 
-```redis
+```
 -ERR unknown command 'foobar'
 -WRONGTYPE Operation against a key holding the wrong kind of value
 ```

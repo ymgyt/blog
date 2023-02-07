@@ -22,7 +22,7 @@ RustのLT会 [Shinjuku.rs #13](https://forcia.connpass.com/event/194229/)で話�
 TCP(TLS)でremoteに接続してKey/ValueをCRUDするだけのserverです。
 
 
-```console
+```sh
 ❯ export KVSD_HOST=kvsd.ymgyt.io
 
 ❯ kvsd set hello rust

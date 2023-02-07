@@ -191,7 +191,7 @@ func StartControllers(ctx ControllerContext, startSATokenController InitFunc, co
 
   return nil
 ```
-[https://github.com/kubernetes/kubernetes/blob/release-1.16//cmd/kube-controller-manager/app/controllermanager.go#L498:6:title](https://github.com/kubernetes/kubernetes/blob/release-1.16//cmd/kube-controller-manager/app/controllermanager.go#L498:6:title)
+[https://github.com/kubernetes/kubernetes/blob/release-1.16//cmd/kube-controller-manager/app/controllermanager.go#L498:6:title](https://github.com/kubernetes/kubernetes/blob/release-1.16//cmd/kube-controller-manager/app/controllermanager.go#L498)
 
 各controllerの起動処理を実行しているようです。
 肝心の`ReplicaSetController`の起動処理をみてみます。
@@ -209,7 +209,7 @@ func startReplicaSetController(ctx ControllerContext) (http.Handler, bool, error
 }
 ```
 
-[https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/cmd/kube-controller-manager/app/apps.go#L69:6](https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/cmd/kube-controller-manager/app/apps.go#L69:6)
+[https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/cmd/kube-controller-manager/app/apps.go#L69](https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/cmd/kube-controller-manager/app/apps.go#L69)
 
 `ReplicaSetController`の生成と起動処理を別goroutineで実行しているようです。
 
@@ -225,7 +225,7 @@ func (rsc *ReplicaSetController) Run(workers int, stopCh <-chan struct{}) {
 }
 ```
 
-[https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/controller/replicaset/replica_set.go#L177:34](https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/controller/replicaset/replica_set.go#L177:34)
+[https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/controller/replicaset/replica_set.go#L177:34](https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/controller/replicaset/replica_set.go#L177)
 
 指定された数のworkerを起動して、`stopCh`でblockしています。
 
@@ -256,7 +256,7 @@ func (rsc *ReplicaSetController) processNextWorkItem() bool {
 }
 ```
 
-[https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/controller/replicaset/replica_set.go#L432:34](https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/controller/replicaset/replica_set.go#L432:34)
+[https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/controller/replicaset/replica_set.go#L432:34](https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/controller/replicaset/replica_set.go#L432)
 
 肝心のworkerはqueueからtaskを取得して、`ReplicaSetController.syncHandler()`処理を呼び出しています。
 このqueueまわりもslideの後半で解説されていましたが、概要としてはapi-serverからcontrollerが関心のあるEventに絞って取得していると理解しています。
@@ -339,7 +339,7 @@ func (rsc *ReplicaSetController) manageReplicas(filteredPods []*v1.Pod, rs *apps
 		return err
 ```
 
-[https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/controller/replicaset/replica_set.go#L459:34](https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/controller/replicaset/replica_set.go#L459:34)
+[https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/controller/replicaset/replica_set.go#L459:34](https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/controller/replicaset/replica_set.go#L459)
 
 
 ```go
@@ -370,7 +370,7 @@ func slowStartBatch(count int, initialBatchSize int, fn func() error) (int, erro
 }
 ```
 
-[https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/controller/replicaset/replica_set.go#L658:6](https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/controller/replicaset/replica_set.go#L658:6)
+[https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/controller/replicaset/replica_set.go#L658](https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/controller/replicaset/replica_set.go#L658)
 
 `Pod`と`ReplicaSet`のreplica数の差分をとって、`Pod`の作成処理を実行していますね。
 `slowStartBatch()`は作成処理を並列で走らせるhelper関数のようです。
@@ -385,7 +385,7 @@ func (r RealPodControl) CreatePodsWithControllerRef(namespace string, template *
 	return r.createPods("", namespace, template, controllerObject, controllerRef)
 }
 ```
-[https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/controller/controller_utils.go#L523:title](https://speakerdeck.com/govargo/under-the-kubernetes-controller-36f9b71b-9781-4846-9625-23c31da93014?slide=19)
+[https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/controller/controller_utils.go#L523](https://speakerdeck.com/govargo/under-the-kubernetes-controller-36f9b71b-9781-4846-9625-23c31da93014?slide=19)
 
 
 ```go
@@ -453,7 +453,7 @@ func assignedPod(pod *v1.Pod) bool {
 }
 ```
 
-[https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/scheduler/eventhandlers.go#L323:6](https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/scheduler/eventhandlers.go#L418)
+[https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/scheduler/eventhandlers.go#L323](https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/scheduler/eventhandlers.go#L418)
 
 
 `Scheduler`が`podInformer`にevent handlerを登録する際に、podがassigne(`NodeName`が設定されている)されていないことを条件とするfilterを設定していることがわかります。
@@ -511,7 +511,7 @@ func (sched *Scheduler) assume(assumed *v1.Pod, host string) error {
 }
 ```
 
-[https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/scheduler/scheduler.go#L447:25](white-space:nowrap;
+[https://github.com/kubernetes/kubernetes/blob/2f76f5e63872a40ac08056289a6c52b4f6250154/pkg/scheduler/scheduler.go#L447](white-space:nowrap;
 overflow:scroll;)
 
 

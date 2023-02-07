@@ -360,7 +360,7 @@ pub fn credentials<F>(&mut self, cb: F) -> &mut RemoteCallbacks<'a>
 where
     F: FnMut(&str, Option<&str>, CredentialType) -> Result<Cred, Error> + 'a, 
 ```
-ここでdocumentにあまり情報がなく、困ったのですが、[issue](https://github.com/rust-lang/git2-rs/issues?q=is%3Aissue+authentication+required+but+no+callback+set)と[cargoのコメント](https://github.com/rust-lang/cargo/blob/6a7672ef5344c1bb570610f2574250fbee932355/src/cargo/sources/git/utils.rs#L409-L617)から、callbackの第3引数(`allowed_types`)に応じて、[`git2::Cred`](https://docs.rs/git2/0.13.1/git2/struct.Cred.html)を生成して返せばよさそうだったので、`git2::Cred::user_pass_plaintext()`を実行したところ、githubに認証してもらえました。
+ここでdocumentにあまり情報がなく、困ったのですが、[issue](https://github.com/rust-lang/git2-rs/issues?q=is%3Aissue+authentication+required+but+no+callback+set)と[cargoのコメント](https://github.com/rust-lang/cargo/blob/6a7672ef5344c1bb570610f2574250fbee932355/src/cargo/sources/git/utils.rs#L409)から、callbackの第3引数(`allowed_types`)に応じて、[`git2::Cred`](https://docs.rs/git2/0.13.1/git2/struct.Cred.html)を生成して返せばよさそうだったので、`git2::Cred::user_pass_plaintext()`を実行したところ、githubに認証してもらえました。
 
 毎回認証のpromptをだすのはさすがに煩わしいので、このあたりは改善したいです。
 [libgit2にもdoc](https://libgit2.org/docs/guides/authentication/)があります。

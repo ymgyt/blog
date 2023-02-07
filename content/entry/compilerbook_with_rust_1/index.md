@@ -14,7 +14,7 @@ compilerbookこと[低レイヤを知りたい人のためのCコンパイラ作
 概要としては、計算の対象となる文字列(`2*(3+4)`)を引数にとるCLIをRustで作成し、アセンブリを出力します。そのアセンブリをcompilerbookが提供してくださっているdocker上のgccでcompileして機械語を生成する流れとなります。
 生成されたプログラムは計算結果を終了ステータスとして返します。
 
-```console
+```sh
 
 # 入力からアセンブリを生成するCLI
 cargo run -- '2*(3+4)'
@@ -77,7 +77,7 @@ fn main() {
 環境構築といっても、必要なツールが揃っている[Dockerfile](https://www.sigbus.info/compilerbook/Dockerfile)を準備していただいているので、Rust側だけです。
 compilerbookでは`9cc`という名前で実装していくので、`r9cc`としました。[repositoryはこちらです](https://github.com/ymgyt/r9cc)
 
-```console
+```sh
 # clone
 git clone https://github.com/ymgyt/r9cc
 
@@ -157,7 +157,7 @@ pub type Token = Annot<TokenKind>;
 ```
 tokenに位置に関する情報をもたせるために、`Annot`でwrapしています。これは実践Rust入門でおこなわれていた実装方法で、Genericsの使い方として非常に参考になりました。
 `Loc`の情報はエラー時に以下のような表示をだすために利用します。
-```console
+```sh
 ./target/debug/r9cc '1 + 2 - aaa'  
 1 + 2 - aaa
         ^ invalid char 'a'
@@ -536,7 +536,7 @@ fn post_gen<W: Write>(w: &mut W) -> io::Result<()> {
 ## test
 
 ここまでで、入力文字列からアセンブリを出力できるようになりました。
-```console
+```sh
 ./target/debug/r9cc '6/2*(3+4)'   
 .intel_syntax noprefix
 .global main
@@ -599,7 +599,7 @@ echo OK
 ```
 dockerのbase imageはubuntuなので、crossを利用してcross compileを実行してから、docker上で上記のtest.shを実行します。
 
-```console
+```sh
 [loc rs/r9cc] cargo make build 
 [cargo-make] INFO - cargo make 0.25.0
 [cargo-make] INFO - Project: r9cc
