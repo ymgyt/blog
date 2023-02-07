@@ -38,7 +38,7 @@ StackとHeapについてから、型やAPI Design、Test,Macro,Async,Pin,Unsafe,
 Valueとvariableの違いや、variableについて考えるときのメンタルモデルとして、High-LevelとLow-Levelに分けてみることができる。High-Levelの方はborrow checkerやvariable間の関係に焦点をあて、Low-Level的な見方はvariableはmemory locationに名前をつけたと考えると自分なりには理解しました。
 
 Codeを書くうえで、memoryのどの部分を利用するかは重要で、Rustに際してはstack, heap, static memoryの区別が特に重要。  
-Stackの考え方は[rui ueyama先生のcompiler book 関数とローカル変数](https://www.sigbus.info/compilerbook#%E9%96%A2%E6%95%B0%E3%81%A8%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E5%A4%89%E6%95%B0)が非常にわかりやすいと思いました。  
+Stackの考え方は[rui ueyama先生のcompiler book 関数とローカル変数](https://www.sigbus.info/compilerbook)が非常にわかりやすいと思いました。  
 Stack frameはいずれ消える(書き換えられる)ということがlifetimeとして表現されているのがRustの特徴のひとつだなと思いました。
 
 Heapはcall stackとは独立したメモリ領域。Rustでheapとやり取りするprimary mechanismは`Box`。heapに確保した領域はいずれ開放(free)する必要があり、その責務を表現したのがownership。  
@@ -53,7 +53,7 @@ Ownership,{Shared,Mutable} References, Interior Mutabilityについても簡潔�
 > References are pointers that come with an additional contract for how they can be used
 
 という説明があり、referenceってpointerって考えていいんだよねと思っていたので参考になりました。
-Lifetimeとvarianceの説明もあり、このあたりの話は[以前ブログで書いた](https://blog.hatena.ne.jp/yamaguchi7073xtt/ymgyt.hatenablog.com/edit?entry=26006613706218795)ので、理解できました。(どうして、`&mut T`がTにたいしてinvariantなのか等)
+Lifetimeとvarianceの説明もあり、このあたりの話は[以前ブログで書いた](@/entry/lifetime-and-variance/index.md)ので、理解できました。(どうして、`&mut T`がTにたいしてinvariantなのか等)
 
 ## TYPES
 

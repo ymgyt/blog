@@ -526,7 +526,7 @@ input!{
   s: String,
 }
 ```
-これは、`String`が[`FromStr`を実装](https://doc.rust-lang.org/src/alloc/string.rs.html#2225-2231)しているためです。  
+これは、`String`が[`FromStr`を実装](https://doc.rust-lang.org/src/alloc/string.rs.html#2225)しているためです。  
 入力を`Vec<char>`や、`Vec<u8>`でうけとりたいときはどうすればよいでしょうか。型定義して、`Readable`を実装すればよいのですが、想定されるユースケースなので、`proconio`側が用意してくれています。それが、`marker::{Chars,Bytes}`です。
 [https://github.com/statiolake/proconio-rs/blob/master/proconio/src/marker.rs]
 

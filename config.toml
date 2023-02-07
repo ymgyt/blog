@@ -53,6 +53,9 @@ internal_level = "error"
 # Treat external link problems as either "error" or "warn", default is "error"
 external_level = "error"
 
+# Skip link checking for external URLs that start with these prefixes
+skip_prefixes = []
+
 [extra]
 # Put all your custom variables here
 
