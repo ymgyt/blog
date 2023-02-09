@@ -1,5 +1,5 @@
 <head>
-	{{ macro::google_tag() }}
+	{% include "base/google_tag.html" %}
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -12,6 +12,6 @@
 		href="{{ get_url(path=config.feed_filename, trailing_slash=false) }}">
 
 	{% block title %}
-	<title>{{ config.extra.site.title }}</title>
+	<title>{{ config.title }}</title>
 	{% endblock title %}
 </head>

@@ -232,7 +232,7 @@ where
 
 このコードは現状のexistential typeの制約でcompileできません。
 
-```text
+```sh
 error[E0562]: `impl Trait` only allowed in function and inherent method return types, not in `Fn` trait return
   --> src/main.rs:54:76
    |
@@ -330,7 +330,7 @@ impl<T> Handler for Timeout<T>
 ```
 ただし、このままだとcompileが通りません。
 
-```text
+```sh
 error[E0759]: `self` has an anonymous lifetime `'_` but it needs to satisfy a `'static` lifetime requirement
   --> src/main.rs:84:29
    |
@@ -391,7 +391,7 @@ where
 ここでのcloneのコストは問題になりません。`RequestHandler`はfieldをもっていないですし、`Timeout`の`Duration`は`Copy`でからです。  
 これでエラーは次のようにかわりました。
 
-```text
+```sh
 error[E0310]: the parameter type `T` may not live long enough
   --> src/main.rs:86:9
    |

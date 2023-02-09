@@ -616,7 +616,7 @@ service:
 
 設定fileの読み方ですがtop levelでは
 
-```text
+```yaml
 receivers:
 
 processors:
@@ -714,7 +714,7 @@ exporters:
 冗長なのは`verbosity: detailed`を設定しているためです。
 
 
-```text
+```
 opentelemetry-handson-otel-collector-1       | 2022-12-18T07:01:06.906Z info    TracesExporter  {"kind": "exporter", "data_type": "traces", "name": "logging", "#spans": 3}
 opentelemetry-handson-otel-collector-1       | 2022-12-18T07:01:06.908Z info    ResourceSpans #0
 opentelemetry-handson-otel-collector-1       | Resource SchemaURL: 

@@ -732,7 +732,7 @@ Lockにもいろいろな実装があるのだと知りました。
 * [Github code example](https://github.com/m-ou-se/rust-atomics-and-locks)
 * [アトミック変数とメモリ順序](https://qiita.com/qnighy/items/b3b728adf5e4a3f1a841#)
 * なぜ違う値をみたのか
-    * https://tech.unifa-e.com/entry/2019/03/04/130455
-    * https://tech.unifa-e.com/entry/2018/07/24/120258
-    * http://www.rdrop.com/users/paulmck/scalability/paper/whymb.2010.07.23a.pdf
+    * [https://tech.unifa-e.com/entry/2019/03/04/130455](https://tech.unifa-e.com/entry/2019/03/04/130455)
+    * [https://tech.unifa-e.com/entry/2018/07/24/120258](https://tech.unifa-e.com/entry/2018/07/24/120258)
+    * [http://www.rdrop.com/users/paulmck/scalability/paper/whymb.2010.07.23a.pdf](http://www.rdrop.com/users/paulmck/scalability/paper/whymb.2010.07.23a.pdf)
 

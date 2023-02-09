@@ -25,6 +25,7 @@ taxonomies = [
   { name = "tags", feed = true },
 ]
 
+
 [markdown]
 # Whether to do syntax highlighting
 # Theme can be customised by setting the `highlight_theme` variable to a theme supported by Zola
@@ -65,7 +66,4 @@ skip_prefixes = []
 name = "ymgyt"
 github = "ymgyt"
 twitter = "YAmaguchixt "
-
-[extra.site]
-title = "Happy Developing"
 

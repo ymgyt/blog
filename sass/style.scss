@@ -30,14 +30,20 @@ $measure: 50rem;
   max-width: $measure
 }
 
-html,body,div,header,nav,main,footer {
-	max-width: none;
+html,
+body,
+div,
+header,
+nav,
+main,
+footer {
+  max-width: none;
 }
 
 html {
-	background: $light-grey;
-	line-height: 1.6;
-	letter-spacing: 0.05em;
+  background: $light-grey;
+  line-height: 1.6;
+  letter-spacing: 0.05em;
 }
 
 body,
@@ -57,22 +63,28 @@ body {
 
 }
 
-.stack {
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
+.stack,
+.aligned-stack,
+{
+display: flex;
+flex-direction: column;
+justify-content: flex-start;
 
-	> * {
-  	margin-top: 0;
-		margin-bottom: 0;
-	}
-
-	> * + * {
-  	margin-top: $stack-space;
-	}
+>* {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
-.blog-layout {
+>*+* {
+  margin-top: $stack-space;
+}
+
+.centered {
+  align-items: center;
+}
+}
+
+.aligned-stack {
   align-items: center;
 }
 
@@ -94,6 +106,7 @@ body {
       }
     }
   }
+
   .icon {
     display: inline-block;
     vertical-align: middle;
@@ -110,21 +123,21 @@ body {
   }
 }
 
-.blog-nav {
-}
+.blog-nav {}
 
 .blog-main {
   padding: $padding;
+  max-width: $measure
 }
 
 .blog-footer {
 
   padding: 0 $padding $padding $padding;
 
- display: flex;
- justify-content: center;
- align-items: center;
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   text-align: center;
   font-size: 0.9em;
   margin-bottom: 32px;
@@ -250,6 +263,7 @@ table {
   .entry-year {
     font-size: 1.6em;
     padding-top: 6px;
+    white-space: nowrap; // 年なので折り返しされたくない
     @include dimmed;
   }
 
@@ -268,6 +282,8 @@ table {
       align-items: baseline;
       padding: 12px 0;
     }
+
+    .entry-title {}
   }
 
   .entry-day {
@@ -329,9 +345,15 @@ table {
       @include dimmed;
     }
   }
+
+  // zolaのinsert_anchor_linksで生成される見出しのlinkに線を引かない
+  // TODO: refactor
+  .zola-anchor {
+    box-shadow: none;
+  }
 }
 
-#toc {
+.entry-toc {
   font-size: 0.8em;
   @include dimmed;
 
@@ -340,7 +362,7 @@ table {
     margin: 0;
   }
 
-  & > ul {
+  &-toplevel-list {
     list-style-type: none;
   }
 

@@ -81,7 +81,7 @@ pub fn derive(input: TokenStream) -> TokenStream {
 ```
 
 この状態で`cargo test --quiet`を実行するとnot implementedとなり失敗します。
-```console
+```sh
 ❯ cargo test --quiet
 running 0 tests
 
@@ -114,7 +114,7 @@ pub fn derive(input: TokenStream) -> TokenStream {
 }
 ```
 
-```console
+```sh
 ❯ cargo test --quiet
 running 0 tests
 
@@ -241,7 +241,7 @@ procedural macroの最初の課題はsyn(とquote)のapiに慣れることにあ
 そこから必要な情報を抽出して、`quote!`でTokenStreamを組み立てます。
 
 
-```console
+```sh
 ❯ cargo test --quiet
 
 running 0 tests
@@ -423,7 +423,7 @@ impl Command {
 ```
 となり意図通りのコードが生成されています。
 
-```console
+```sh
 ❯ cargo test --quiet
 
 running 0 tests
@@ -525,7 +525,7 @@ fn derive_builder(input: DeriveInput) -> Result<TokenStream2> {
 
 filedの識別だけを保持するiteratorを用意しておき、`#idents: self.#idents.take()`のように使います。あくまでtokenなので、実際にはOptionでなくても(`syn::Ident`)`take`が呼べてしまうんですね。
 
-```console
+```sh
 ❯ cargo test
     Finished test [unoptimized + debuginfo] target(s) in 0.02s
      Running unittests src/lib.rs (/Users/ymgyt/rs/proc-macro-workshop-blog/target/debug/deps/derive_builder-5d658299e3122af7)
@@ -578,7 +578,7 @@ fn main() {
 今回はbuilderのsignatureを`&mut self`としていますが、`self`としたい場面もあります。今回のケースでは初期値をすべてOption型としているので、takeで所有権を奪えるのですがそうでない場合には`&mut self`から値をmoveできずに不要なcloneが生じてしまう場合があります。  
 このあたりのPro/Conについては[derive_builder](https://docs.rs/derive_builder/latest/derive_builder/#builder-patterns)に説明がありました。
 
-```console
+```sh
 ❯ cargo test
     Finished test [unoptimized + debuginfo] target(s) in 0.02s
      Running unittests src/lib.rs (/Users/ymgyt/rs/proc-macro-workshop-blog/target/debug/deps/derive_builder-5d658299e3122af7)
@@ -789,7 +789,7 @@ filedの型が`Option<T>`と判別できれば、初期値は`Some(None)`とし�
 
 これでテストをパスできました。
 
-```console
+```sh
 ❯ cargo test
     Finished test [unoptimized + debuginfo] target(s) in 0.02s
      Running unittests src/lib.rs (/Users/ymgyt/rs/proc-macro-workshop-blog/target/debug/deps/derive_builder-5d658299e3122af7)
@@ -961,7 +961,7 @@ attributeを値を抽出するhelperを定義。eachが指定されていたらb
 
 無事テストをパスしました。
 
-```console
+```sh
 ❯ cargo test --quiet
 running 0 tests
 
@@ -1006,7 +1006,7 @@ pub struct Command {
 
 testを実行してみると以下のように意図したエラーメッセージとちょっとずれています。
 
-```console
+```sh
 test tests/08-unrecognized-attribute.rs ... mismatch
 
 EXPECTED:
@@ -1106,7 +1106,7 @@ pub fn new_spanned<T: ToTokens, U: Display>(tokens: T, message: U) -> Self {
 無事テストも通りました。  
 (stderrもテストできるtrybuildも便利で他にも使い道がありそうでもっと調べてみたくなります)
 
-```console
+```sh
 ❯  cargo test --quiet
 
 running 0 tests
@@ -1157,7 +1157,7 @@ fn main() {}
 
 元々、`::core::option::Option`のように型をフルパスで指定していたので特に変更せずにテストをパスできます。
 
-```console
+```sh
 ❯ cargo test --quiet
 
 running 0 tests
@@ -1192,7 +1192,7 @@ fn tests() {
 }
 ```
 
-```console
+```sh
 ❯ cargo test --quiet
 
 running 0 tests
