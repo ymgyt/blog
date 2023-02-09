@@ -7,7 +7,6 @@ draft = false
 tags = ["rust"]
 +++
 
-[f:id:yamaguchi7073xtt:20221015203626p:plain]
 
 最近会社で[This week in rust](https://this-week-in-rust.org/)ならぬThis week in fraimという会が週1で行われる様になりました。そこで[CQRS and Event Sourcing using Rust](https://doc.rust-cqrs.org/intro.html)というドキュメントを教えてもらいました。  
 このドキュメントは[cqrs-rs](https://github.com/serverlesstechnology/cqrs)というRustのCQRS lightweight frameworkについて書かれており、RustにおけるCQRSの実装の具体例としてとても参考になりました。  
