@@ -1,0 +1,22 @@
+{% import "macro/google_tag.html" as macro %}
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  {% include "base/head.html" %}
+</head>
+
+<body>
+  <div class="root-container">
+    <div class="stack blog-layout">
+      {% include "base/header.html" %}
+      <main class="blog-main">
+        {% block content %}
+        {% endblock content %}
+      </main>
+      {% include "base/footer.html" %}
+    </div>
+  </div>
+</body>
+
+</html>

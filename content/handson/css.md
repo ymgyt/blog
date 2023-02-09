@@ -1,9 +1,9 @@
 +++
 title = "CSS Handson"
-slug = "css-handson"
+slug = "css"
 date = "2023-02-06"
 draft = true
-template = "css.html"
+template = "handson/css.html"
 [taxonomies]
 tags = ["rust"]
 +++

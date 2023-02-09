@@ -1,5 +1,5 @@
-{% import "macro.html" as macro %}
-{% extends "base.html" %}
+{% import "macro/title.html" as macro %}
+{% extends "base/base.html" %}
 
 {% block title %}
 {{ macro::title(title=page.title) }}
@@ -13,18 +13,29 @@
     </h1>
     <div class="entry-meta">
       <p>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg> 
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+          <line x1="7" y1="7" x2="7" y2="7"></line>
+        </svg>
         {% for key, value in page.taxonomies %}
         {% if key == "tags" %}
-          {% for tag in value %}
-            <span class="tag"><a href="{{ get_taxonomy_url(kind="tags", name=tag) }}">{{ tag }}</a></span>
-          {% endfor %}
+        {% for tag in value %}
+        {# vscode-languageserver try to format `kind=" tags"`, so we use single quote. #}
+        <span class="tag"><a href="{{ get_taxonomy_url(kind='tags', name=tag) }}">{{ tag }}</a></span>
+        {% endfor %}
         {% endif %}
         {% endfor %}
       </p>
 
       <p>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
         {{ page.date }}
       </p>
     </div>
@@ -33,18 +44,18 @@
   <div id="toc">
     <ul>
       {% for h1 in page.toc %}
-        <li>
-          <a href="{{ h1.permalink | safe }}">{{ h1.title }}</a>
-          {% if h1.children %}
-            <ul>
-              {% for h2 in h1.children %}
-                <li>
-                  <a href="{{ h2.permalink | safe }}">{{ h2.title }}</a>
-                </li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        </li>
+      <li>
+        <a href="{{ h1.permalink | safe }}">{{ h1.title }}</a>
+        {% if h1.children %}
+        <ul>
+          {% for h2 in h1.children %}
+          <li>
+            <a href="{{ h2.permalink | safe }}">{{ h2.title }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </li>
       {% endfor %}
     </ul>
   </div>
