@@ -1,4 +1,9 @@
+{% import "macro.html" as macro %}
 {% extends "base.html" %}
+
+{% block title %}
+{{ macro::title(title=page.title) }}
+{% endblock title %}
 
 {% block content %}
 <article>

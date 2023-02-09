@@ -38,6 +38,8 @@ highlight_theme = "base16-ocean-dark"
 # Unicode emoji equivalent in the rendered Markdown files. (e.g.: :smile: => 😄)
 render_emoji = false
 
+extra_syntaxes_and_themes = []
+
 # Various slugification strategies
 [slugify]
 # Respect entry "_" for compability
@@ -63,4 +65,7 @@ skip_prefixes = []
 name = "ymgyt"
 github = "ymgyt"
 twitter = "YAmaguchixt "
+
+[extra.site]
+title = "Happy Developing"
 
