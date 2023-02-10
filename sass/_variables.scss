@@ -1,3 +1,7 @@
+$measure: 50rem;
+$padding: 8px;
+$ratio: 1.5;
+
 // Colors
 //
 $theme: #018574;
@@ -7,3 +11,6 @@ $dark-grey: #3b3e48;
 $highlight-grey: #7d828a;
 $midnightblue: #31333d;
 
+@mixin dimmed {
+  opacity: 0.6;
+}

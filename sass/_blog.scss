@@ -1,0 +1,56 @@
+@import "variables.scss";
+
+.blog-header-container {
+  width: 100%;
+  max-width: $measure;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  nav {
+    ul {
+      list-style: none;
+
+      li {
+        display: inline;
+        padding-left: 0.5em;
+      }
+    }
+  }
+
+  .icon {
+    display: inline-block;
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.blog-logo {
+  a {
+    flex-basis: 20%;
+    font-size: 26px;
+    font-weight: bold;
+  }
+}
+
+.blog-nav {}
+
+.blog-footer {
+
+  padding: 0 $padding $padding $padding;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+  font-size: 0.9em;
+  margin-bottom: 32px;
+  margin-top: 64px;
+
+  p {
+    margin: 0;
+  }
+}

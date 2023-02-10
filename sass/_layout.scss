@@ -1,0 +1,28 @@
+@import "variables.scss";
+
+$stack-space: 1rem / $ratio;
+
+.stack,
+.aligned-stack,
+{
+display: flex;
+flex-direction: column;
+justify-content: flex-start;
+
+>* {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+>*+* {
+	margin-top: $stack-space;
+}
+
+.centered {
+	align-items: center;
+}
+}
+
+.aligned-stack {
+	align-items: center;
+}
