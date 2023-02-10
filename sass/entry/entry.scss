@@ -1,11 +1,173 @@
 @import "../variables.scss";
 
+$h_border_line: #5c93bb2b;
+
+@mixin aTag {
+	a {
+		word-break: break-all;
+		border: none;
+		box-shadow: inset 0 -1px 0 $text;
+		transition-property: background-color;
+
+	}
+}
+
 .entry-title {
 	font-size: 2rem;
 	margin: 0.67em 0;
 }
 
+.entry-meta {
+	font-size: 1em;
+	line-height: normal;
+	@include dimmed;
+
+	p {
+		margin: 0.8em 0;
+	}
+
+	a:hover {
+		border-bottom: 1px solid $text;
+	}
+}
+
+.tag {
+	margin-right: 0.5em;
+
+	&::before {
+		content: "#";
+	}
+}
+
+.entry-toc {
+	font-size: 0.8em;
+	@include dimmed;
+
+	ul {
+		padding: 0;
+		margin: 0;
+	}
+
+	&-toplevel-list {
+		list-style-type: none;
+	}
+
+	ul ul {
+		font-size: 0.9em;
+		list-style-position: inside;
+		list-style-type: "-";
+		padding-left: 1ch;
+	}
+
+	a:hover {
+		border-bottom: 1px solid $text;
+	}
+}
+
 .entry-main {
 	padding: $padding;
 	max-width: $measure
+}
+
+.entry-content {
+	text-align: justify;
+	@include aTag;
+
+	h2 {
+		margin-top: 1rem;
+		margin-bottom: 1rem;
+		border-top: 2px solid $h_border_line;
+		padding-top: 0.5rem;
+	}
+
+	h3 {
+		margin-top: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	p {
+		margin-top: 1em;
+		margin-bottom: 1em;
+	}
+
+	figure {
+		text-align: center;
+		margin-right: 0;
+		margin-left: 0;
+
+		.fig-images-row {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
+		}
+
+		img {
+			display: block;
+			border-radius: 4px;
+		}
+
+		figcaption {
+			margin-top: 1rem;
+			font-style: italic;
+			@include dimmed;
+		}
+	}
+
+	// zolaのinsert_anchor_linksで生成される見出しのlinkに線を引かない
+	// TODO: refactor
+	.zola-anchor {
+		box-shadow: none;
+	}
+
+	a {
+		code {
+			&:hover {
+				color: $midnightblue;
+			}
+		}
+	}
+
+	pre,
+	code {
+		font-family: $code-fonts;
+	}
+
+	pre {
+		margin-top: 0.7rem;
+		margin-bottom: 0.7rem;
+		padding: 1em 1.0em;
+		font-size: 0.9em;
+		line-height: 1.2;
+		letter-spacing: normal;
+
+		// white-spaceを無効にして,overflow:autoにしておくとscrollして表示される
+		// white-space: pre-wrap;
+		overflow: auto;
+		word-wrap: break-word;
+
+		color: #eee;
+		border-radius: 5px;
+
+		code {
+			padding: 0;
+			margin: 0;
+			background: inherit;
+		}
+	}
+
+	code {
+		color: #ddd;
+		background: $highlight-grey;
+		border-radius: 3px;
+		padding: 0 2px;
+		margin: 0;
+		// `format::Format<format::Full>`とかで折り返してほしくない
+		word-break: break-word;
+		letter-spacing: normal;
+
+		transition-property: color;
+		transition-duration: 0.2s;
+		transition-timing-function: ease-out;
+	}
+
 }

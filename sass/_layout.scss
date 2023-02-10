@@ -2,6 +2,20 @@
 
 $stack-space: 1rem / $ratio;
 
+* {
+	max-width: $measure
+}
+
+html,
+body,
+div,
+header,
+nav,
+main,
+footer {
+	max-width: none;
+}
+
 .stack,
 .aligned-stack,
 {

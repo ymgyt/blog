@@ -1,40 +1,9 @@
 @import "variables.scss";
 @import "base";
 @import "layout.scss";
-
-@import "font.scss";
-
 @import "link.scss";
 @import "blog.scss";
 @import "entry";
-
-$h_border_line: #5c93bb2b;
-
-
-
-@mixin aTag {
-  a {
-    word-break: break-all;
-    border: none;
-    box-shadow: inset 0 -1px 0 $text;
-    transition-property: background-color;
-
-  }
-}
-
-* {
-  max-width: $measure
-}
-
-html,
-body,
-div,
-header,
-nav,
-main,
-footer {
-  max-width: none;
-}
 
 html {
   background: $light-grey;
@@ -56,57 +25,6 @@ body {
   line-break: strict;
   overflow-wrap: break-word;
   word-break: break-word;
-
-}
-
-pre,
-code,
-pre tt {
-  font-family: $code-fonts;
-}
-
-pre {
-  // max-height: 100em;
-  padding: 0.7em 1.0em;
-  font-size: 0.9em;
-  line-height: 1.2;
-  letter-spacing: normal;
-
-  // white-spaceを無効にして,overflow:autoにしておくとscrollして表示される
-  // white-space: pre-wrap;
-  overflow: auto;
-  word-wrap: break-word;
-
-  color: #eee;
-  border-radius: 5px;
-
-  code {
-    padding: 0;
-    margin: 0;
-    background: $midnightblue;
-  }
-}
-
-a {
-  code {
-    &:hover {
-      color: $midnightblue;
-    }
-  }
-}
-
-code {
-  color: #eee;
-  background: $highlight-grey;
-  border-radius: 3px;
-  padding: 0 2px;
-  margin: 0;
-  word-break: break-all;
-  letter-spacing: normal;
-
-  transition-property: color;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-out;
 }
 
 blockquote {
@@ -114,23 +32,6 @@ blockquote {
   margin: 1em;
   padding: 0 1em;
   font-style: italic;
-}
-
-a {
-  color: $text;
-  text-decoration: none;
-  border: none;
-  transition-property: color;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-out;
-
-  &:hover {
-    color: #fff;
-  }
-
-  &:focus {
-    outline: none;
-  }
 }
 
 hr {
@@ -166,97 +67,4 @@ table {
   vertical-align: -0.125em;
   width: 1em;
   height: 1em;
-}
-
-.entry-meta {
-  font-size: 1em;
-  line-height: normal;
-  @include dimmed;
-
-  p {
-    margin: 0.8em 0;
-  }
-
-  a:hover {
-    border-bottom: 1px solid $text;
-  }
-}
-
-.tag {
-  margin-right: 0.5em;
-
-  &::before {
-    content: "#";
-  }
-}
-
-.entry-content {
-  text-align: justify;
-  @include aTag;
-
-  h2 {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    border-top: 2px solid $h_border_line;
-    padding-top: 0.5rem;
-  }
-
-  h3 {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-  }
-
-  figure {
-    text-align: center;
-    margin-right: 0;
-    margin-left: 0;
-
-    .fig-images-row {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-around;
-    }
-
-    img {
-      display: block;
-      border-radius: 4px;
-    }
-
-    figcaption {
-      margin-top: 1rem;
-      font-style: italic;
-      @include dimmed;
-    }
-  }
-
-  // zolaのinsert_anchor_linksで生成される見出しのlinkに線を引かない
-  // TODO: refactor
-  .zola-anchor {
-    box-shadow: none;
-  }
-}
-
-.entry-toc {
-  font-size: 0.8em;
-  @include dimmed;
-
-  ul {
-    padding: 0;
-    margin: 0;
-  }
-
-  &-toplevel-list {
-    list-style-type: none;
-  }
-
-  ul ul {
-    font-size: 0.9em;
-    list-style-position: inside;
-    list-style-type: "-";
-    padding-left: 1ch;
-  }
-
-  a:hover {
-    border-bottom: 1px solid $text;
-  }
 }
