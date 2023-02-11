@@ -70,7 +70,6 @@ $h_border_line: #5c93bb2b;
 }
 
 .entry-content {
-	text-align: justify;
 	@include aTag;
 
 	h2 {
@@ -89,8 +88,9 @@ $h_border_line: #5c93bb2b;
 	}
 
 	p {
-		margin-top: 1em;
-		margin-bottom: 1em;
+		line-height: 1.7;
+		margin-top: 1rem;
+		margin-bottom: 1rem;
 	}
 
 	figure {
