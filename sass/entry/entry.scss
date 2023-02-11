@@ -6,7 +6,7 @@ $h_border_line: #5c93bb2b;
 	a {
 		word-break: break-all;
 		border: none;
-		box-shadow: inset 0 -1px 0 $color-text;
+		color: $color-p-5;
 		transition-property: background-color;
 
 	}
@@ -136,8 +136,7 @@ $h_border_line: #5c93bb2b;
 	}
 
 	pre {
-		margin-top: 0.7rem;
-		margin-bottom: 0.7rem;
+		margin-top: 1rem;
 		padding: 1em 1.0em;
 		font-size: 0.9em;
 		line-height: 1.2;
@@ -161,7 +160,7 @@ $h_border_line: #5c93bb2b;
 	code {
 		background: $color-inline-code-background;
 		border-radius: 3px;
-		padding: 0 2px;
+		padding: 0 1px;
 		margin: 0;
 		// `format::Format<format::Full>`とかで折り返してほしくない
 		word-break: break-word;
