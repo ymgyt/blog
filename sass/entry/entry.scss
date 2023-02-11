@@ -6,7 +6,7 @@ $h_border_line: #5c93bb2b;
 	a {
 		word-break: break-all;
 		border: none;
-		box-shadow: inset 0 -1px 0 $text;
+		box-shadow: inset 0 -1px 0 $color-text;
 		transition-property: background-color;
 
 	}
@@ -27,7 +27,7 @@ $h_border_line: #5c93bb2b;
 	}
 
 	a:hover {
-		border-bottom: 1px solid $text;
+		border-bottom: 1px solid $color-text;
 	}
 }
 
@@ -60,7 +60,7 @@ $h_border_line: #5c93bb2b;
 	}
 
 	a:hover {
-		border-bottom: 1px solid $text;
+		border-bottom: 1px solid $color-text;
 	}
 }
 
@@ -74,10 +74,13 @@ $h_border_line: #5c93bb2b;
 	@include aTag;
 
 	h2 {
-		margin-top: 1rem;
-		margin-bottom: 1rem;
+		margin-top: 2rem;
 		border-top: 2px solid $h_border_line;
-		padding-top: 0.5rem;
+		padding-top: 1rem;
+
+		>p {
+			margin-top: 1.5rem;
+		}
 	}
 
 	h3 {
@@ -122,7 +125,7 @@ $h_border_line: #5c93bb2b;
 	a {
 		code {
 			&:hover {
-				color: $midnightblue;
+				color: $color-text;
 			}
 		}
 	}
@@ -156,8 +159,7 @@ $h_border_line: #5c93bb2b;
 	}
 
 	code {
-		color: #ddd;
-		background: $highlight-grey;
+		background: $color-inline-code-background;
 		border-radius: 3px;
 		padding: 0 2px;
 		margin: 0;

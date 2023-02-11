@@ -3,18 +3,22 @@ $padding: 8px;
 $ratio: 1.5;
 
 // Colors
-//
-$theme: #018574;
-$text: #c6cddb;
-$light-grey: #494f5c;
-$dark-grey: #3b3e48;
-$highlight-grey: #7d828a;
-$midnightblue: #31333d;
+$color-p-1: hsl(211deg, 53%, 11%);
+$color-p-2: hsl(219deg, 37%, 17%);
+$color-p-3: hsl(212deg, 29%, 36%);
+$color-p-4: hsl(214deg, 23%, 56%);
+$color-p-5: hsl(75deg, 6%, 87%);
+
+$color-background: $color_p_2;
+$color-text: hsl(219deg, 37%, 75%);
+$color-codeblock-background: $color-p-3;
+$color-inline-code-background: $color-p-3;
 
 // Fonts
 //
 $fonts: "Trebuchet MS", Verdana, "Verdana Ref", "Segoe UI", Candara,
   "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif;
+
 $code-fonts: Menlo, Consolas, "Andale Mono WT", "Andale Mono", Monaco,
   "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono",
   "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", "Courier New",

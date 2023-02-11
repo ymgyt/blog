@@ -4,21 +4,10 @@
 @import "link.scss";
 @import "blog.scss";
 @import "entry";
-
-html {
-  background: $light-grey;
-  line-height: 1.6;
-  letter-spacing: 0.05em;
-}
-
-body,
-button,
-input,
-select,
-textarea {
-  color: $text;
-  font-family: $fonts;
-}
+@import "icon.scss";
+@import "syntax_highlight";
+@import "theme.scss";
+@import "typography.scss";
 
 body {
   hyphens: auto;
@@ -60,11 +49,4 @@ table {
     font-weight: 700;
     vertical-align: bottom;
   }
-}
-
-.icon {
-  display: inline-block;
-  vertical-align: -0.125em;
-  width: 1em;
-  height: 1em;
 }

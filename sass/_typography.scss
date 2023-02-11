@@ -1,0 +1,10 @@
+@import "variables";
+
+body,
+button,
+input,
+select,
+textarea {
+	color: $color-text;
+	font-family: $fonts;
+}

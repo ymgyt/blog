@@ -2,18 +2,14 @@
 
 $stack-space: 1rem / $ratio;
 
-* {
-	max-width: $measure
+article {
+	max-width: 50rem;
 }
 
-html,
-body,
-div,
-header,
-nav,
-main,
-footer {
-	max-width: none;
+@media (max-width: 600px) {
+	article {
+		max-width: 380px;
+	}
 }
 
 .stack,
