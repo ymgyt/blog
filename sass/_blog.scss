@@ -1,8 +1,6 @@
 @import "variables.scss";
 
 .blog-header-container {
-  width: 100%;
-  max-width: $measure;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -47,8 +45,8 @@
 
   text-align: center;
   font-size: 0.9em;
-  margin-bottom: 32px;
-  margin-top: 64px;
+  margin-block-start: 60px;
+  margin-block-end: 60px;
 
   p {
     margin: 0;

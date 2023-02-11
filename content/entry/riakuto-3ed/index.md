@@ -14,7 +14,7 @@ tags = ["book"]
 
 りあクト！ TypeScriptで始めるつらくないReact開発 第3版(200912)
 
-{{figure(caption="りあクト!第3班", images=[
+{{figure(caption="りあクト!第3版", images=[
   "images/riakuto_1.jpeg",
   "images/riakuto_2.jpeg",
   "images/riakuto_3.jpeg",

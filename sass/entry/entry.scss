@@ -1,6 +1,6 @@
 @import "../variables.scss";
 
-$h_border_line: #5c93bb2b;
+$h_border_line: $color-p-3;
 
 @mixin aTag {
 	a {
@@ -66,31 +66,31 @@ $h_border_line: #5c93bb2b;
 
 .entry-main {
 	padding: $padding;
-	max-width: $measure
 }
 
 .entry-content {
 	@include aTag;
 
 	h2 {
-		margin-top: 2rem;
+		margin-block-start: 2rem;
 		border-top: 2px solid $h_border_line;
-		padding-top: 1rem;
+		padding-block-start: 1rem;
+	}
 
-		>p {
-			margin-top: 1.5rem;
-		}
+	h2+* {
+		// h2: まとめの直後の<ul>にもmargin当てたい
+		margin-block-start: 1rem;
 	}
 
 	h3 {
-		margin-top: 1rem;
-		margin-bottom: 1rem;
+		margin-block-start: 1rem;
+		margin-block-end: 1rem;
 	}
 
 	p {
 		line-height: 1.7;
-		margin-top: 1rem;
-		margin-bottom: 1rem;
+		margin-block-start: 1rem;
+		margin-block-end: 1rem;
 	}
 
 	figure {
@@ -105,12 +105,11 @@ $h_border_line: #5c93bb2b;
 		}
 
 		img {
-			display: block;
 			border-radius: 4px;
 		}
 
 		figcaption {
-			margin-top: 1rem;
+			margin-block-start: 1rem;
 			font-style: italic;
 			@include dimmed;
 		}
@@ -136,7 +135,7 @@ $h_border_line: #5c93bb2b;
 	}
 
 	pre {
-		margin-top: 1rem;
+		margin-block-start: 1rem;
 		padding: 1em 1.0em;
 		font-size: 0.9em;
 		line-height: 1.2;

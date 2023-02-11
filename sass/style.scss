@@ -9,13 +9,6 @@
 @import "theme.scss";
 @import "typography.scss";
 
-body {
-  hyphens: auto;
-  line-break: strict;
-  overflow-wrap: break-word;
-  word-break: break-word;
-}
-
 blockquote {
   border-left: 0.25em solid;
   margin: 1em;
