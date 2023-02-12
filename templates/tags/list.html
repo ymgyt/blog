@@ -4,27 +4,28 @@
 
 <h1>Tags</h1>
 <div class="tags-list">
+  {# lang-serverがうまくtemplateを解釈できないので変数定義にわけておく。たぶんemojiがわるい #}
   {% set terms_map = terms | group_by(attribute="name") %}
+  {% set rust_pages = terms_map["rust"][0].pages | length %}
+  {% set book_pages = terms_map["book"][0].pages | length %}
+  {% set event_pages = terms_map["event"][0].pages | length %}
   <ul>
     <li class="tags-list-item">
       <a href="{{ config.base_url }}/tags/rust/">
-        🦀 Rust({{ terms_map["rust"][0].pages | length }})
+        🦀 Rust({{ rust_pages }}) Rust関連
       </a>
-      <span> Rust関連</span>
     </li>
 
     <li class="tags-list-item">
       <a href="{{ config.base_url }}/tags/book/">
-        📗 Book({{ terms_map["book"][0].pages | length }})
+        📗 Book({{ book_pages }}) 読んだ本やdocumentの感想
       </a>
-      <span> 本やdocumentの感想</span>
     </li>
 
     <li class="tags-list-item">
       <a href="{{ config.base_url }}/tags/book/">
-        🏃 Event({{ terms_map["event"][0].pages | length }})
+        🏃 Event({{ event_pages }}) 参加したevent
       </a>
-      <span> 参加したEvent</span>
     </li>
   </ul>
 </div>
