@@ -4,7 +4,7 @@ slug = "build-lily58pro"
 date = "2020-08-09"
 draft = false
 [taxonomies]
-tags = ["device"]
+tags = ["etc"]
 +++
 
 この記事では自作キーボード[Lily58 Pro](https://yushakobo.jp/shop/lily58-pro/)の組み立て工程について書いていきます。
