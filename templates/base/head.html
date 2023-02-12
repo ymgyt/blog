@@ -1,17 +1,16 @@
-<head>
-	{% include "base/google_tag.html" %}
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+{% include "base/google_tag.html" %}
 
-	<link rel="icon" type="image/png" sizes="16x16" href="{{ get_url(path='/images/favicon/favicon-16x16.png') }}" />
-	<link rel="icon" type="image/png" sizes="32x32" href="{{ get_url(path='/images/favicon/favicon-32x32.png') }}" />
-	<link rel="icon" href={{ get_url(path='/images/favicon/favicon.ico' ) }} />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-	<link rel="stylesheet" href="{{ get_url(path='/style.css') }}" />
-	<link rel="alternate" type="application/rss+xml" title="RSS"
-		href="{{ get_url(path=config.feed_filename, trailing_slash=false) }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ get_url(path='/images/favicon/favicon-16x16.png') }}" />
+<link rel="icon" type="image/png" sizes="32x32" href="{{ get_url(path='/images/favicon/favicon-32x32.png') }}" />
+<link rel="icon" href={{ get_url(path='/images/favicon/favicon.ico' ) }} />
 
-	{% block title %}
-	<title>{{ config.title }}</title>
-	{% endblock title %}
-</head>
+<link rel="stylesheet" href="{{ get_url(path='/style.css') }}" />
+<link rel="alternate" type="application/rss+xml" title="RSS"
+	href="{{ get_url(path=config.feed_filename, trailing_slash=false) }}">
+
+{% block title -%}
+<title>{{ config.title }}</title>
+{%- endblock title %}

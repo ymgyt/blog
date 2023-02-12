@@ -3,6 +3,12 @@
 
 <head>
   {% include "base/head.html" %}
+
+  {# head.html側に定義するとextend側でoverrideできない #}
+  {% block title -%}
+  <title>{{ config.title }}</title>
+  {%- endblock title %}
+
 </head>
 
 <body>
