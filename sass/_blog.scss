@@ -37,7 +37,7 @@
 
 .blog-footer {
 
-  padding: 0 $padding $padding $padding;
+  padding: 40px $padding 40px $padding;
 
   display: flex;
   justify-content: center;
@@ -45,8 +45,8 @@
 
   text-align: center;
   font-size: 0.9em;
-  margin-block-start: 60px;
-  margin-block-end: 60px;
+  // margin-block-start: 60px;
+  // margin-block-end: 200px;
 
   p {
     margin: 0;

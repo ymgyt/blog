@@ -66,6 +66,8 @@ $h_border_line: $color-p-3;
 
 .entry-main {
 	padding: $padding;
+	// contentがないpageでもfooterを下の方に出したい
+	min-height: 85%;
 }
 
 .entry-content {

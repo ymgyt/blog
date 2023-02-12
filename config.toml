@@ -22,7 +22,7 @@ generate_feed = true
 feed_filename = "atom.xml"
 
 taxonomies = [
-  { name = "tags", feed = true },
+  { name = "tags", feed = true, render = true },
 ]
 
 

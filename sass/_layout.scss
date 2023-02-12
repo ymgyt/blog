@@ -2,7 +2,12 @@
 
 $content-max-width: 50rem;
 
+.world {
+	height: 100%;
+}
+
 .content-container {
+	height: 100%;
 	max-width: $content-max-width;
 	margin-inline-start: auto;
 	margin-inline-end: auto;
