@@ -3,7 +3,7 @@ title = "🚛 BlogをZola + Github Pagesに移行した"
 slug = "migrated-blog-to-zola-and-github-pages"
 date = "2023-02-13"
 draft = true
-description = "Rust製 static site generator zolaとGithub Pagesでblogを作る方法"
+description = "Rust製 static site generator zolaとGithub Pagesでblogを公開するまで"
 [taxonomies]
 tags = ["etc"]
 +++
@@ -44,9 +44,115 @@ Zolaには以下のコマンドがあります。
 
 ## Zolaのdirectory構造
 
+まずは`zola init`から始めます。  
+
+```sh
+❯ mkdir zola-handson
+❯ cd zola-handson
+❯ zola init
+
+Welcome to Zola!
+Please answer a few questions to get started quickly.
+Any choices made can be changed by modifying the `config.toml` file later.
+> What is the URL of your site? (https://example.com): https://blog.ymgyt.io
+> Do you want to enable Sass compilation? [Y/n]: Y
+> Do you want to enable syntax highlighting? [y/N]: y
+> Do you want to build a search index of the content? [y/N]: N
+
+Done! Your site was created in /private/tmp/zola-handson
+
+Get started by moving into the directory and using the built-in server: `zola serve`
+Visit https://www.getzola.org for the full documentation.
+```
+
+`zola init`実行後にいくつか質問に答えるとdirectoryが作成されます。  
+なお、messageにある通り設定は後から変えられるので適当に答えても特に問題ありません。  
+
+directory構成を確認します。
+
+```sh
+❯ exa -T --icons
+ .
+├──  config.toml
+├──  content
+├──  sass
+├──  static
+├──  templates
+└──  themes
+```
+
+* `config.toml`がzolaの設定fileです
+* `content`がmarkdownを格納するdirectoryです
+* `sass`は適用するcss(sass)を配置します
+* `static`に公開される画像等のasset fileを置きます
+* `templates`にmakrdown fileをhtmlに変換する方法を指示するtemplateを置きます
+* `thems`適用するthemeの格納場所です
+
+`zola`コマンドを実行するとcontent配下のmarkdown filesがtemplatesに従ってhtmlに変換され、sass配下のcssとstatic配下のasset fileと共に`public`(設定で変更可) directoryに出力されます。
+
 ## Sectionとpage
 
+さっそくmarkdownを書いていきたいところですが、その前にzolaの[Section](https://www.getzola.org/documentation/content/section/)と[Page](https://www.getzola.org/documentation/content/page/)について説明させてください。  
+まず、Pageはcontentとして公開するmarkdownのことです。Pageには以下のようにmetadataを付与することでtemplateで処理する際に参照することができます。  
+
+```
++++
+title = "🚛 BlogをZola + Github Pagesに移行した"
+slug = "migrated-blog-to-zola-and-github-pages"
+date = "2023-02-13"
+draft = true
+description = "Rust製 static site generator zolaとGithub Pagesでblogを公開するまで"
+[taxonomies]
+tags = ["etc"]
++++
+
+Blogを...
+```
+
+上記は本記事のmetadataです。
+
+* `title` 記事のtitle
+* `slug` 記事のpathに利用される
+* `date` 公開日、pageを日付でsortする場合に参照される
+* `draft` draftの設定、後述します
+* `description` description templateで必要なら参照できる
+* `taxonomies` いわゆるtagでzolaが提供するpageの分類機能、こちらも後述
+
+その他`aliases`でredirect用のpathを設定できたりもします。詳しくは[公式doc](https://www.getzola.org/documentation/content/page/#front-matter)を参照してください。  
+
+
+次にSectionを作成します。`content`配下にdirectoryを作成し、`_index.md` fileを配置するとそのdirectoryがzolaからSectionとして認識されます。  
+Sectionは作らなくても良いのですが、同じ分類のpageをSectionにまとめておくとtemplateでlistとして参照できて便利です。  
+今回、blogの記事は`entry` Sectionとして作成することにしました。  
+まずは、`content/entry/_index.md`を作成します。`content`配下はそのまま公開時のpath名になるので、記事のURLは`https://blog.ymgyt.io/entry/{page_metadata.slug}`になります。  
+Page同様にSectionにも`_index.md`にmetadataを記述できます。  
+
+```
++++
+title = "Blog entries"
+sort_by = "date"
+template = "entry.html"
+page_template = "entry/page.html"
+insert_anchor_links = "heading"
++++
+```
+
+* `title` templateから参照できます
+* `sort_by` pageのsort方法、templateでsortされている前提で扱えます
+* `template` Section pageのtemplateの指定
+* `page_template` defaultで利用するpage共通のtemplateの指定
+* `insert_anchor_links` markdownの見出し(`## Chapter2`)にanchor(`#`)用のlinkを作成するかの指定
+
+Page同様、詳しくは[公式doc](https://www.getzola.org/documentation/content/section/)を参照してください。 
+
+Sectionで`/entry`や`/entry/hello-world`のようなpathでアクセスがあった際にrenderingに利用するtemplateが指定できたので、次はtemplateについて見ていきます。 
+
+
 ## Templateの書き方
+
+Zolaでは[Tera](https://github.com/Keats/tera)というtemplate engineが利用されています。Goのtemplate等、なにかしらのtemplate engineを利用したことがあればすぐに使えると思います。 
+ 
+
 
 ### Macro
 
