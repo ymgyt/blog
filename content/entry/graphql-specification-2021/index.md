@@ -171,7 +171,7 @@ tokenはlexical grammarで定義される。lexical grammar productionsは`::`�
 
 実際に書くGraphQL queryやmutationはどのように規定されているか。
 
-```text
+```
 OperationDefinition :
   - OperationType Name? VariableDefinitions? Directives? SelectionSet
   - SelectionSet
@@ -211,7 +211,7 @@ query FetchRepository {
 
 必要な情報だけを宣言するselectionについて。
 
-```text
+```
 SelectionSet : { Selection+ }
 
 Selection :
@@ -224,7 +224,7 @@ fieldかfragmentをかける。fragmentも別で定義するかinlineで書け�
 
 #### Field
 
-```text
+```
 Field : Alias? Name Arguments? Directives? SelectionSet?
 ```
 
@@ -322,7 +322,7 @@ fragmentは適用対象の型を明示する必要があり、上記の例では
 
 それぞれの型に対応したfragmentが適用されます。
 
-```text
+```
 InlineFragment : ... TypeCondition? Directives? SelectionSet
 ```
 
@@ -370,7 +370,7 @@ Int, Float, Boolean, String, Enum, List, Objectについては割愛。
 
 複数のprogramming言語またぐとなにかと問題になりがちなnullについて。
 
-```text
+```
 NullValue : `null`
 ```
 
@@ -401,7 +401,7 @@ Implicitly not providing a value at all.
 
 operationから動的な部分を分離するためにvariableが使える。
 
-```text
+```
 Variable : $ Name
 
 VariableDefinitions : ( VariableDefinition+ )
@@ -522,7 +522,7 @@ type Query {
 
 ### Types
 
-```text
+```
 TypeDefinition :
   - ScalarTypeDefinition
   - ObjectTypeDefinition
@@ -570,7 +570,7 @@ GraphQL serverへの入力に使われるかresponseの型定義に使われる�
 
 判定方法は以下
 
-```text
+```
 IsInputType(type) :
   * If {type} is a List type or Non-Null type:
     * Let {unwrappedType} be the unwrapped type of {type}.
@@ -791,7 +791,7 @@ custom directivesを定義する際は、将来的なcollisionを防止する観
 
 directiveの書き方は以下のように定義されています。
 
-```text
+```
 DirectiveDefinition : Description? directive @ Name ArgumentsDefinition? `repeatable`? on DirectiveLocations
 
 DirectiveLocations :

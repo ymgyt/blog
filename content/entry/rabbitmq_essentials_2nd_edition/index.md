@@ -60,7 +60,7 @@ PolicyはAMQPの仕様ではないのでclientにAPIがありません。(ある
 そこで、rabbitmqctlという専用のcliを利用します。  
 dockerでRabbitMQをたちあげている場合は
 
-```console
+```sh
 docker exec rabbitmq-rabbitmq-1 -it /bin/bash
 rabbitmqctl set_policy -p / Q_TTL_DLX '.*' '{"message-ttl": 1000, "dead-letter-exchange": "dlx"}' --apply-to queues
 ```

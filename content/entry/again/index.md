@@ -76,7 +76,7 @@ async fn main() {
 `RetryPolicy::retry_if()`の第一引数に実際に実行したい処理をclosureで渡します。第二引数はErrorがretryできるかどうかの判定をおこなうclosureです。
 これを実行すると以下の出力をえます。
 
-```console
+```sh
 2022-06-25T11:36:05.393876Z  INFO retry/examples/retry_closure.rs:35: task run! retry_count=1
 2022-06-25T11:36:06.399287Z  INFO retry/examples/retry_closure.rs:35: task run! retry_count=2
 2022-06-25T11:36:08.400343Z  INFO retry/examples/retry_closure.rs:35: task run! retry_count=3
@@ -134,7 +134,7 @@ async fn main() {
 
 ```
 
-```console
+```sh
 2022-06-25T11:12:22.640568Z  INFO retry/examples/retry_struct.rs:26: MyTask call() 1
 2022-06-25T11:12:23.645944Z  INFO retry/examples/retry_struct.rs:26: MyTask call() 2
 2022-06-25T11:12:25.651503Z  INFO retry/examples/retry_struct.rs:26: MyTask call() 3

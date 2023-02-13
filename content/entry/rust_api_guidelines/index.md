@@ -88,7 +88,7 @@ Rustのorphan ruleによって、基本的には`impl`はその型を定義し�
 したがって、ユーザが定義した型についてstdで定義されているtraitは当該crateでしか定義できない。  
 例えば、`url::Url`が`std::fmt::Display`を`impl`する必要があり、application側で`Url`に`Display`を定義することはできない。
 
-この点については[RUST FOR RUSTACEANS](https://blog.ymgyt.io/entry/books/rust_for_rustaceans#Ergonomic-Trait-Implementations)でも述べられていました。  
+この点については[RUST FOR RUSTACEANS](https://blog.ymgyt.io/entry/books/rust_for_rustaceans)でも述べられていました。  
 featureでserdeのSerialize等を追加できるようにしてあるcrateなんかもあるなーと思っていたら(C-SERDE)で述べられていました。
 
 ### [Conversions use the standard traits `From`, `AsRef`, `AsMut` (C-CONV-TRAITS)](https://rust-lang.github.io/api-guidelines/interoperability.html#conversions-use-the-standard-traits-from-asref-asmut-c-conv-traits)
@@ -297,7 +297,7 @@ Errorを返すなら、`# Errors` sectionで説明を加える。panicするな�
 
 ### [Prose contains hyperlinks to relevant things (C-LINK)](https://rust-lang.github.io/api-guidelines/documentation.html#prose-contains-hyperlinks-to-relevant-things-c-link)
 
-[Link all the things](https://github.com/rust-lang/rfcs/blob/master/text/1574-more-api-documentation-conventions.md#link-all-the-things)ということで、他の型へのlinkがかける。  
+[Link all the things](https://github.com/rust-lang/rfcs/blob/master/text/1574-more-api-documentation-conventions.md)ということで、他の型へのlinkがかける。  
 linkにはいくつか書き方があり、[RFC1946](https://rust-lang.github.io/rfcs/1946-intra-rustdoc-links.html)に詳しくのっていた。
 
 ### [Cargo.toml includes all common metadata (C-METADATA)](https://rust-lang.github.io/api-guidelines/documentation.html#cargotoml-includes-all-common-metadata-c-metadata)
@@ -394,7 +394,7 @@ Rustのorphan ruleによって、基本的には`impl`はその型を定義し�
 したがって、ユーザが定義した型についてstdで定義されているtraitは当該crateでしか定義できない。  
 例えば、`url::Url`が`std::fmt::Display`を`impl`する必要があり、application側で`Url`に`Display`を定義することはできない。
 
-この点については[RUST FOR RUSTACEANS](https://blog.ymgyt.io/entry/books/rust_for_rustaceans#Ergonomic-Trait-Implementations)でも述べられていました。  
+この点については[RUST FOR RUSTACEANS](https://blog.ymgyt.io/entry/books/rust_for_rustaceans)でも述べられていました。  
 featureでserdeのSerialize等を追加できるようにしてあるcrateなんかもあるなーと思っていたら(C-SERDE)で述べられていました。
 
 ### [Conversions use the standard traits `From`, `AsRef`, `AsMut` (C-CONV-TRAITS)](https://rust-lang.github.io/api-guidelines/interoperability.html#conversions-use-the-standard-traits-from-asref-asmut-c-conv-traits)
@@ -603,7 +603,7 @@ Errorを返すなら、`# Errors` sectionで説明を加える。panicするな�
 
 ### [Prose contains hyperlinks to relevant things (C-LINK)](https://rust-lang.github.io/api-guidelines/documentation.html#prose-contains-hyperlinks-to-relevant-things-c-link)
 
-[Link all the things](https://github.com/rust-lang/rfcs/blob/master/text/1574-more-api-documentation-conventions.md#link-all-the-things)ということで、他の型へのlinkがかける。  
+[Link all the things](https://github.com/rust-lang/rfcs/blob/master/text/1574-more-api-documentation-conventions.md)ということで、他の型へのlinkがかける。  
 linkにはいくつか書き方があり、[RFC1946](https://rust-lang.github.io/rfcs/1946-intra-rustdoc-links.html)に詳しくのっていた。
 
 ### [Cargo.toml includes all common metadata (C-METADATA)](https://rust-lang.github.io/api-guidelines/documentation.html#cargotoml-includes-all-common-metadata-c-metadata)
@@ -829,7 +829,7 @@ fn main() {
 `Builder`のmethodのreceiverに`&mut self`をとるか、`self`をとるかでそれぞれトレードオフがある。  
 どちらを採用してもone lineは問題なくかけるが、ifを書こうとすると`self`をとるアプローチは再代入させる形にする必要がある。
 
-```self
+```rust
 // Complex configuration
 let mut task = TaskBuilder::new();
 task = task.named("my_task_2"); // must re-assign to retain ownership

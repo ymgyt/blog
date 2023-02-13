@@ -34,7 +34,7 @@ tracing-subscriber = { version = "=0.3.16", default-features = false, features =
 ```
 
 上記のコードを実行すると以下の出力を得ます。
-```shell
+```sh
 2022-11-11T08:39:02.198973Z  INFO span_1{key="hello"}: tracing_handson: hello
 ```
 
@@ -106,7 +106,7 @@ fn main() {
 
 処理の内容はなんでもよいのですが、まずリクエストの識別子を生成して次に認証して、...と処理を進めていく中で処理内容のcontextができていくと思います。それをspanとして表現します。上記のコードを実行すると以下のようなログが出力されます。
 
-```shell
+```sh
 2022-11-11T09:19:18.317693Z  INFO req{request_id="req-123"}:user{user_id="user_aaa"}: span: successfully processed
 ```
 
@@ -139,7 +139,7 @@ fn main() {
 }
 ```
 
-```shell
+```sh
 --> examples/thread_local.rs:8:15
   |
 8 | static STATE: RefCell<String> = RefCell::new(String::new());
@@ -196,7 +196,7 @@ fn main() {
     should_sync(a);
 }
 ```
-```shell
+```sh
   --> examples/thread_local.rs:14:17
    |
 14 |     should_sync(a);
@@ -478,7 +478,7 @@ pub struct Subscriber<
     inner: layer::Layered<F, Formatter<N, E, W>>,
 }
 ```
-[https://github.com/tokio-rs/tracing/blob/tracing-subscriber-0.3.16/tracing-subscriber/src/fmt/mod.rs#L225-L232](https://github.com/tokio-rs/tracing/blob/tracing-subscriber-0.3.16/tracing-subscriber/src/fmt/mod.rs#L225-L232)
+[https://github.com/tokio-rs/tracing/blob/tracing-subscriber-0.3.16/tracing-subscriber/src/fmt/mod.rs#L225](https://github.com/tokio-rs/tracing/blob/tracing-subscriber-0.3.16/tracing-subscriber/src/fmt/mod.rs#L225-L232)
 
 Genericsが4つもでてきて、うっとなります。ただし、よくみてみると以下の構造をしている`inner`のwrapperであることがわかります。
 
@@ -495,12 +495,12 @@ pub type Formatter<
     W = fn() -> io::Stdout,
 > = layer::Layered<fmt_layer::Layer<Registry, N, E, W>, Registry>;
 ```
-[https://github.com/tokio-rs/tracing/blob/tracing-subscriber-0.3.16/tracing-subscriber/src/fmt/mod.rs#L237-L241](https://github.com/tokio-rs/tracing/blob/tracing-subscriber-0.3.16/tracing-subscriber/src/fmt/mod.rs#L237-L241)
+[https://github.com/tokio-rs/tracing/blob/tracing-subscriber-0.3.16/tracing-subscriber/src/fmt/mod.rs#L237](https://github.com/tokio-rs/tracing/blob/tracing-subscriber-0.3.16/tracing-subscriber/src/fmt/mod.rs#L237-L241)
 
 ということで、`Formatter`も実体は`layer::Layered`でした。  
 `N = format::DefaultFields`と`E = format::Fromat<format::Full>`はログの出力方法をカスタマイズするためのgenerics、`W = fn() -> io::Stdout`はログの出力先を切り替えるためのgenericです。そこでこれらのgenericsをいったん無視すると`FmtSubscriber`は概ね以下の構造をしているといえます。
 
-```text
+```
 Layered<
     LevelFilter,
     Layered<
@@ -596,7 +596,7 @@ https://github.com/tokio-rs/tracing/blob/tracing-subscriber-0.3.16/tracing-subsc
 
 あらためて`FmtSubscriber`の概要を確認します。
 
-```text
+```
 Layered<
     LevelFilter,
     Layered<
@@ -646,7 +646,7 @@ impl<S: Subscriber> crate::Layer<S> for LevelFilter {
 
 `FmtSubscriber`のcomponentで次にみていくのが`Registry`です。
 
-```text
+```
 Layered<
     LevelFilter,
     Layered<
@@ -677,7 +677,7 @@ Layered<
 
 ### `fmt_layer::Layer`
 
-```text
+```
 Layered<
     LevelFilter,
     Layered<
@@ -848,7 +848,7 @@ impl Dispatch {
 
 ### `FmtSubscriber` まとめ
 
-```text
+```
 Layered<
     LevelFilter,
     Layered<
@@ -1093,7 +1093,7 @@ where
 ここで注目していただきたいのが、最初に`self.inner.new_span()`を呼び出した後自身の`self.layer.on_new_span()`を呼んでいる点です。  
 `FmtSubscriber`の構造の概略を再掲すると
 
-```text
+```
 Layered<
     LevelFilter,
     Layered<
@@ -1955,7 +1955,7 @@ where
 
 長いですが、概要としては以下のようなログの情報を設定に応じて書き込んでいます。  
 
-```text
+```sh
 2022-11-11T08:39:02.198973Z  INFO span_1{key="hello"}: tracing_handson: hello
 ```
 
@@ -2701,7 +2701,7 @@ impl<'a> DefaultVisitor<'a> {
 
 するとloggingにも🦀が出力されました。
 
-```text
+```sh
 2022-11-18T13:21:33.092617Z  INFO span_1{🦀key="hello"}: tracing_handson: 🦀hello
 ```
 
@@ -2741,7 +2741,7 @@ spanとevent両方に🦀がいるので、fieldのformat処理が共通化さ�
 
 コードを読んで初めて知ったのですがloggingのverbosityをruntimeでなくcompile時に指定できるようにするための判定です。以下のようにfeature指定時にverbosityを指定できます。
 
-```text
+```toml
 [dependencies]
 tracing = { 
     version = "0.1", 

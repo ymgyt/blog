@@ -608,7 +608,7 @@ pub fn a(x: &AtomicI64) {
 
 上記のような関数を定義した状態で
 
-```console
+```sh
 ❯ cargo asm --lib a
     Finished release [optimized] target(s) in 0.02s
 
@@ -663,7 +663,7 @@ fn main() {
 atomic変数を10億回loadするprogramです。この処理がどれくらいかかると思いますか？
 答えは0msでした。
 
-```console
+```sh
 ❯  cargo run --example ch7_bench --release --quiet
 0ns
 ```
@@ -688,7 +688,7 @@ fn main() {
 `std::hint::black_box()`を利用してcompilerの最適化を調整します。  
 自分の環境では概ね320ms前後の実行時間がかかりました。
 
-```console
+```sh
 ❯  cargo run --example ch7_bench --release --quiet
 317.6865ms
 ```

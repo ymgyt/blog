@@ -62,6 +62,12 @@ external_level = "error"
 # Skip link checking for external URLs that start with these prefixes
 skip_prefixes = []
 
+skip_anchor_prefixes = [
+  # Github line link does not work with link checker
+  # ex. mod.rs#L237-L241
+  "https://github.com",
+]
+
 [extra]
 # Put all your custom variables here
 

@@ -3,6 +3,7 @@ title = "📙 RUST FOR RUSTACEANSを読んだ感想"
 slug = "rust-for-rustacieans"
 date = "2021-12-31"
 draft = false
+aliases = ["/books/rust_for_rustaceans"]
 [taxonomies]
 tags = ["rust", "book"]
 +++

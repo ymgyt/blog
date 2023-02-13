@@ -445,7 +445,7 @@ async fn main() {
 結構長いです。`tracing_opentelemetry`だけで完結すると思いきや、`opentelemetry_sdk`や`opentelemetry_otlp`等もでてきます。
 実行すると以下のlogが出力されます。
 
-```shell
+```sh
 ❯ cargo run --quiet
 2022-12-18T07:01:01.837895Z  INFO request{version=0.1.0}:auth{user=ymgyt}: opentelemetry_handson: successfully completed ops="xxx" counter.ops_count=10
 BatchSpanProcessor: flush messages

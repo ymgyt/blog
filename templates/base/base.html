@@ -9,13 +9,16 @@
   <title>{{ config.title }}</title>
   {%- endblock title %}
 
+  {% block description %}
+  {% endblock description %}
+
 </head>
 
 <body>
   <div class="world">
     <div class="content-container">
       {% include "base/header.html" %}
-      <main class="entry-main">
+      <main class="blog-main">
         {% block content %}
         {% endblock content %}
       </main>

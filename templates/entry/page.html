@@ -5,6 +5,12 @@
 {{ macro::title(title=page.title) }}
 {% endblock title %}
 
+{% block description %}
+{% if page.description %}
+<meta name="description" content="{{ page.description }}">
+{% endif %}
+{% endblock description %}
+
 {% block content %}
 <article>
   <header class="entry-header">

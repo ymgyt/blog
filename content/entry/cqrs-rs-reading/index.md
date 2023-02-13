@@ -551,7 +551,7 @@ enum SourceOfTruth {
 }
 ```
 
-[https://docs.rs/cqrs-es/latest/src/cqrs_es/persist/event_store.rs.html#13-17](https://docs.rs/cqrs-es/latest/src/cqrs_es/persist/event_store.rs.html#13-17)
+[https://docs.rs/cqrs-es/latest/src/cqrs_es/persist/event_store.rs.html#13](https://docs.rs/cqrs-es/latest/src/cqrs_es/persist/event_store.rs.html#13)
 
 ## 自分で試した感想
 

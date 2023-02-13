@@ -106,7 +106,7 @@ RabbitMQへの接続情報とConnection Poolに関する設定を渡すことが
 まず、 `url: Some(String::from("amqp://guest:guest@localhost:5672/%2f"))`のように接続先のServerの情報を渡します。  
 formatは[RabbitMQ URI Specification](https://www.rabbitmq.com/uri-spec.html)に以下のように定義されています。
 
-```text
+```sh
 amqp_URI       = "amqp://" amqp_authority [ "/" vhost ] [ "?" query ]
 
 amqp_authority = [ amqp_userinfo "@" ] host [ ":" port ]
@@ -356,7 +356,7 @@ async fn consumer(channel: Channel) -> anyhow::Result<()> {
 
 実行してみると無事consumeできました。
 
-```console
+```sh
 ❯ cargo run --quiet --example tutorial_hello_world
 2022-08-10T10:52:58.05527Z  INFO examples/tutorial_hello_world.rs:69: Hello World!
 ```
@@ -471,7 +471,7 @@ channel.basic_qos(1, BasicQosOptions::default()).await?;
 
 実行してみると
 
-```console
+```sh
 ❯ cargo run --quiet --example tutorial_work_queues
 worker1 task 0
 worker2 task 1
@@ -625,7 +625,7 @@ queueの名前に空文字を指定するとRabbitMQ側で新規のqueueを作�
 
 実行してみると
 
-```console
+```sh
 ❯ cargo run --quiet --example tutorial_pub_sub    
 2022-08-11T02:37:07.643985Z  INFO examples/tutorial_pub_sub.rs:102: message 0 name="worker 1"
 2022-08-11T02:37:07.644035Z  INFO examples/tutorial_pub_sub.rs:102: message 0 name="worker 2"
@@ -770,7 +770,7 @@ async fn consume(
 
 実行してみると
 
-```console
+```sh
 ❯ cargo run --quiet --example tutorial_routing
 2022-08-12T02:05:15.350635Z  INFO examples/tutorial_routing.rs:113: worker2 info message
 2022-08-12T02:05:15.351025Z  INFO examples/tutorial_routing.rs:113: worker2 warn message
@@ -964,7 +964,7 @@ async fn consumer_2(channel: Channel, tx: UnboundedSender<()>) -> anyhow::Result
 
 実行してみると
 
-```console
+```sh
 ❯ cargo run --quiet --example tutorial_topic
 2022-08-12T02:57:31.23669Z  INFO examples/tutorial_topic.rs:70: tracking.aaa.arrived published
 2022-08-12T02:57:31.236836Z  INFO examples/tutorial_topic.rs:70: tracking.xxx.departed published
@@ -1065,7 +1065,7 @@ async fn server(channel: Channel) -> anyhow::Result<()> {
 fibonacciを返すserverをrpcで利用しています。  
 response用のqueueはexclusiveにして名前はRabbitMQ側で生成しています。  
 
-```console
+```sh
 ❯ cargo run --quiet --example tutorial_rpc
 2022-08-12T08:49:10.864598Z  INFO examples/tutorial_rpc.rs:38: fib(10) = 55
 ```

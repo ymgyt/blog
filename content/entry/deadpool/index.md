@@ -167,7 +167,7 @@ async fn main() -> anyhow::Result<()> {
 わかりやすさのために、変数に型を書いていますが実際には必要ないです。  
 `Object`については後述します。このコードを実行すると
 
-```text
+```sh
 ❯ cargo run --example get --quiet
 2022-07-28T12:25:58.078486Z  INFO examples/get.rs:13: connection state: Connected
 ```
@@ -249,7 +249,7 @@ Pool生成時にそれぞれのhookにclosure/funcを渡します。ここでは
 
 この処理を実行すると
 
-```text
+```sh
 ❯ cargo run --example hook --quiet
 2022-07-28T20:10:54.872028Z  INFO examples/hook.rs:6: Connection { name: "connection 0", state: Connected } Metrics { created: Instant { t: 8126598910934 }, recycled: None, recycle_count: 0 } hook="post_create"
 2022-07-28T20:10:54.872113Z  INFO examples/hook.rs:35: Got connection from pool state=Connected

@@ -7,6 +7,7 @@
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: baseline;
+  row-gap: $s1;
 
   nav {
     ul {
@@ -37,6 +38,11 @@
 }
 
 .blog-nav {}
+
+.blog-main {
+  // contentがないpageでもfooterを下の方に出したい
+  min-height: 85%;
+}
 
 .blog-footer {
 

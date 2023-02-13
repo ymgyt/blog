@@ -247,10 +247,11 @@ Warning: Unable to complete 10 samples in 5.0s. You may wish to increase target 
 cache/access            time:   [4.2983 s 4.5101 s 4.6564 s]                          
 ```
 
-[f:id:yamaguchi7073xtt:20221127213834p:plain]
 
 ということで、cacheを考慮した`access_in_order`のほうが速い結果が再現できました。  
 `pref`コマンドの使い方も載っており、とても参考になりました。
+
+{{ figure(caption="criterion出力結果", images=["images/cpu_no_kimochi_bench.png"]) }}
 
 ## 第12章 CPUと周辺機器との結びつき(I/O)
 

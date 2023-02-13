@@ -3,6 +3,7 @@ title = "🍺 RustのcliをHomebrewで公開する"
 slug = "release-rust-with-homebrew"
 date = "2020-02-06"
 draft = false
+aliases = ["/2020/02/02/213031"]
 [taxonomies]
 tags = ["rust"]
 +++

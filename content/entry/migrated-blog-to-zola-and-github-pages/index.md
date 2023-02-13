@@ -3,6 +3,7 @@ title = "🚛 BlogをZola + Github Pagesに移行した"
 slug = "migrated-blog-to-zola-and-github-pages"
 date = "2023-02-13"
 draft = true
+description = "Rust製 static site generator zolaとGithub Pagesでblogを作る方法"
 [taxonomies]
 tags = ["etc"]
 +++
@@ -10,6 +11,8 @@ tags = ["etc"]
 Blogを[Hatena blog](https://hatenablog.com/)から[Github pages](https://docs.github.com/en/pages)に移行しました。  
 Markdownで記事を書いて、Rust製のstatic site generator [zola](https://github.com/getzola/zola)でhtmlを生成する構成です。  
 本記事では、移行にあたって調べた事や行った設定について書きます。  
+
+<!-- more -->
 
 Zolaのversionは[`0.16.1`](https://github.com/getzola/zola/releases/tag/v0.16.1)です。
 

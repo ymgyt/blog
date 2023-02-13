@@ -128,7 +128,7 @@ let config = match kubeprovision::Config::from_path(cli.config.as_path())
 
 引数のfileが存在しない場合。
 
-```console
+```sh
 2022-07-20T17:04:24.685595Z ERROR src/main.rs:17: Could not parse configuration file
              at /Users/ymgyt/ymgyt.io/kubeprovision/src/config.rs:47:14
       - Loading configuration file Cli { config: "not_exists", command: Status }
@@ -141,7 +141,7 @@ Caused by:
 
 引数のfileのyamlが不正な場合。
 
-```console
+```sh
 2022-07-20T17:08:10.639151Z ERROR src/main.rs:17: Could not parse configuration file
              at /Users/ymgyt/ymgyt.io/kubeprovision/src/config.rs:52:14
       - Loading configuration file Cli { config: "/tmp/hello.txt", command: Status }
@@ -161,7 +161,7 @@ Caused by:
 
 上記の処理を以下のように`RUST_LIB_BACKTRACE=1 cargo +nightly`で実行するとbacktraceが取得できます。
 
-```console
+```sh
 ❯ RUST_LIB_BACKTRACE=1 cargo +nightly run --quiet -- --config /tmp/hello.txt status
 2022-07-20T17:18:43.109086Z ERROR src/main.rs:17: Could not parse configuration file
 at /Users/ymgyt/ymgyt.io/kubeprovision/src/config.rs:52:14
@@ -230,7 +230,7 @@ pub struct ReportImpl {
 
 ## anyhow/eyreとの互換性
 
-また、`0.1.1`ではanyhowやeyreとの[互換処理](https://github.com/hashintel/hash/tree/main/packages/libs/error-stack/src/compat)も追加されており、段階的に移行していくこともできそうです。
+また、`0.1.1`ではanyhowやeyreとの互換処理も追加されており、段階的に移行していくこともできそうです。
 
 
 ## まとめ
@@ -240,6 +240,9 @@ thiserrorでcrate/module単位でエラーを切っていくなかで、追加�
 まだまだ触れられていない機能もあるので、もう少し使ってみてソースを読んでみたいと思っています。
 
 
+## CHANGELOG
+
+* 2023-02-14: `https://github.com/hashintel/hash/tree/main/packages/libs/error-stack/src/compat`へのlinkを削除
 
 
 [`error-stack`]: https://github.com/hashintel/hash/tree/e248d06d0b783a7d93875a7323d13e4ddd319fc9/packages/libs/error-stack

@@ -17,10 +17,9 @@ $h_border_line: $color-p-3;
 	line-height: normal;
 	display: flex;
 	margin-block-end: $s1;
+	gap: $s1;
 
-	&-item {
-		margin-inline-end: $s-2;
-	}
+	&-item {}
 
 	a:hover {
 		border-bottom: 1px solid $color-text;
@@ -28,7 +27,7 @@ $h_border_line: $color-p-3;
 }
 
 .tag {
-	margin-right: $s-2;
+	margin-right: $s-5;
 
 	&::before {
 		content: "#";
@@ -62,12 +61,6 @@ $h_border_line: $color-p-3;
 	}
 }
 
-.entry-main {
-	padding: $padding;
-	// contentがないpageでもfooterを下の方に出したい
-	min-height: 85%;
-}
-
 .entry-content {
 	@include aTag;
 
@@ -80,6 +73,12 @@ $h_border_line: $color-p-3;
 	h2+* {
 		// h2: まとめの直後の<ul>にもmargin当てたい
 		margin-block-start: $s2;
+	}
+
+	// 特定のcontextに依存しすぎている
+	// h2直後にlinkつきのfigureをもってくると直後が<a>になり、margin-block-startがあたらないことへのworkaround
+	h2+a {
+		display: block;
 	}
 
 	h3 {
@@ -135,8 +134,8 @@ $h_border_line: $color-p-3;
 	}
 
 	pre {
-		margin-block-start: 1rem;
-		padding: 1em 1.0em;
+		margin-block-start: $s1;
+		padding: $s-1 $s-1;
 		font-size: 0.9em;
 		line-height: 1.2;
 		letter-spacing: normal;
@@ -144,7 +143,6 @@ $h_border_line: $color-p-3;
 		// white-spaceを無効にして,overflow:autoにしておくとscrollして表示される
 		// white-space: pre-wrap;
 		overflow: auto;
-		word-wrap: break-word;
 
 		color: #eee;
 		border-radius: 5px;
@@ -169,5 +167,4 @@ $h_border_line: $color-p-3;
 		transition-duration: 0.2s;
 		transition-timing-function: ease-out;
 	}
-
 }
