@@ -1,6 +1,7 @@
 @import "variables.scss";
 
 .blog-header-container {
+  margin-block-end: $s1;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -28,7 +29,7 @@
 .blog-logo {
   a {
     flex-basis: 20%;
-    font-size: 26px;
+    font-size: $s1;
     font-weight: bold;
   }
 }
@@ -37,7 +38,7 @@
 
 .blog-footer {
 
-  padding: 40px $padding 40px $padding;
+  padding: $s2 0 $s2 0;
 
   display: flex;
   justify-content: center;

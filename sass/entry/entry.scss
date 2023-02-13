@@ -12,18 +12,14 @@ $h_border_line: $color-p-3;
 	}
 }
 
-.entry-title {
-	font-size: 2rem;
-	margin: 0.67em 0;
-}
-
 .entry-meta {
-	font-size: 1em;
+	font-size: $s0;
 	line-height: normal;
-	@include dimmed;
+	display: flex;
+	margin-block-end: $s1;
 
-	p {
-		margin: 0.8em 0;
+	&-item {
+		margin-inline-end: $s-2;
 	}
 
 	a:hover {
@@ -32,7 +28,7 @@ $h_border_line: $color-p-3;
 }
 
 .tag {
-	margin-right: 0.5em;
+	margin-right: $s-2;
 
 	&::before {
 		content: "#";
@@ -40,7 +36,9 @@ $h_border_line: $color-p-3;
 }
 
 .entry-toc {
-	font-size: 0.8em;
+	border-top: 2px solid $h_border_line;
+	padding-block-start: $s0;
+	font-size: $s-1;
 	@include dimmed;
 
 	ul {
@@ -53,7 +51,7 @@ $h_border_line: $color-p-3;
 	}
 
 	ul ul {
-		font-size: 0.9em;
+		font-size: $s-1;
 		list-style-position: inside;
 		list-style-type: "-";
 		padding-left: 1ch;
@@ -74,25 +72,25 @@ $h_border_line: $color-p-3;
 	@include aTag;
 
 	h2 {
-		margin-block-start: 2rem;
+		margin-block-start: $s2;
 		border-top: 2px solid $h_border_line;
-		padding-block-start: 1rem;
+		padding-block-start: $s0;
 	}
 
 	h2+* {
 		// h2: まとめの直後の<ul>にもmargin当てたい
-		margin-block-start: 1rem;
+		margin-block-start: $s2;
 	}
 
 	h3 {
-		margin-block-start: 1rem;
-		margin-block-end: 1rem;
+		margin-block-start: $s1;
+		margin-block-end: $s1;
 	}
 
 	p {
 		line-height: 1.7;
-		margin-block-start: 1rem;
-		margin-block-end: 1rem;
+		margin-block-start: $s0;
+		margin-block-end: $s0;
 	}
 
 	figure {

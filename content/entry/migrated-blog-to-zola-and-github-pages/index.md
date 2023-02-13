@@ -56,7 +56,6 @@ Zolaには以下のコマンドがあります。
 ## Theme
 
 
-
 ## Custom domainの設定
 
 Hatena blogでは自分のdomain(`blog.ymgyt.io`)を利用していたのでGithub pagesでも[custom domain](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site)の機能を利用することにしました。  
@@ -124,3 +123,20 @@ ymgyt.github.io.        3600    IN      A       185.199.111.153
 ```
 
 これでcustom domainの設定は完了です。
+
+## その他ecosystem
+
+### RSS
+
+### Sitemap
+
+### 404
+
+
+## 移行とは関係ない話
+
+ここからは移行とは直接関係ない話です。  
+
+### favicon
+
+
