@@ -3,8 +3,12 @@ base_url = "https://blog.ymgyt.io"
 
 title = "Happy developing"
 
+description = "楽しい開発ライフ"
+
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
+
+minify_html = true
 
 # Whether to build a search index to be used later on by a JavaScript library
 # https://www.getzola.org/documentation/content/search/
