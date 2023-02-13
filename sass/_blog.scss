@@ -4,31 +4,33 @@
   margin-block-end: $s1;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
 
   nav {
     ul {
       list-style: none;
+      // flexがwrapした際に2段目にくるのでpaddingはいれない
+      padding: 0;
 
       li {
         display: inline;
-        padding-left: 0.5em;
+        padding-inline-end: $s-3;
       }
     }
   }
 
   .icon {
     display: inline-block;
-    vertical-align: middle;
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
   }
 }
 
 .blog-logo {
+
   a {
-    flex-basis: 20%;
     font-size: $s1;
     font-weight: bold;
   }
@@ -38,7 +40,7 @@
 
 .blog-footer {
 
-  padding: $s2 0 $s2 0;
+  padding: $s2 0;
 
   display: flex;
   justify-content: center;
@@ -46,8 +48,6 @@
 
   text-align: center;
   font-size: 0.9em;
-  // margin-block-start: 60px;
-  // margin-block-end: 200px;
 
   p {
     margin: 0;
