@@ -65,9 +65,9 @@ $h_border_line: $color-p-3;
 	@include aTag;
 
 	h2 {
-		margin-block-start: $s2;
+		margin-block-start: $s4;
 		border-top: 2px solid $h_border_line;
-		padding-block-start: $s0;
+		padding-block-start: $s1;
 	}
 
 	h2+* {
@@ -135,6 +135,8 @@ $h_border_line: $color-p-3;
 
 	pre {
 		margin-block-start: $s1;
+		// codeblockの直後にlistがくる場合があるのでやはりmargin-endがほしい
+		margin-block-end: $s1;
 		padding: $s-1 $s-1;
 		font-size: 0.9em;
 		line-height: 1.2;
