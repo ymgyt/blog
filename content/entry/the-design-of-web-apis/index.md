@@ -3,6 +3,7 @@ title = "📗 Web APIの設計を読んだ感想"
 slug = "the-design-of-web-apis"
 date = "2020-12-27"
 draft = false
+aliases = ["/entry/books/the_design_of_web_apis"]
 [taxonomies]
 tags = ["book"]
 +++
