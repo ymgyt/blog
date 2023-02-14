@@ -3,6 +3,7 @@ title = "⚛️ りあクト!第3版がすごくよかった"
 slug = "riakuto-3ed"
 date = "2020-10-10"
 draft = false
+aliases = ["/entry/books/riakuto"]
 [taxonomies]
 tags = ["book"]
 +++
