@@ -9,7 +9,7 @@
   <ul class="entry-list">
     {% for page in pages %}
     <li class="entry-item">
-      <a href="{{ page.permalink | safe }}" <span class="entry-item-title">{{ page.title }}</span>
+      <a href="{{ page.permalink | safe }}"><span class="entry-item-title">{{ page.title }}</span>
         <span class="entry-day">{{ page.date | date(format="%m/%d") }}</span>
       </a>
     </li>
