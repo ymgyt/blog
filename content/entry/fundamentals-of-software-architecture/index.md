@@ -3,6 +3,7 @@ title = "📗 ソフトウェアアーキテクチャの基礎を読んだ感想
 slug = "fundamentals-of-software-architecture"
 date = "2022-06-18"
 draft = false
+aliases = ["/entry/2022/06/18/230408"]
 [taxonomies]
 tags = ["book"]
 +++
