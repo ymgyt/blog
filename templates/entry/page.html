@@ -1,4 +1,5 @@
 {% import "macro/title.html" as macro %}
+{% import "macro/twitter_card.html" as sns %}
 {% extends "base/base.html" %}
 
 {% block title %}
@@ -10,6 +11,12 @@
 <meta name="description" content="{{ page.description }}">
 {% endif %}
 {% endblock description %}
+
+{% block sns %}
+{% if page.extra.image %}
+{{ sns::twitter_card(title=page.title, description=page.description, image=page.extra.image) }}
+{% endif %}
+{% endblock sns %}
 
 {% block content %}
 <article>

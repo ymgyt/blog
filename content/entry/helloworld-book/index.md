@@ -6,6 +6,8 @@ draft = false
 description = "ハロー\"Hello, World\"OSと標準ライブラリのシゴトとしくみを読んだ感想について"
 [taxonomies]
 tags = ["book"]
+[extra]
+image = "images/emoji/closed_book.png"
 +++
 
 
