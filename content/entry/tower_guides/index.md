@@ -7,8 +7,6 @@ draft = false
 tags = ["rust"]
 +++
 
-[f:id:yamaguchi7073xtt:20220708234744p:plain]
-
 [`tower::Service`] traitについての[公式のGuide](https://github.com/tower-rs/tower/tree/master/guides)がとてもがとてもわかりやすかったです。  
 そこで本記事ではこれを辿りながら[`tower::Service`]がなにを抽象化しようとしているかの理解を試みます。(libraryのAPIがどうして今のsignatureに至ったのかをここまで丁寧に一歩ずつ解説してくれているのはなかなか見られないのではないでしょうか)  
 versionは現時点の最新版(`0.4.13`)を対象にしています。
