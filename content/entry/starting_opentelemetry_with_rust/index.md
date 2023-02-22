@@ -5,6 +5,8 @@ date = "2022-12-18"
 draft = false
 [taxonomies]
 tags = ["rust"]
+[extra]
+image = "images/emoji/telescope.png"
 +++
 
 
