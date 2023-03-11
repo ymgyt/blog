@@ -5,6 +5,8 @@ date = "2022-07-08"
 draft = false
 [taxonomies]
 tags = ["rust"]
+[extra]
+image = "images/emoji/tokyo_tower.png"
 +++
 
 [`tower::Service`] traitについての[公式のGuide](https://github.com/tower-rs/tower/tree/master/guides)がとてもがとてもわかりやすかったです。  
