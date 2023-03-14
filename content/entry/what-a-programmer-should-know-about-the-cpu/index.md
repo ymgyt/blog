@@ -114,7 +114,27 @@ sub x4, x5, x1
 
 ### 命令レイテンシの計測実験
 
-TODO
+実際に各種命令(add,mul,load)のレイテンシを計測するassemblyのサンプルがあります。  
+
+```sh
+$ sudo perf stat -e"cycles,instructions" ./latency_add
+
+loop-variable = 10000000
+
+ Performance counter stats for './latency_add':
+
+     1,001,224,176      cycles                                                      
+     1,031,181,195      instructions              #    1.03  insn per cycle         
+
+       0.213554069 seconds time elapsed
+
+       0.213500000 seconds user
+       0.000000000 seconds sys
+```
+
+となり、add命令については1cycleで実行していることが確かめられました。  
+0.2秒程度で10億回の命令が実行されるのはすごい。  
+この他にも依存関係を変えるとどう変化するかの実験もあります。
 
 
 ## 第4章 分岐命令
@@ -126,7 +146,51 @@ TODO
 分岐予測では、分岐命令が実行されるたびにその命令のアドレスと分岐先を専用の記憶領域(BTB)に保持しておき、命令をfetchする度にアドレスで検索して分岐命令かを判定します。さらに分岐命令の条件の成否の履歴を保持しておき、分岐予測に役立てるそうです。 ifを実行する度にCPUではこんなことが起きているとしり結構衝撃的でした。  
 本章に限ったことではないですが、参考として米国特許までもが挙げられており筆者の知識の深さに驚かされます。
 
-### TODO 予測ミス率の計測
+### 分岐予測ミスの計測実験
+
+本章の実験では、分岐予測が50%ミスするプログラムと100%ヒットするプログラムでどの程度の差がでるかを検証します。  
+以下が自分の手元の計測結果でした。
+
+
+```sh
+$ sudo perf stat -e "cycles,instructions,branches,branch-misses" ./branch_miss_many
+loop-variable = 10000000
+
+ Performance counter stats for './branch_miss_many':
+
+       167,198,348      cycles                                                      
+       155,965,644      instructions              #    0.93  insn per cycle         
+        20,179,030      branches                                                    
+         5,003,075      branch-misses             #   24.79% of all branches        
+
+       0.039321696 seconds time elapsed
+
+       0.039277000 seconds user
+       0.000000000 seconds sys
+```
+
+2000万 branchesとありますが、この内半分はloopの判定なので実質的には1000万で、missが500万となっています。  
+次が分岐予測がほとんどあたる場合です。
+
+```sh
+$ sudo perf stat -e "cycles,instructions,branches,branch-misses" ./branch_miss_few
+loop-variable = 10000000
+
+ Performance counter stats for './branch_miss_few':
+
+        66,698,390      cycles                                                      
+       150,937,374      instructions              #    2.26  insn per cycle         
+        20,174,821      branches                                                    
+             5,368      branch-misses             #    0.03% of all branches        
+
+       0.017504270 seconds time elapsed
+
+       0.017500000 seconds user
+       0.000000000 seconds sys
+```
+
+着目すべきは、cycle数が40%程度減っていおり、実行速度も40%程度向上しました。  
+このように分岐予測の影響が実際に確かめることができました。
 
 
 ## 第5章 キャッシュメモリ
@@ -141,7 +205,50 @@ CPUからメモリへのアクセスには10 ~ 100サイクル程度を要する
 また、自分はフルアソシアティブ方式とセットアソシアティブ方式の違いやway数というものがよくわかっていなかったので本章説明は非常にありがたかったです。  
 普段のアプリケーションでキャッシュラインを意識することはほとんどないのですが、ライブラリのコードを見ているとキャッシュラインを意識したコメントを時々見かけることもあります。現状ではstructを64byte以内にしておくとキャッシュに乗りやすいくらいの理解度です。
 
-### TODO キャッシュミスの測定
+### キャッシュミスの測定
+
+本章ではキャッシュミスがどのように影響するかを実験します。以下がキャッシュをミスさせるプログラム。  
+アドレスの増分値として4096を利用しました。
+
+```sh
+$ sudo perf stat -e "cycles,instructions,L1-dcache-loads,L1-dcache-load-misses" ./cache_miss_many
+loop-variable = 10000000
+
+ Performance counter stats for './cache_miss_many':
+
+        22,006,883      cycles                                                      
+        91,018,467      instructions              #    4.14  insn per cycle         
+        10,257,315      L1-dcache-loads                                             
+         8,954,362      L1-dcache-load-misses     #   87.30% of all L1-dcache accesses
+
+       0.008935091 seconds time elapsed
+
+       0.008868000 seconds user
+       0.000000000 seconds sys
+```
+
+次が、メモリアクセスがキャッシュラインにのるようなプログラムです。  
+
+
+```sh
+$ sudo perf stat -e "cycles,instructions,L1-dcache-loads,L1-dcache-load-misses" ./cache_miss_few
+loop-variable = 10000000
+
+ Performance counter stats for './cache_miss_few':
+
+        21,923,146      cycles                                                      
+        90,949,898      instructions              #    4.15  insn per cycle         
+        10,239,289      L1-dcache-loads                                             
+            12,032      L1-dcache-load-misses     #    0.12% of all L1-dcache accesses
+
+       0.008941629 seconds time elapsed
+
+       0.008911000 seconds user
+       0.000000000 seconds sys
+```
+
+0.1%程度しかミスしていないようです。  
+自分の環境では実行速度に差がでませんでした。
 
 
 ## 第6章 仮想記憶
@@ -155,7 +262,50 @@ Virtual addressとphysical addressの変換を行うレイヤーが仮想記憶�
 
 CPUの命令流の密度を高めるための工夫を知ると、ページフォルト時にI/Oが発生したらもう今までの苦労が全部水の泡になるというのが腹落ちできたのもうれしいです。
 
-### TODO TLBミス計測
+### TLBミス計測実験
+
+キャッシュライン同様に、TLBミスの影響を実験します。  以下はTLBがヒットするプログラムです。  
+
+```sh
+$ sudo perf stat -e "cycles,instructions,L1-dcache-loads,dTLB-loads,dTLB-load-misses" ./tlb_miss_few
+loop-variable = 100000000
+
+ Performance counter stats for './tlb_miss_few':
+
+       243,254,513      cycles                                                      
+       901,372,541      instructions              #    3.71  insn per cycle         
+       100,349,655      L1-dcache-loads                                             
+       100,349,655      dTLB-loads                                                  
+               899      dTLB-load-misses          #    0.00% of all dTLB cache accesses
+
+       0.054821090 seconds time elapsed
+
+       0.054809000 seconds user
+       0.000000000 seconds sys
+```
+
+次に、TLBをミスさせるプログラムです。変更点は、参照するメモリアドレスを一定範囲に抑えるコードをなくし、参照するページ数を増やしただけです。
+
+```sh
+$ sudo perf stat -e "cycles,instructions,L1-dcache-loads,dTLB-loads,dTLB-load-misses" ./tlb_miss_many
+loop-variable = 100000000
+
+ Performance counter stats for './tlb_miss_many':
+
+     1,919,208,667      cycles                                                      
+       913,274,488      instructions              #    0.48  insn per cycle         
+       103,472,076      L1-dcache-loads                                             
+       103,472,076      dTLB-loads                                                  
+        97,106,889      dTLB-load-misses          #   93.85% of all dTLB cache accesses
+
+       0.405079023 seconds time elapsed
+
+       0.405029000 seconds user
+       0.000000000 seconds sys
+```
+
+自分の環境では実行時間が7倍程度増加しました。  
+TLBミスの影響が確認できました。
 
 ## 第7章 I/O
 
