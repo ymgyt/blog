@@ -136,6 +136,13 @@ loop-variable = 10000000
 0.2秒程度で10億回の命令が実行されるのはすごい。  
 この他にも依存関係を変えるとどう変化するかの実験もあります。
 
+検証環境は以下です。  
+
+```
+$ uname --kernel-name --kernel-release  --machine --processor --hardware-platform --operating-system
+Linux 5.19.0-35-generic x86_64 x86_64 x86_64 GNU/Linux 
+```
+
 
 ## 第4章 分岐命令
 
@@ -327,7 +334,23 @@ exception, interrupt, trap, fault, system call,...等を命令流の特別な切
 加えて、システムコール、例外、割り込み時の挙動の説明も具体的で、ベクターテーブルの説明もあります。  
 システムコールは遅いと漠然と思っていたのですが、なぜ遅いかが、これまでのパイプラインやキャッシュの観点から理解できます。章だてが練られていると思わされます。
 
-### TODO検証
+### システムコールと例外の実験
+
+実際にシステムコールを実行してみます。  
+システムコール自体は、仕様を把握できていれさえすれば、引数をregisterに設定したのち、専用の命令を実行するだけというのがわかります。
+
+```
+ /* write(2) system-call */
+ mov     eax, 1                  /* system-call number: write() */
+ mov     edi, 1                  /* fd: stdout */
+ lea     rsi, [rip + msg]        /* buf: */
+ mov     edx, 13                 /* count: */
+ syscall
+```
+
+[Hello World本](https://blog.ymgyt.io/entry/helloworld-book/)で学んだことですが、これはx86 + linuxの仕様であって、system callの引数をregisterではなくstack経由で渡すというのも設計上はありえるという理解です。  
+
+また、0除算やページフォールとの例もあります。
 
 
 ## 第9章 マルチプロセッサ
@@ -345,8 +368,62 @@ exception, interrupt, trap, fault, system call,...等を命令流の特別な切
 最初にキャッシュコヒーレンスの話を知った際は、変数に書き込むと裏ではCPU間で当該キャッシュを無効にするやり取りが行われているなんて思いもしませんでした。  
 MSIプロトコルについての説明もあります。
 
-### TODO 検証
+### コヒーレンスミスの実験
 
+本章の実験では、2つのthreadで、互いにメモリを変更し合うプログラムを動かします。  
+その際、変更対象のメモリのキャッシュラインが同じか異なるかでどのような影響が観測されるかを検証します。
+
+まずthread間でキャッシュラインを共有しない場合です。
+
+```sh
+$ sudo perf stat -e "cycles,instructions,L1-dcache,L1-dcache-load-misses" ./cacheline_different
+main(): start
+child1(): start
+child2(): start
+child2(): finish
+child1(): finish
+main(): finish
+
+ Performance counter stats for './cacheline_different':
+
+        71,827,869      cycles                                                      
+        61,149,657      instructions              #    0.85  insn per cycle         
+        10,288,943      L1-dcache                                                   
+            19,262      L1-dcache-load-misses     #    0.19% of all L1-dcache accesses
+
+       0.012914616 seconds time elapsed
+
+       0.024334000 seconds user
+       0.000000000 seconds sys
+```
+
+ミス率が0.19%とほとんどないことがわかります。  
+次はキャッシュラインを共有する場合です。
+
+```sh
+$ sudo perf stat -e "cycles,instructions,L1-dcache,L1-dcache-load-misses" ./cacheline_same
+main(): start
+child1(): start
+child2(): start
+child2(): finish
+child1(): finish
+main(): finish
+
+ Performance counter stats for './cacheline_same':
+
+       341,254,050      cycles                                                      
+        61,221,311      instructions              #    0.18  insn per cycle         
+        10,306,873      L1-dcache                                                   
+         1,431,930      L1-dcache-load-misses     #   13.89% of all L1-dcache accesses
+
+       0.041625362 seconds time elapsed
+
+       0.080869000 seconds user
+       0.000000000 seconds sys
+```
+
+キャッシュミス率が70倍程度増加し、実行時間が3倍程度増加しました。 
+キャッシュラインのフォールスシェアリングの影響があることが確かめられました。
 
 
 ## 第11章 メモリ順序付け
@@ -357,13 +434,91 @@ fench命令の必要性や、acquire, release命令の動作が具体例つき�
 また、本章で説明されるメモリ順序付けは1つのCPUからのメモリアクセスについてである点が強調されています。そのため、本章とRust Atomics and Locksを併せて読むのがオススメです。  
 fenceやldar, stlr命令があくまで1CPUに対する制約であり、happens-before relationshipとは別の話と整理できて非常に理解が進みました。 
 
+### メモリオーダリングの実験
+
+本章の実験では実際にCPUが命令を入れ替えて実行していることを実験します。  
+具体的には、0に初期化された変数x,yに対して、以下の二つのthreadを実行します。  
+
+* thread1: x = 1を実施したのち、yをload
+* thread2: y = 1を実施したのち、xをload
+
+命令がインオーダーに実行されていればthreadの実行順序に関わらず、x = 0, y = 0という状態には至らないはずです。  
+しかしながら、x86であってもloadとstore間では実行順序の入れ替えが起こることが許容されていることから、実際にx = 0, y = 0という状態が観測されます。  
+実際に試してみると以下のようになりました。
+
+```sh
+$ ./ordering_unexpected 
+main(): start
+child1(): start
+child2(): start
+child2(): UNEXPECTED!: r14 == 0 && r15 == 0; loop-variable = 5
+child1(): UNEXPECTED!: r14 == 0 && r15 == 0; loop-variable = 5
+main(): finish
+```
+
+続いて、storeとload間にメモリフェンス命令を挿入した例を試します。  
+
+```
+mov     [rip + value_x], rax    /* value_x = 1   */
+mfence                          /* FORCE ORDERING */
+mov     r14, [rip + value_y]    /* r14 = value_y */
+```
+
+```sh
+$ ./ordering_force
+main(): start
+child1(): start
+child2(): start
+child1(): finish: loop-variable = 5000000
+child2(): finish: loop-variable = 5000000
+main(): finish
+```
+
+メモリフェンス命令が実際に命令の入れ替えを抑止していることが確かめられました。
+
+
+
 ## 第12章 不可分操作
 
 本章では共通のメモリを2つ以上のCPU間で相互に更新する場合についてです。  
 メモリオーダリングに比べて、不可分操作の話は解決したい問題がわかりやすく、解決法も専用の命令使うという話で意外とわかりやすい印象があります。  
 swapやcompare and swap命令がどのように動作するのかの説明があります。このあたりはプログラム言語でもそのままapiになっている気がするので、内部動作を知るのが結局近道だと思いました。  
 
-### TODO 検証
+### 不可分操作の実験
+
+本章の実験では、共有変数をthread間でインクリメントする際にatomic命令を使わないとどうなるかを検証します。  
+
+具体的には以下のようにatomic命令を使ってインクリメントする場合
+
+```
+lock xadd [rip + counter], rax
+```
+
+と単純なadd命令を使う場合を比較します。
+```
+add     rax, 1
+```
+
+```
+$ ./counter_atomic
+main(): start
+child1(): start
+child2(): start
+child2(): finish: loop-variable = 5000000
+child1(): finish: loop-variable = 5000000
+main(): finish: counter = 10000000
+
+$ ./counter_bad
+main(): start
+child1(): start
+child2(): start
+child2(): finish: loop-variable = 5000000
+child1(): finish: loop-variable = 5000000
+main(): finish: counter = 5133651 
+```
+
+add命令を利用する`./counter_bad`の方では、counterが意図通りになっていないことが確認できました。  
+またadd命令を使った場合でもthread間のアクセス頻度ではcounterの値がより意図通りになる例も載っており、この種のバグの厄介さがわかります。
 
 
 ## 第13章 高速なソフトウェアを書く際には何に注目すべきか
