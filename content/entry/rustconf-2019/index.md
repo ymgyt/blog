@@ -22,10 +22,10 @@ Rustに関わっておられる方々がにどんな人達なのか実際に見�
 入国審査で、目的は観光で滞在日数は4日と答えたところ、"Very Short" と言われました。
 
 
-{{ figure(caption="portlandの場所", images=["/images/rustconf-2019/portland_1.jpeg"]) }}
+{{ figure(caption="portlandの場所", images=["images/portland_1.jpeg"]) }}
 
 {{ figure(caption="PDXとオレゴンコンベンションセンター入口", images=[
-  "/images/rustconf-2019/pdx.jpeg", "/images/rustconf-2019/oregon_convention_center.jpeg",
+  "images/pdx.jpeg", "images/oregon_convention_center.jpeg",
 ], width="48%") }}
 
 
@@ -36,15 +36,15 @@ RustConfは２日に渡って開催され、1日目は、いくつかの[Trainin
 
 
 {{ figure(caption="Conferenceの様子", images=[
-  "/images/rustconf-2019/rustconf_2019_day1_1.jpeg", 
-  "/images/rustconf-2019/rustconf_2019_day1_2.jpeg",
-  "/images/rustconf-2019/rustconf_2019_day1_3.jpeg",
+  "images/rustconf_2019_day1_1.jpeg", 
+  "images/rustconf_2019_day1_2.jpeg",
+  "images/rustconf_2019_day1_3.jpeg",
 ], width="32%") }}
 
 Async Courseの内容は、Futureの概要/Conceptの説明や、[`async-std`](https://github.com/async-rs/async-std)のhandsonで、[chat](https://github.com/async-rs/a-chat)を作ってみるものでした。ちょうど、前日に`async/await` syntaxがmergeされ、`rustc 1.39.0-nightly (e44fdf979 2019-08-21)` versionを利用しました。
 
 {{ figure(caption="1.39からasync/awaitがstable!", images=[
-  "/images/rustconf-2019/rustconf_2019_async_pr.jpeg",
+  "images/rustconf_2019_async_pr.jpeg",
 ]) }}
 
 [`async-book`](https://book.async.rs/tutorial/index.html)にそって進めていったのですが、よくあるsample codeのuseが漏れていて、book通りに進めていくとcompileが通らないことがおきました。するとすかさず(おそらく)参加者の一人の方が[PR](https://github.com/async-rs/async-std/pull/98)を送り(それがmergeされ)、「画面をリロードしてくれ、もう直ってるから」といって、sample codeのcompileが通るようになる場面がありました。
@@ -59,8 +59,8 @@ Rustの非同期関連については、まったくわかっておらず、今�
 
 
 {{ figure(caption="irlnaさんによるasyncの冊子(ちなみに、2日目のspeakerでもあられる", images=[
-  "/images/rustconf-2019/rustconf_2019_paper_1.jpeg",
-  "/images/rustconf-2019/rustconf_2019_paper_2.jpeg",
+  "images/rustconf_2019_paper_1.jpeg",
+  "images/rustconf_2019_paper_2.jpeg",
 ], width="48%") }}
 
 
@@ -69,12 +69,12 @@ Rustの非同期関連については、まったくわかっておらず、今�
 2日目が本番といったところで、参加者の人数は1日目よりはるかに多かったです。
 
 {{ figure(caption="会場ロビー", images=[
-  "/images/rustconf-2019/rustconf_2019_day2_1.jpeg"
+  "images/rustconf_2019_day2_1.jpeg"
 ])}}
 
 
 {{ figure(caption="開始前のkeynote会場(はじまると8,9割程度埋まっていました)", images=[
-  "/images/rustconf-2019/rustconf_2019_day2_2.jpeg"
+  "images/rustconf_2019_day2_2.jpeg"
 ])}}
 
 openingとclosingのkeynote以外は、２つの会場でSessionが行われ、各々好きなほうを聞きに行く形式でした。[schedule](https://rustconf.com/schedule/)
@@ -96,15 +96,15 @@ openingとclosingのkeynote以外は、２つの会場でSessionが行われ、�
 * Facebookで、Rustの導入に取り組まれているC歴30年の方が、Rustは今までで初めて、every roleでCを置き換えられる言語だ的なことをおっしゃっていたこと
 
 {{ figure(caption="rustの求人", images=[
-  "/images/rustconf-2019/rustconf_2019_rust_jobs.jpeg"
+  "images/rustconf_2019_rust_jobs.jpeg"
 ])}}
 
 {{ figure(caption="AWSにもrustの募集がある", images=[
-  "/images/rustconf-2019/rustconf_2019_aws_rust_job.jpeg"
+  "images/rustconf_2019_aws_rust_job.jpeg"
 ])}}
 
 {{ figure(caption="Sponsors", images=[
-  "/images/rustconf-2019/rustconf_2019_sponsors.png",
+  "images/rustconf_2019_sponsors.png",
 ])}}
 
 
