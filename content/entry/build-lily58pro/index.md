@@ -105,7 +105,7 @@ TRRSケーブル用ソケットとトグルスイッチをつけていきます�
 {{ figure(caption="OELFモジュールの準備", images=[
   "images/lily58pro_assemble_15.jpeg",
   "images/lily58pro_assemble_16.jpeg",
-], width="49lily58pro_assemble_%") }}
+], width="48%") }}
 
 OELDモジュールをとりつけるために指定箇所にはんだづけをおこないジャンプさせます。またソケットをはめて裏からはんだづけします。写真のひとつだけ大きいなはんだづけ箇所はやり直しています。
 
