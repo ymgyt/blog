@@ -152,7 +152,7 @@ Caused by:
              at /Users/ymgyt/ymgyt.io/kubeprovision/src/config.rs:51:14
 ```
 
-となり、引数のfile pathと原因が表示できかと思います。
+となり、引数のfile pathと原因が表示できたかと思います。
 
 ## Backtraces
 
