@@ -273,13 +273,212 @@ https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021
 
 ## `Application::render()`
 
+```rust
+impl Application {
+
+  async fn render(&mut self) {
+      let mut cx = crate::compositor::Context { // 1️⃣
+          editor: &mut self.editor,
+          // ...
+      };
+
+      let area = self // 2
+          .terminal
+          .autoresize()
+          .expect("Unable to determine terminal size");
+
+      let surface = self.terminal.current_buffer_mut(); // 3
+
+      self.compositor.render(area, surface, &mut cx); // 4
+
+      self.terminal.draw(pos, kind).unwrap(); // 5
+  }
+}
+```
+
+https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-term/src/application.rs#L255  
+
+`Application::render()`の主要な処理は上記のような流れです。各処理ごとの概要を説明します。  
+
+1. rendering処理で引き回す情報を表現した`compositor::Context`を作ります。大事なのはrederingに`Editor`にaccessできるという点です。   
+2. 現在のterminalのwindow sizeを取得します。  
+3. helixが管理しているterminal rendering用のbufferを取得します。このbufferへの書き込みはすぐにterminalに反映されるのではなく5の処理で反映されます。  
+4. rendering処理の実装です。`Application`はredering処理を`Compositor`に委譲していることがわかります。 
+5. `Compositor`によってbufferへ書き込まれた情報を実際にterminalに反映します。 5をコメントアウトすると実際になにも描画されなくなります。(`:q`で抜けれます)  
+
+というわけで、`Application::render()`はrenderingするための準備(contextの生成、terminal sizeの取得, 書き込み先のbuffer管理)を行ったのち、`Compositor`に処理を委譲して、最後にその結果をterminalに反映させているということがわかりました。  
+`self.terminal.draw()`は後ほど見ていきます。
 
 
+## `Compositor::render()`
 
-## `Compositor`
+続いて、`Compository::render()`です。処理はsimpleで
+
+```rust
+impl Compositor {
+    pub fn render(&mut self, area: Rect, surface: &mut Surface, cx: &mut Context) {
+        for layer in &mut self.layers {
+            layer.render(area, surface, cx);
+        }
+    }
+}
+```
+
+https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-term/src/compositor.rs#L168
+
+自身が保持しているlayerをiterateして順番に`layer.render()`を呼び出しているだけです。  
+
+`Compository`は以下のように、layersとして`dyn Component` trait objectを保持しています。  
+
+```rust
+pub struct Compositor {
+    layers: Vec<Box<dyn Component>>,
+    area: Rect,
+
+    pub(crate) last_picker: Option<Box<dyn Component>>,
+}
+```
+
+ここまでで、おそらく`Component` traitに`render()`が定義されていて、dynamic traitになっていることから、helixの各種component(editor, filepicker, buffer list, file tree,..)が`Component`を実装しているだろうということが予想できるかと思います。  
+また、今みている処理はhelix起動後にuserからの入力を処理する前に呼ばれているrendering処理です。となると、`Compositor`が保持しているcomponentは`Application::new()`の生成処理の中でセットされていると当たりをつけることができないでしょうか。  
+ということで、`Component` traitを実装した具体的な型を探すべく、`Application::new()`に戻ります。
+
+## `Compositor`の生成
+
+`Application::new()`の中で行われている`Compository`の生成処理を見ていきます。具体的には、`Component` traitを実装しているstructを特定します。
+
+```rust
+use arc_swap::{access::Map, ArcSwap};
+
+impl Application {
+
+    pub fn new(
+        args: Args,
+        config: Config,
+        syn_loader_conf: syntax::Configuration,
+    ) -> Result<Self, Error> {
+        // ...
+
+        let mut compositor = Compositor::new(area); // 1
+
+        let config = Arc::new(ArcSwap::from_pointee(config)); // 2
+        let mut editor = Editor::new(
+            area,
+            theme_loader.clone(),
+            syn_loader.clone(),
+            Arc::new(Map::new(Arc::clone(&config), |config: &Config| {
+                &config.editor
+            })),
+        );
+
+        let keys = Box::new(Map::new(Arc::clone(&config), |config: &Config| { // 3
+            &config.keys
+        }));
+
+        let editor_view = Box::new(ui::EditorView::new(Keymaps::new(keys))); // 4
+
+        compositor.push(editor_view); // 5
+
+        // ...
+
+        let app = Self {
+            compositor,
+            terminal,
+            editor,
+            config,
+            // ...
+        };
+
+        Ok(app)
+    }
+}
+```
+
+https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-term/src/application.rs#L104 
+
+`Compositor`関連の処理のみ載せています。  
+
+1. `Compositor`を生成しています。引数の`area`は気にしなくて大丈夫です。
+2. `Config`を`Arc`と`ArcSwap`でwrapしています。各種componentにそれぞれに設定を渡すためです。
+3. 設定のうちkey bindに関する設定です。
+4. key bindの設定を渡して,`EditorView` componentを設定しています。
+5. `EditorView`を`Compositor`にpushします。
+
+ということで、`Compositor`に渡されたcomponentは`EditorView`ということがわかりました。  
+
+一応、`Compositor::push()`をみておくと
+
+```rust
+impl Compositor {
+    /// Add a layer to be rendered in front of all existing layers.
+    pub fn push(&mut self, mut layer: Box<dyn Component>) {
+        let size = self.size();
+        // trigger required_size on init
+        layer.required_size((size.width, size.height));
+        self.layers.push(layer);
+    }
+}
+```
+
+https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-term/src/compositor.rs#L102
+
+渡された`dyn Component`にsizeの情報を渡した後、自身のVecにpushしています。  
+`EditorView`は`required_size()`を実装しておらずnoopな処理なのでここでは気にしなくてよいです。
+
+また、ここで`Component`の定義を確認しておきます。
+
+```rust
+use std::any::Any;
+
+pub trait Component: Any + AnyComponent {
+    /// Process input events, return true if handled.
+    fn handle_event(&mut self, _event: &Event, _ctx: &mut Context) -> EventResult {
+        EventResult::Ignored(None)
+    }
+    // , args: ()
+
+    /// Should redraw? Useful for saving redraw cycles if we know component didn't change.
+    fn should_update(&self) -> bool {
+        true
+    }
+
+    /// Render the component onto the provided surface.
+    fn render(&mut self, area: Rect, frame: &mut Surface, ctx: &mut Context);
+
+    /// Get cursor position and cursor kind.
+    fn cursor(&self, _area: Rect, _ctx: &Editor) -> (Option<Position>, CursorKind) {
+        (None, CursorKind::Hidden)
+    }
+
+    /// May be used by the parent component to compute the child area.
+    /// viewport is the maximum allowed area, and the child should stay within those bounds.
+    ///
+    /// The returned size might be larger than the viewport if the child is too big to fit.
+    /// In this case the parent can use the values to calculate scroll.
+    fn required_size(&mut self, _viewport: (u16, u16)) -> Option<(u16, u16)> {
+        None
+    }
+
+    fn type_name(&self) -> &'static str {
+        std::any::type_name::<Self>()
+    }
+
+    fn id(&self) -> Option<&'static str> {
+        None
+    }
+}
+```
+
+https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-term/src/compositor.rs#L39  
+
+`AnyComponent`は気にしなくてよいです。  
+Renderingとの関係では、`Component`の責務は渡された`Surface`(buffer)に`Context`の情報を使って、reder処理を行うことです。  
+
+ということでrender処理は`Application`, `Compositor`と委譲されて`EditorView`が次に呼ばれることがわかりました。
+
+## `EditorView::render()` 
 
 
-## `EditorView`
 
 
 ## `Document`と`View`
