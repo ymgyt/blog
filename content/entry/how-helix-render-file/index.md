@@ -478,6 +478,423 @@ Renderingとの関係では、`Component`の責務は渡された`Surface`(buffe
 
 ## `EditorView::render()` 
 
+```rust
+impl Component for EditorView {
+    fn render(&mut self, area: Rect, surface: &mut Surface, cx: &mut Context) {
+        // clear with background color
+        surface.set_style(area, cx.editor.theme.get("ui.background")); // 1
+
+        // -1 for commandline and -1 for bufferline
+        let mut editor_area = area.clip_bottom(1); // 2
+
+        for (view, is_focused) in cx.editor.tree.views() { // 3
+            let doc = cx.editor.document(view.doc).unwrap(); // 4
+            self.render_view(cx.editor, doc, view, area, surface, is_focused); // 5
+        }
+
+        // ...
+    }
+}
+```
+
+https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-term/src/ui/editor.rs#L1359  
+
+本来の処理はbuffer line(開いているbufferのlist)やstatus line等のrender処理があるのですが割愛しています。  
+それらを無視できれば、`EditorView::render()`の責務はsimpleで、themeの背景色をsetしたのち、`Editor`が保持している`View`のredering処理を呼ぶことだけです。
+
+1. `cx.editor.theme.get("ui.background")`でuserが指定したthemeの背景色用の`Theme`が取得できます。仮にこの行をコメントアウトすると背景色が反映されなくなります。  
+2. 描画領域を下から1行減らす処理です。空いた行にstatus lineを描画します。  
+3. `Editor`が保持している`View`をiterateします。`is_forcus` はuserが現在focusしているかのflagでcursorを描画するかの判定等に利用します。  
+4. `View`に対応する`Document`を取得します。`View`と`Document`については後述します。この取得が失敗するのはbugなのでunwrapです。  
+5. `View`のredering処理を呼び出します。
+
+ここで`Editor`から`View`を取得しています。`Compositor`の時と同じようにまだuserの入力を処理する前の段階なので、`Editor`が保持しているなんらかの`View`は`Application::new()`の処理の中で生成されたと考えられます。  
+ということで、`Editor`が`View`をどのように生成したかを見ていきます。
+
+## `Document`と`View`の生成処理
+
+```rust
+impl Application {
+    pub fn new(
+        args: Args,
+        config: Config,
+        syn_loader_conf: syntax::Configuration,
+    ) -> Result<Self, Error> {
+        // ...
+
+        let editor_view = Box::new(ui::EditorView::new(Keymaps::new(keys)));
+
+        compositor.push(editor_view);
+
+        if args.load_tutor {
+            // ...
+        } else if !args.files.is_empty() {
+            let first = &args.files[0].0; // we know it's not empty
+            if first.is_dir() {
+                // ...
+            } else {
+                let nr_of_files = args.files.len();
+                for (i, (file, pos)) in args.files.into_iter().enumerate() {
+                    if file.is_dir() {
+                        return Err(anyhow::anyhow!(
+                            "expected a path to file, found a directory. (to open a directory pass it as first argument)"
+                        ));
+                    } else {
+                        let action = match args.split {
+                            _ if i == 0 => Action::VerticalSplit,
+                            Some(Layout::Vertical) => Action::VerticalSplit,
+                            Some(Layout::Horizontal) => Action::HorizontalSplit,
+                            None => Action::Load,
+                        };
+                        let doc_id = editor
+                            .open(&file, action) // 1  👈👈👈
+                            .context(format!("open '{}'", file.to_string_lossy()))?;
+
+                        let view_id = editor.tree.focus;
+
+                        let doc = doc_mut!(editor, &doc_id);
+
+                        let pos = Selection::point(pos_at_coords(doc.text().slice(..), pos, true));
+                        doc.set_selection(view_id, pos);
+                    }
+                }
+            }
+        } else {
+            // ...
+        }
+
+        let app = Self {
+            // ...
+        };
+
+        Ok(app)
+    }
+}
+```
+
+再び`Application::new()`です。さきほどは`Compository`と`EditorView`の生成処理に注目しましたが、今回はその次の処理が重要です。  
+`hx ./Cargo.toml`のように引数にopenしたfileが渡されていることを前提にして、なんやかんや判定して、1の`editor.open()`のところまで来ます。  
+引数の`file`はfile path, `action`には`Action::VerticalSplit`が設定されます。`editor.open()`の戻り値が`doc_id`となっており、次の処理で`view_id`を取得していることからこの処理が`Document`および`View`の生成処理であることが予想できます。  
+ということで、`Editor::open()`を見ていきましょう。  
+
+https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-term/src/application.rs#L192
+
+## `Editor::open()`
+
+```rust
+impl Editor {
+    pub fn open(&mut self, path: &Path, action: Action) -> Result<DocumentId, Error> {
+        let path = helix_core::path::get_canonicalized_path(path)?; // 1
+        let id = self.document_by_path(&path).map(|doc| doc.id); // 2
+
+        let id = if let Some(id) = id {
+            id
+        } else {
+            let mut doc = Document::open( // 3
+                &path,
+                None,
+                Some(self.syn_loader.clone()),
+                self.config.clone(),
+            )?;
+
+            // ...
+
+            let id = self.new_document(doc); // 4
+            let _ = self.launch_language_server(id); // 5
+
+            id
+        };
+
+        self.switch(id, action); // 6
+        Ok(id)
+    }
+}
+```
+
+https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-view/src/editor.rs#L1310 
+
+`Editor::open()`は引数にfile pathとfileの開き方(windowをvertical,horizonどちらに分割するか)をとって、対応する`Document`を生成したのち、識別子である`DocumentId`を返します。  
+
+1. file pathの正規化処理です。`~`を展開したりします。  
+2. 既にpathに該当する`Document`があるかを確かめます。ここでは`None`が返ってきます。  
+3. `Document`の生成処理。
+4. 生成した`Document`を保持する処理です。
+5. 今回はふれませんが、ここでLSP serverを起動します。  
+6. 後述(TODO)
+
+ということで、`Document::open()`をみます
+
+### `Document::open()` 
+
+```rust
+use crate::editor::Config;
+
+impl Document {
+    pub fn open(
+        path: &Path,
+        encoding: Option<&'static encoding::Encoding>,
+        config_loader: Option<Arc<syntax::Loader>>,
+        config: Arc<dyn DynAccess<Config>>,
+    ) -> Result<Self, Error> {
+        // Open the file if it exists, otherwise assume it is a new file (and thus empty).
+        let (rope, encoding) = if path.exists() {
+            let mut file =
+                std::fs::File::open(path).context(format!("unable to open {:?}", path))?;
+            from_reader(&mut file, encoding)?
+        } else {
+            // ...
+        };
+
+        let mut doc = Self::from(rope, Some(encoding), config);
+
+        // ...
+
+        Ok(doc)
+    }
+}
+```
+
+https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-view/src/document.rs#L508 
+
+`Document::open()`ではfileが存在する場合に、filesystemからopenしたのち、`from_reader()`を呼び出しています。  
+
+```rust
+pub fn from_reader<R: std::io::Read + ?Sized>(
+    reader: &mut R,
+    encoding: Option<&'static encoding::Encoding>,
+) -> Result<(Rope, &'static encoding::Encoding), Error> { /* ... */ }
+```
+
+https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-view/src/document.rs#L283 
+
+`from_reader()`は上記のようなsignatureをしており、`reader`(file)のencodingを判定したのち、`Rope`と判定したencodingを返す関数です。  
+この関数もとてもおもしろいので見ていきたいところなのですが、rendering処理という本題からそれてしまうので今回は飛ばします。  
+また、`Rope`というデータ構造はhelixにおける編集対象のtextを保持する核となるデータ構造で、別の機会により詳しく述べたいと思います。  
+ここでは、編集対象のtext(file)を保持して、各種効率的な操作のAPIを提供してくれるデータ構造という程度に理解します。  crateとしては[ropey](https://github.com/cessen/ropey)を利用しています。  
+
+`Document::from`は`Document`のconstruct処理です。
+
+```rust
+impl Document {
+    pub fn from(
+        text: Rope,
+        encoding: Option<&'static encoding::Encoding>,
+        config: Arc<dyn DynAccess<Config>>,
+    ) -> Self {
+        let encoding = encoding.unwrap_or(encoding::UTF_8);
+        let changes = ChangeSet::new(&text);
+        let old_state = None;
+
+        Self {
+            id: DocumentId::default(),
+            path: None,
+            encoding,
+            text,
+            selections: HashMap::default(),
+            config,
+            // ...
+        }
+    }
+}
+```
+
+https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-view/src/document.rs#L464  
+
+`Document`はいろいろな状態を保持しているのですが、renderingを追っていく上で抑えてほしいのはfileの内容を`Rope`で保持していることです。  
+`Selection`はcursorの位置を表現しています。この実装からhelixにおいてはcursorの現在位置と選択範囲が`Selection`で表現されていることがわかります。  
+`Selection`はrederingに関わってくるのでのちほどもう少し詳しく説明します。
+
+```rust
+pub struct Document {
+    pub(crate) id: DocumentId,
+    text: Rope,
+    selections: HashMap<ViewId, Selection>,
+    // ...
+    path: Option<PathBuf>,
+    encoding: &'static encoding::Encoding,
+}
+```
+
+https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-view/src/document.rs#L118  
+
+ということで、`Document`の生成を確認しました。要はfileからopenした`Rope`と、helix的に管理したい状態を保持しているのが`Document`というデータ構造ということが今のところわかりました。  
+今みているところを再掲すると
+
+```rust
+impl Editor {
+    pub fn open(&mut self, path: &Path, action: Action) -> Result<DocumentId, Error> {
+        // ...
+        let id = if let Some(id) = id {
+            id
+        } else {
+            let mut doc = Document::open( // 👈
+                &path,
+                None,
+                Some(self.syn_loader.clone()),
+                self.config.clone(),
+            )?;
+
+            // ...
+
+            let id = self.new_document(doc); // 4
+            let _ = self.launch_language_server(id); // 5
+
+            id
+        };
+
+        self.switch(id, action); // 6
+        Ok(id)
+    }
+}
+```
+
+https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-view/src/editor.rs#L1310  
+
+`Document::open()`から戻ってきて、`self.new_document()`が次の処理です。
+
+### `Editor::new_document()`
+
+```rust
+pub struct Editor {
+    // ...
+    pub next_document_id: DocumentId,
+    pub documents: BTreeMap<DocumentId, Document>,
+    // ...
+}
+
+impl Editor {
+    /// Generate an id for a new document and register it.
+    fn new_document(&mut self, mut doc: Document) -> DocumentId {
+        let id = self.next_document_id;
+        // Safety: adding 1 from 1 is fine, probably impossible to reach usize max
+        self.next_document_id =
+            DocumentId(unsafe { NonZeroUsize::new_unchecked(self.next_document_id.0.get() + 1) });
+        doc.id = id;
+        self.documents.insert(id, doc);
+
+        // ...
+
+        id
+    }
+}
+```
+
+https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-view/src/editor.rs#L1274  
+
+`Editor::new_document()`は`DocumentId`を採番して、`Document`にsetしたのち、`Editor`の`BTreeMap`に保持しています。  
+今回はLSPについてはふれませんが、このタイミングでlanguage serverを起動していることから、helixではfileを開いた際に初めてfileに対応するlanguage serverを起動していることがわかります。  
+`Editor::open()`の処理のうち、`Documentを`生成して、`Editor`に登録したあとは`Editor::switch()`を実行して終わりです。  
+まだ`View`が出てきていないのでおそらくこの処理で、生成した`Editor`に対応する`View`を作るのだろうということが予想できます。  
+
+### `Editor::switch()`
+
+```rust
+pub struct Editor {
+    pub tree: Tree,
+    // ...
+}
+
+impl Editor {
+    pub fn switch(&mut self, id: DocumentId, action: Action) {
+        // ...
+
+        match action {
+            // ...
+            Action::HorizontalSplit | Action::VerticalSplit => {
+                // copy the current view, unless there is no view yet
+                let view = self
+                    .tree
+                    .try_get(self.tree.focus)
+                    .filter(|v| id == v.doc) // Different Document
+                    .cloned()
+                    .unwrap_or_else(|| View::new(id, self.config().gutters.clone())); // 1
+                let view_id = self.tree.split( // 2
+                    view,
+                    match action {
+                        Action::HorizontalSplit => Layout::Horizontal,
+                        Action::VerticalSplit => Layout::Vertical,
+                        _ => unreachable!(),
+                    },
+                );
+                // initialize selection for view
+                let doc = doc_mut!(self, &id); // 3
+                doc.ensure_view_init(view_id); // 4
+            }
+        }
+    }
+}
+```
+
+https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-view/src/editor.rs#L1180  
+
+なにやら`View`を生成していそうな感じがあります。  
+
+1. まず`self.tree`は`Tree`を参照します。ここでは詳しく述べれないのですが`View`を管理している木構造です。基本的に新しい`View`を作るには現在のwindowを分割していくので、これを木構造で表現しています。現在の処理では`unwrap_or_else()`のelseに入って`View::new()`が呼ばれます。  
+2. 生成した`View`を`Tree`に登録します。  
+3. `doc_mut!()`は`Editor`から`DocumentId`に対応する`Document`を取得するhelper macroです。  
+4. cursorをfileの先頭にsetする処理という理解で大丈夫です。
+
+
+
+```rust
+#[derive(Clone)]
+pub struct View {
+    pub id: ViewId,
+    pub offset: ViewPosition,
+    pub area: Rect,
+    pub doc: DocumentId,
+    pub jumps: JumpList,
+    // documents accessed from this view from the oldest one to last viewed one
+    pub docs_access_history: Vec<DocumentId>,
+    /// the last modified files before the current one
+    /// ordered from most frequent to least frequent
+    // uses two docs because we want to be able to swap between the
+    // two last modified docs which we need to manually keep track of
+    pub last_modified_docs: [Option<DocumentId>; 2],
+    /// used to store previous selections of tree-sitter objects
+    pub object_selections: Vec<Selection>,
+    /// all gutter-related configuration settings, used primarily for gutter rendering
+    pub gutters: GutterConfig,
+    /// A mapping between documents and the last history revision the view was updated at.
+    /// Changes between documents and views are synced lazily when switching windows. This
+    /// mapping keeps track of the last applied history revision so that only new changes
+    /// are applied.
+    doc_revisions: HashMap<DocumentId, usize>,
+}
+
+impl fmt::Debug for View {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("View")
+            .field("id", &self.id)
+            .field("area", &self.area)
+            .field("doc", &self.doc)
+            .finish()
+    }
+}
+
+impl View {
+    pub fn new(doc: DocumentId, gutters: GutterConfig) -> Self {
+        Self {
+            id: ViewId::default(),
+            doc,
+            offset: ViewPosition {
+                anchor: 0,
+                horizontal_offset: 0,
+                vertical_offset: 0,
+            },
+            area: Rect::default(), // will get calculated upon inserting into tree
+            jumps: JumpList::new((doc, Selection::point(0))), // TODO: use actual sel
+            docs_access_history: Vec::new(),
+            last_modified_docs: [None, None],
+            object_selections: Vec::new(),
+            gutters,
+            doc_revisions: HashMap::new(),
+        }
+    }
+
+
+```
+
 
 
 
