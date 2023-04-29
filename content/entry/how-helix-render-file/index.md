@@ -1,5 +1,5 @@
 +++
-title = " ✏️ helixがfileの中身をrenderingする仕組みを理解する"
+title = " ✏️ helixがfileをrenderingする仕組みを理解する"
 slug = "how-helix-render-file"
 description = "helix source code readingの第一弾。まずはrenderingの流れを確認します。"
 date = "2023-04-30"
