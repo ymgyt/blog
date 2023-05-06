@@ -1,5 +1,5 @@
 +++
-title = "🔭 opentelemetry-collectorのpipelineをソースコードから理解する"
+title = "[Draft] 🔭 opentelemetry-collectorのpipelineをソースコードから理解する"
 slug = "how-opentelemetry-collector-pipeline-works"
 date = "2023-03-28"
 draft = true

@@ -1,5 +1,5 @@
 +++
-title = "📗 Cloud-Native Observability with OpenTelemetryを読んだ感想"
+title = "[Draft] 📗 Cloud-Native Observability with OpenTelemetryを読んだ感想"
 slug = "cloud-native-observability-with-opentelemetry"
 date = "2023-03-28"
 draft = true

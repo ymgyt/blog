@@ -2,7 +2,7 @@
 title = "🗼 Kubernetes Meetup Tokyo #23にいってきました"
 slug = "kubernetes-meetup-tokyo-23"
 date = "2019-09-27"
-draft = true
+draft = false
 [taxonomies]
 tags = ["cncf", "event"]
 +++
