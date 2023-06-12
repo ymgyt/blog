@@ -169,4 +169,9 @@ $h_border_line: $color-p-3;
 		transition-duration: 0.2s;
 		transition-timing-function: ease-out;
 	}
+
+	table th,
+	table td {
+		word-break: break-word;
+	}
 }
