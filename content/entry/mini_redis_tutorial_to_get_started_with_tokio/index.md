@@ -5,6 +5,8 @@ date = "2020-10-25"
 draft = false
 [taxonomies]
 tags = ["rust"]
+[extra]
+image = "images/emoji/tokyo_tower.png"
 +++
 
 この記事ではRustの非同期runtimeのひとつ[tokio](https://github.com/tokio-rs/tokio)の[公式Tutorial](https://tokio.rs/tokio/tutorial)を通じてtokioのAPIに入門していきます。  
