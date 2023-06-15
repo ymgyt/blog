@@ -34,7 +34,7 @@ Nixについてまだまだわかっていないことが多いのですが、�
 Installすると`nix` commandが使えるようになりこれ自体はpackage manager的な役割も担います。  
 また、mac, linux共通で利用できます。  
 Macでいうと`brew`の替わりに使うイメージです。必要に応じてinstall commandを実行するような使い方では`brew`でいいじゃんとなるので、installされているべきcommand一覧を定義しておくという運用になります。  
-NixOSはnixを前提としてlinux distributionです。
+NixOSはnixを前提としたlinux distributionです。
 
 ### Nixの現状とflake
 
