@@ -295,7 +295,7 @@ where
 
 ### Send bound
 
-`tokio::spawn`に渡されるfutureは`Send`をimplementしている必要がある。taskが`Send`になるには、**`.await`をまたぐすべてのデータが`Send`**である必要がある。逆にいうと`.await`またがなければ`Send`でないデータでも使える。
+`tokio::spawn`に渡されるfutureは`Send`をimplementしている必要がある。**taskが`Send`になるには、`.await`をまたぐすべてのデータが`Send`** である必要がある。逆にいうと`.await`またがなければ`Send`でないデータでも使える。
 
 ```rust
 tokio::spawn(async {
