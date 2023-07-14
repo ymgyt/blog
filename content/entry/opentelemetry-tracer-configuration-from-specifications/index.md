@@ -1,8 +1,8 @@
 +++
 title = "🔭 RustでOpenTelemetry: Tracerの設定を仕様から理解したい"
 slug = "understanding-opentelemetry-tracer-configuration-from-specifications"
-description = "RustにおけるOpenTelemetryの実装を見ながら仕様の理解を試みます。"
-date = "2023-07-12"
+description = "RustにおけるOpenTelemetryの実装を見ながら仕様の理解を試みます。今回はTracerの設定について。"
+date = "2023-07-14"
 draft = true
 [taxonomies]
 tags = ["rust"]
@@ -35,8 +35,8 @@ Rust特有の話とOpenTelemetry共通の話が最初は分かりづらかった
 次にtraceのexportは[`opentelemetry-otlp` crate](https://github.com/open-telemetry/opentelemetry-rust/tree/main/opentelemetry-otlp)を利用して、gRPCでremoteにexportします。(基本的にはopentelemetry-collectorになるかと思います)  
 Opentelemetry-collectorやobservability-backendの立ち上げについては詳しくは触れません。  
 
-対象とするOpenTelemetryの仕様は`v1.22.0`です。  
-仕様の参照元としては、[公式のwebsite](https://opentelemetry.io/docs/specs/)と[`opentelemetry-specification` repository](https://github.com/open-telemetry/opentelemetry-specification/tree/v1.22.0/specification)があります。  
+対象とするOpenTelemetryの仕様は`v1.23.0`です。  
+仕様の参照元としては、[公式のwebsite](https://opentelemetry.io/docs/specs/)と[`opentelemetry-specification` repository](https://github.com/open-telemetry/opentelemetry-specification/tree/v1.23.0/specification)があります。  
 versionを固定したlinkを貼りやすいので、本記事ではrepositoryを参照します。  
 仕様の範囲ですが、概ね、Traceと関連する共通項目についてみていきます。  
 
@@ -58,7 +58,6 @@ opentelemetry-semantic-conventions = "=0.11.0"
 tracing = "0.1.38"
 tracing-opentelemetry = "=0.19.0"
 tracing-subscriber = "0.3.17"
-
 # ...
 ```
 
@@ -187,8 +186,14 @@ fn tracer(sampling_ratio: f64) -> opentelemetry::sdk::trace::Tracer {
 
 ## Traceの生成からexportまでの流れ
 
+ここまで見てきたところで、初めてだと上記のcodeは何を設定しているのかよくわからないのではないでしょうか。  
+ということで、メンタルモデルとして、traceが生成されてからexportされるまでの流れを確認します。
 
 
 ## Crate間の関係性
 
 ## 仕様の確認
+
+## Memo
+
+v1.22.0 -> v1.23.0にした(7/14)
