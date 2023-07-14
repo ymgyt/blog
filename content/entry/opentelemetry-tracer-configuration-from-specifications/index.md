@@ -1,8 +1,8 @@
 +++
-title = "🔭 RustでOpenTelemetry: Tracerの設定を仕様から理解したい"
+title = "🔭 RustでOpenTelemetry: Tracerの設定を仕様から理解する"
 slug = "understanding-opentelemetry-tracer-configuration-from-specifications"
 description = "RustにおけるOpenTelemetryの実装を見ながら仕様の理解を試みます。今回はTracerの設定について。"
-date = "2023-07-14"
+date = "2023-07-16"
 draft = true
 [taxonomies]
 tags = ["rust"]
@@ -13,17 +13,6 @@ image = "images/emoji/telescope.png"
 本記事では、RustにおけるOpenTelemetry Tracerの設定をOpenTelemetryの仕様に照らして理解することを目指します。  
 仕様を確認しながら、どうして各種crateが現在の型や構成になっているのかを説明します。  
 Rust特有の話とOpenTelemetry共通の話が最初は分かりづらかったのですが、共通の概念を理解できれば他言語でも同様に設定できるようになります。
-
-
-## 概要
-
-以下の順番で話を進めていきます。  
-
-1. 前提の確認
-1. 具体的なcodeの概要
-1. Traceの生成からexportまでの流れ
-1. Crate間の関係性
-1. 仕様の確認
 
 
 ## 前提の確認
@@ -131,7 +120,7 @@ tracing subscriberやlayerについては[tracing/tracing-subscirberでログが
 
 要点としては、tracing/tracing-subscriberの仕組みのおかげで、ここで見ているapplication初期化時以外では、traceがopentelemetryの仕組みで処理されるといったことを意識しなくてよくなっているということです。  
 逆にいうと、opentelemetryにおけるtraceのデータが具体的にどうなるかは、`tracing::info!()`といった、tracing apiとtracing_opentelemetryによる変換処理次第となります。  
-また、tracing/tracing_opentelemetryによるopentelemetryの抽象化は徹底されているわけではなく、他サービスをnetworkごしに呼んだ場合にもtraceを連携させるcontext propagation等の仕組みを利用する上では、opentelemetryを利用していることを意識する必要がでてきます。  
+また、tracing/tracing_opentelemetryによるopentelemetryの抽象化は徹底されているわけではなく、他サービスをnetwork越しに呼んだ場合にもtraceを連携させるcontext propagation等の仕組みを利用する上では、opentelemetryを利用していることを意識する必要がでてきます。  
 
 
 ### Tracerの設定
@@ -180,8 +169,26 @@ fn tracer(sampling_ratio: f64) -> opentelemetry::sdk::trace::Tracer {
 * `opentelemetry`
 * `opentelemetry_otlp`
 * `opentelemetry_semantic_convensions` 
+
+`opentelemetry` crateは`opentelemetry_api`と`opentelemetry_sdk`をre-exportしているだけのcrateです。
  
 これらのcrateはそれぞれ対応する仕様やその実装に対応しているので、この設定項目の仕様を理解することを目指します。
+
+## crate間の関係
+
+まずはこれらのcrate間の関係を整理します。  
+
+{{ figure(images=["images/opentelemetry_crates_overview.svg"], caption="crates間の関係") }}
+
+まずApplicationはtracingのapiを利用して計装します。  
+具体的には、`tracing::instrument`や、`info_span!()`, `info!()`等を組み込みます。  
+Applicationが実行されるとtracingの情報はtracing_subscriberによって処理されるので、subscriberの処理にopentelemetryを組み込むためにtracing_opentelemetryを利用します。  
+tracing_opentelemetryはopentelemetry_apiに依存しており、実行時にその実装をinjectする必要があります。  
+opentelemetry_sdkがその実装を提供してくれているので、それを利用するのですが、opentelemetry_sdkはplugin構造になっており、protocol依存な箇所はsdkには組み込まれていません。  
+今回はgRPCを利用してtraceをexportするのですが、そのgRPC関連の実装はopentelemetry_otlpによって提供されます。  
+そして、opentelemetry_otlpはopentelemetry_sdkの設定を行うhelper関数を公開してくれているので、applicationではそれを利用します。  
+
+概ねこのような役割分担となっています。
 
 
 ## Traceの生成からexportまでの流れ
@@ -189,10 +196,20 @@ fn tracer(sampling_ratio: f64) -> opentelemetry::sdk::trace::Tracer {
 ここまで見てきたところで、初めてだと上記のcodeは何を設定しているのかよくわからないのではないでしょうか。  
 ということで、メンタルモデルとして、traceが生成されてからexportされるまでの流れを確認します。
 
+{{ figure(images=["images/opentelemetry_trace_flow_overview.svg"], caption="traceがexportされる概要") }}
 
-## Crate間の関係性
+それぞれのcomponentの詳細はのちほど確認しますが、全体の流れとしては上記のようになっております。  
 
-## 仕様の確認
+spanがdropされたり、`#[tracing::instrument]`が付与された関数を抜けると、tracing apiによって、subsriberの`on_close()`が呼ばれます。 
+subscriberはlayered構成になっているので、各layerのspan終了処理が走ります。`OpenTelemetryLayer`はここで、tracingのspan情報をopentelemetryのspanに変換を行い、`TracerProvider`を経由して、`SpanProcessor`にexportするspanを渡します。  
+`SpanExporter`はbatchやtimeout,retry処理等を行い、serializeやprotocolの処理を担う`SpanExporter`がnetwork越しのopentelemetry collectorにspanをexportします。  
+`OpenTelemetryLayer`から先の`Tracer`についてはrustの独自実装ではなく、**opentelemetryの仕様に定められています。**  
+このSDKがどのように実装されているかの仕様というのがopentelemetry projectの特徴だと思っています。
+
+
+## APIとSDK
+
+
 
 ## Memo
 
