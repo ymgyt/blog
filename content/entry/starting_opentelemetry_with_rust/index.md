@@ -17,8 +17,10 @@ image = "images/emoji/telescope.png"
 
 前半は[公式doc](https://opentelemetry.io/docs/)を読みながら登場人物を整理し、後半は実際にdocker-compose上でそれらを動かします。  
 またRustでは[tracing-opentelemetry](https://github.com/tokio-rs/tracing/tree/master/tracing-opentelemetry) crateを利用します。  
-tracingについては[別の記事](https://blog.ymgyt.io/entry/how-tracing-and-tracing-subscriber-write-events)で基本的な仕組みについて書いたのでopentelemetry固有の処理について述べます。    
+tracingについては[別の記事](https://blog.ymgyt.io/entry/how-tracing-and-tracing-subscriber-write-events/)で基本的な仕組みについて書いたのでopentelemetry固有の処理について述べます。    
 [sample code](https://github.com/ymgyt/opentelemetry-handson)
+
+traceの設定については、[別の記事](https://blog.ymgyt.io/entry/understanding-opentelemetry-tracer-configuration-from-specifications/)に詳しい説明を書きました。
 
 ## OpenTelemetryとは
 
