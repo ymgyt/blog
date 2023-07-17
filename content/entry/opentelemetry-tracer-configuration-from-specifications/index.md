@@ -243,11 +243,11 @@ Plugin AuthorはSDKのpluginのmaintainerです。本記事でいうと、opente
 Application Ownerから、SDKのConstructorとPluginのConstructorに矢印が伸びています。
 
 ```rust
-    opentelemetry_otlp::new_pipeline() // 👈 Plugin Constructor
-        .tracing()
-        .with_trace_config(
-            opentelemetry::sdk::trace::Config::default() // 👈 SDK Constructor
-        // ...
+opentelemetry_otlp::new_pipeline() // 👈 Plugin Constructor
+    .tracing()
+    .with_trace_config(
+        opentelemetry::sdk::trace::Config::default() // 👈 SDK Constructor
+    // ...
 ```
 
 Plugin AuthorからSDKのPlugin Interfaceに矢印が伸びていますが、これはPluginがSDKのtraitを実装しているということです。具体例はのちほど見ていきます。  
@@ -358,14 +358,14 @@ fn tracer(sampling_ratio: f64) -> opentelemetry::sdk::trace::Tracer {
 ## `opentelemetry::sdk::trace::Config`
 
 ```rust
-    opentelemetry_otlp::new_pipeline()
-        .tracing()
-        .with_trace_config(
-            opentelemetry::sdk::trace::Config::default()
-                .with_sampler(/*...*/)
-                .with_id_generator(/*...*/)
-                .with_resource(/*...*/),
-        )
+opentelemetry_otlp::new_pipeline()
+    .tracing()
+    .with_trace_config(
+        opentelemetry::sdk::trace::Config::default()
+            .with_sampler(/*...*/)
+            .with_id_generator(/*...*/)
+            .with_resource(/*...*/),
+    )
 ```
 
 `with_trace_config()`に`sdk::trace::Config`を渡します。  
