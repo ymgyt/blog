@@ -13,7 +13,7 @@
       {%- if section -%}
         {{ section.permalink | escape_xml | safe }}
       {%- else -%}
-        {{ config.base_url | escape_xml | safe }}
+        {{ config.base_url ~ '/entry/' | escape_xml | safe }}
       {%- endif -%}
     "/>
     <generator uri="https://www.getzola.org/">Zola</generator>
