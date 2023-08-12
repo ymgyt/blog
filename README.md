@@ -6,11 +6,8 @@ Zennと連携しているbranch
 
 ```sh
 # Create new article
-$ npx zenn new:article
-
-# Create book
-$ npx zenn new:book
+npx zenn new:article
 
 # Show preview
-$ npx zenn preview
+cargo make preview
 ```
