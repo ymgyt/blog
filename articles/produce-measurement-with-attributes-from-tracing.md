@@ -4,7 +4,7 @@ emoji: "🔭"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["rust", "opentelemetry", "tracing"]
 published: false
-publication-name: "fraim"
+publication_name: "fraim"
 ---
 
 # Header1
