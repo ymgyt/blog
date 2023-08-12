@@ -1,5 +1,5 @@
 ---
-title: "[WIP]tracingからAttributesを付与してmetricsを出力できるようtracing-opentelemetryにPRを送った"
+title: "tracingからAttributesを付与してmetricsを出力できるようtracing-opentelemetryにPRを送った"
 emoji: "🔭"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["rust", "opentelemetry", "tracing"]
