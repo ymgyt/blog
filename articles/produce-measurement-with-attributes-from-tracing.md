@@ -27,6 +27,16 @@ tracing::info!(monotonic_counter.foo = 1);
 
 とすると、`foo` [Counter]をincrementすることができます。
 
+[tracing-opentelemetry]のversionは`0.20.0`です。 
+その他の関連crateは以下の通りです。 
+
+```toml
+[dependencies]
+opentelemetry = "0.20.0"
+tracing = "0.1.35"
+tracing-subscriber = "0.3.0"
+```
+
 # PRで実装した機能の概要
 
 [tracing]から[Metrics]を出力する際に、[Attribute]を付与できないといった制約がありました。 
