@@ -611,10 +611,10 @@ trace用のlayerのbenchmarkはあったのですが[`MetricsLayer`]のbenchmark
 本来は旧実装と比較したかったのですが、benchmarkするには、なんらかの形で旧実装を公開する必要があったので断念しました。  
 こういうときどうすればいいんですかね?
 
-# Fraimgraph
+# Flamegraph
 
 criterionのbenchmarkにpprofを設定できるのは知りませんでした。利用してみたところ以下のような結果を得られました。
-![Metricslayer Frame Graph](https://storage.googleapis.com/zenn-user-upload/dbb8b2dc8703-20230814.png)
+![Metricslayer Flame Graph](https://storage.googleapis.com/zenn-user-upload/dbb8b2dc8703-20230814.png)
 Metrics更新時のlock処理に時間を使っていることがわかります。
 
 
