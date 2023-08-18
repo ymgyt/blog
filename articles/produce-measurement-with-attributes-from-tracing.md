@@ -131,7 +131,7 @@ where
 ```
 [source](https://github.com/tokio-rs/tracing-opentelemetry/blob/d9b18f2aeddbab1b26c2794503a2c6423a2426e0/src/metrics.rs#L194C4-L194C4)
 
-となっており、field名に[`MetricsLayer`]が処理の対象とするprefix(`monotonic_counter,counter,histgram`)が利用されている場合のみ、`self.instruments.update_metric()`でmetricsの処理を実施していることがわかりました。
+となっており、field名に[`MetricsLayer`]が処理の対象とするprefix(`monotonic_counter,counter,histogram`)が利用されている場合のみ、`self.instruments.update_metric()`でmetricsの処理を実施していることがわかりました。
 
 ## [`Instruments`]の仕組み
 
@@ -324,7 +324,7 @@ fn register_callsite(&self, metadata: &'static Metadata<'static>) -> Interest
 
 (意訳: このメソッドはspanやeventがグローバルで有効かを判定するもので、レイヤー単位でspanやeventの通知を制御するものではない。これはスタック全体のフィルタリングを実装するレイヤーを意図したもの。特定のspanやeventを処理の対象とはしないが、グローバルで無効にしたくないレイヤーは単にon_eventでそれらを無視すればよい。)
 
-とあるように、`register_callsite()`を利用しても、[`MetricsLayer`]でmetrics以外のevnetで`on_event()`が呼ばれなくなるわけではないということです。(そのような仕組みは別であり、のちほど言及します。) 
+とあるように、`register_callsite()`を利用しても、[`MetricsLayer`]でmetrics以外のeventで`on_event()`が呼ばれなくなるわけではないということです。(そのような仕組みは別であり、のちほど言及します。) 
 この仕組みは[`Event`]や[`Span`]を特定のLevelでfilterする(DEBUGを無視する等) [`LevelFilter`](https://docs.rs/tracing-subscriber/latest/tracing_subscriber/filter/struct.LevelFilter.html)向けであると思われます。
 ということで、ある[`Event`]がmetricsを含んでおり処理対象かどうかは自前で管理する必要がありそうということがわかりました。
 
