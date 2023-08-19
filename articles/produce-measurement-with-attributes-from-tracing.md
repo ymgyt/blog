@@ -3,7 +3,7 @@ title: "tracingからAttributesを付与してmetricsを出力できるように
 emoji: "🔭"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["rust", "opentelemetry", "tracing"]
-published: false
+published: true
 publication_name: "fraim"
 ---
 
