@@ -8,7 +8,7 @@ publication_name: "fraim"
 ---
 
 現在、[FRAIM]では[OpenTelemetry]の導入を進めています。  
-BackendではRustで書かれており、Applicationから出力するMetricsに関しても[OpenTelemetry]の[Metrics]を利用したいと考えています。  
+BackendはRustで書かれており、Applicationから出力するMetricsに関しても[OpenTelemetry]の[Metrics]を利用したいと考えています。  
 既に[tracing]を導入しているので、[tracing-opentelemetry]を利用することでApplicationに[Metrics]を組み込めないか検討していました。  
 その際に必要な機能があったので[PR](https://github.com/tokio-rs/tracing-opentelemetry/pull/43)を[tracing-opentelemetry]に送ったところマージしてもらえました。  
 本記事ではその際に考えたことや学びについて書いていきます。 
@@ -16,7 +16,7 @@ BackendではRustで書かれており、Applicationから出力するMetricsに
 # TL;DR
 
 Rustのapplicationで[OpenTelemetry]の[Metrics]を[tracing]から出力するために[tracing-opentelemetry]を利用している。  
-その際に[Attribute]を[Metrics]に関連づける機能が必要だったので、[tracing-subscriber]の[Per-Layer Filtering]を利用して実装した。
+その際に[Attribute]を[Metrics]に関連づける[機能](https://www.cncf.io/blog/2023/08/03/streamlining-observability-the-journey-towards-query-language-standardization/)が必要だったので、[tracing-subscriber]の[Per-Layer Filtering]を利用して[実装](https://github.com/tokio-rs/tracing-opentelemetry/pull/43)した。
 
 
 # 前提
