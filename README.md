@@ -11,3 +11,8 @@ npx zenn new:article
 # Show preview
 cargo make preview
 ```
+
+## Add Image to articles
+
+1. add image under `/images`
+2. in article `![](/images/foo.png)` (use absolute path)
