@@ -523,8 +523,6 @@ impl Operator {
             return Err(Error::invalid_spec(err));
         }
 
-        let start = tokio::time::Instant::now();
-
         let client = context.client.clone();
         let api = hello.api(client)?;
 
@@ -535,13 +533,7 @@ impl Operator {
             }
         })
         .await
-        .map_err(|e| Error::FinalizerError(Box::new(e)));
-
-        info!(
-            monotonic_counter.operator.reconcile.count = 1,
-            histogram.operator.reconcile.duration = start.elapsed().as_millis(),
-        );
-        action
+        .map_err(|e| Error::FinalizerError(Box::new(e)))
     }
 }
 ```
