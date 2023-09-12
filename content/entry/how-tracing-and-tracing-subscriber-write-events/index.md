@@ -61,6 +61,7 @@ versionは[`tracing-subscriber-0.3.16`](https://github.com/tokio-rs/tracing/tree
 * `tracing-log`
   * log crateとの互換処理も提供されています
 * per-filter-layer
+  * [tracing-opentelemetryにPRを送った記事](https://blog.ymgyt.io/entry/produce-measurement-with-attributes-from-tracing/)でper-filter-layerの利用方法について書きました
 
 ## 前提の確認
 
