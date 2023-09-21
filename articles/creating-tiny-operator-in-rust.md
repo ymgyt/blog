@@ -28,7 +28,7 @@ anyhow = { version = "1.0", default_features = false, features = ["std"] }
 futures = { version = "0.3.28", default_features = false }
 garde = { version = "0.15.0" , features = ["derive"] }
 kube = { version = "0.85.0", default_features = false, features = ["client", "rustls-tls", "derive", "runtime"] }
-k8s-openapi = { version = "0.19.0", default_features = false, features = ["v1_23"] }
+k8s-openapi = { version = "0.19.0", default_features = false, features = ["v1_27"] }
 schemars = { version = "0.8.12", default_features = false, features = ["derive"] }
 serde = { version = "1.0", default_features = false, features = ["derive"]}
 serde_json = { version = "1.0.105", default_features = false }
@@ -124,7 +124,7 @@ CRDのapi group等の指定は`#[kube()]` annotationによって行えます。
 #[kube(
     // Required properties
     group = "fraim.co.jp",
-    version = "v1alpha",
+    version = "v1",
     kind = "Hello",
     // Optional properties
     singular = "hello",
@@ -167,7 +167,7 @@ spec:
   scope: Namespaced
   versions:
   - additionalPrinterColumns: []
-    name: v1alpha
+    name: v1
     schema:
       openAPIV3Schema:
         description: Auto-generated derived type for HelloSpec via `CustomResource`
