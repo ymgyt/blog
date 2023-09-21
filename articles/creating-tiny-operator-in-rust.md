@@ -3,7 +3,7 @@ title: "kube-rsを使ってRustで簡単なKubernetes Operatorを作ってみる
 emoji: "🦀"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["rust", "kubernetes", "kubers"]
-published: false
+published: true
 publication_name: "fraim"
 ---
 
