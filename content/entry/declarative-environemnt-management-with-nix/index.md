@@ -5,7 +5,7 @@ description = "Nixを利用してlinuxとmacの開発環境を宣言的に管理
 date = "2023-06-13"
 draft = false
 [taxonomies]
-tags = ["etc"]
+tags = ["nix"]
 [extra]
 image = "images/emoji/package.png"
 +++
