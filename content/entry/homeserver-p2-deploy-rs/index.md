@@ -2,8 +2,8 @@
 title = "❄️ NixOSとRaspberry Piで自宅server | Part 2 deploy-rsでdeploy"
 slug = "homeserver-with-nixos-and-raspberrypi-deploy-with-deploy-rs"
 description = "deploy-rsを使ってRaspberry Piにdeploy"
-date = "2023-10-08T01:00:00Z"
-draft = true
+date = "2023-10-09T01:00:00Z"
+draft = false
 [taxonomies]
 tags = ["nix"]
 [extra]
@@ -16,7 +16,7 @@ Part 2 deply-rsでNixOS Configurationを適用(👈 この記事)
 [Part 4 opentelemetry-collectorとopenobserveでmetricsを取得](https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-export-metrics-with-opentelemetry-collector/)  
 
 本記事はNixOSとRaspberry Piで自宅serverをはじめる記事のPart 2です。   
-Part 1でRaspberry Pi(以下raspi)にNixOSをinstallしてsshできるところまでを行いました。  　
+Part 1でRaspberry Pi(以下raspi)にNixOSをinstallしてsshできるところまでを行いました。  
 本記事ではraspiの設定をfalkeで管理して手元のhost machineからdeploy(適用)できるようにしていきます。  
 実際のsourceは[こちら](https://github.com/ymgyt/mynix/tree/main/homeserver)で管理しています。 
 
@@ -136,7 +136,7 @@ raspiを管理するrepositoryの`flake.nix`の全体としては以下のよう
           modules = [ ./hosts/rpi4-01.nix ];
         };
       # ...
-    }
+    };
 }
 ```
 

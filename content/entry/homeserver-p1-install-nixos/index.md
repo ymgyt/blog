@@ -2,8 +2,8 @@
 title = "❄️ NixOSとRaspberry Piで自宅server | Part 1 NixOSをinstall"
 slug = "homeserver-with-nixos-and-raspberrypi-install-nixos"
 description = "Raspberry PiへのNixOSのinstallについて"
-date = "2023-10-08T00:00:00Z"
-draft = true
+date = "2023-10-09T00:00:00Z"
+draft = false
 [taxonomies]
 tags = ["nix"]
 [extra]
