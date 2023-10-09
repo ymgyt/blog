@@ -16,13 +16,13 @@ Part 2 deply-rsでNixOS Configurationを適用(👈 この記事)
 [Part 4 opentelemetry-collectorとopenobserveでmetricsを取得](https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-export-metrics-with-opentelemetry-collector/)  
 
 本記事はNixOSとRaspberry Piで自宅serverをはじめる記事のPart 2です。   
-Part 1でRaspberry Pi(以下raspi)にNixOSをinstallしてsshできるところまでを行いました。  
+[Part 1]でRaspberry Pi(以下raspi)にNixOSをinstallしてsshできるところまでを行いました。  
 本記事ではraspiの設定をfalkeで管理して手元のhost machineからdeploy(適用)できるようにしていきます。  
 実際のsourceは[こちら](https://github.com/ymgyt/mynix/tree/main/homeserver)で管理しています。 
 
 概要としては[deploy-rs]を利用することでansibleで構成管理するのと近いことができます。  
 違うのはprovisioningの設定を`nixosConfiguration`で行える点です。これによりhostのNixOSやMacと同じ設定の仕組みでraspiも管理できます。  
-NixOSやMacをnixで管理していく方法については以前[Nixでlinuxとmacの環境を管理してみる](https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/)で書いてみました。
+NixOSやMacをnixで管理していく方法については以前、[Nixでlinuxとmacの環境を管理してみる](https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/)で書いてみました。
 
 
 raspiを管理するrepositoryの`flake.nix`の全体としては以下のようになります。 
@@ -117,7 +117,8 @@ raspiを管理するrepositoryの`flake.nix`の全体としては以下のよう
 ```nix
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable"; # ...
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable"; 
+    # ...
   };
 
   outputs =
@@ -143,7 +144,7 @@ raspiを管理するrepositoryの`flake.nix`の全体としては以下のよう
 raspiのhost `rpi4-01`の設定は上記のようになります。  
 host名は[Part 1]で設定してある前提です。  
 設定自体は通常の`nixosConfigurations`で行います。  
-`specialArgc = spce`を指定することでmoduleから各種設定参照できるようにしてあります。  
+`specialArgc = spce`を指定することでmoduleから`spec`のfieldを参照できるようにしてあります。  
 `system`はraspiなので`aarch64-linux`を指定しました。   
 
 調べ方としては`nix repl`を利用しました。
@@ -190,7 +191,7 @@ raspiそれぞれで共通する設定は`modules/rpi4.nix`に定義しました
     # ...
   };
 
-  environment.systemPackages = with pkgs; [ helix git bottom bat ];
+  environment.systemPackages = with pkgs; [ helix bottom bat ];
 
   # ...
   users = {
@@ -372,8 +373,13 @@ deploy --skip-checks --interactive .
 
 無事、time zoneが`Asia/Tokyo`に変更されていることが確認できました。
 
-Part 3ではraspi上でserviceを動かすために必要なsecretを管理できるようにしていきます。
+[Part 3]ではraspi上でserviceを動かすために必要なsecretを管理できるようにしていきます。
 
 
-[Part 1]: https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-install-nixos/
 [deploy-rs]: https://github.com/serokell/deploy-rs
+[Part 1]: https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-install-nixos/
+[Part 2]: https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-deploy-with-deploy-rs/  
+[Part 3]: https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-secret-management-with-ragenix/  
+[Part 4]: https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-export-metrics-with-opentelemetry-collector/  
+
+ 

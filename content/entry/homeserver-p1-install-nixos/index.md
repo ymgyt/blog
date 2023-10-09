@@ -39,7 +39,7 @@ LANケーブルは無線LAN利用する場合は不要です。今回は有線�
 
 ## NixOS imageをSD Cardに書き込む
 
-基本的にはnix.devの[Installing NixOS n a Raspberry Pi](https://nix.dev/tutorials/nixos/installing-nixos-on-a-raspberry-pi)にしたがって進めていきます。
+基本的にはnix.devの[Installing NixOS on a Raspberry Pi](https://nix.dev/tutorials/nixos/installing-nixos-on-a-raspberry-pi)にしたがって進めていきます。
 
 
 ### NixOS imageの取得
@@ -193,7 +193,7 @@ sshの設定は以下です。
 passwordは無効にしてもよいと思いますが最初は有効にしてました。  
 `users.users.ymgyt.openssh.authorizedKeys.keys`にさきほど生成したkey pairの公開鍵を登録します。
 
-作成した`configuration.nix`をraspiから取得できるようにfile serverをたちあげました。  
+作成した`configuration.nix`をraspiから取得できるようにfile serverを立ち上げました。  
 今回は`sfz`を利用しましたが、なんでも良いです。  
 
 ```sh
@@ -299,4 +299,10 @@ zellijのdefaultのkeybindで、Ctrl + t, sでsync modeになりtabのpanelそ�
 
 {{ figure(images=["images/ss-hostname.png"], caption="hostnamectlの実行") }}
 
-Part 2ではraspiの設定をflakeで管理して、host machineから変更を適用できるようにします。
+[Part 2]ではraspiの設定をflakeで管理して、host machineから変更を適用できるようにします。
+
+[Part 1]: https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-install-nixos/
+[Part 2]: https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-deploy-with-deploy-rs/  
+[Part 3]: https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-secret-management-with-ragenix/  
+[Part 4]: https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-export-metrics-with-opentelemetry-collector/  
+

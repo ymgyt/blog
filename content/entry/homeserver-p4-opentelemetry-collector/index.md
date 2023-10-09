@@ -19,7 +19,7 @@ Part 4ではraspi上でopentelemetry-collector(contrib destribution)を動かし
 現在のところ、openobserveのcloud版は月200GB ingestion, 15日間保持までならfree planで利用できます。  
 またcluster構成でなければ自前でhostするのもやりやすいのでいずれはraspi上で動かせればと考えていますが、CHANGELOGをみているとまだまだ開発中といった感じなのでもうすこし安定してからにしようかと思っています。  
 
-openobserveへのmetricsのexportには組織情報やcredentialが必要です。これはPart 3で準備してあり、既にdeploy済である前提です。
+openobserveへのmetricsのexportには組織情報やcredentialが必要です。これは[Part 3]で準備してあり、既にdeploy済である前提です。
 
 利用するopentelemetry-collectorのversionはcontrib版の`v0.78.0`です。
 
@@ -29,7 +29,7 @@ openobserveへのmetricsのexportには組織情報やcredentialが必要です�
 自分はsystemdがよくわかっていなかったので、[Linux Service Management Made Easy with systemd](https://learning.oreilly.com/library/view/linux-service-management/9781801811644/)を読んでみました。  
 こちらの本は非常に参考になり別で感想を書こうと思っています。　
 
-opentelemetryやcollectorとはそもそもなにかについては以前[記事](https://blog.ymgyt.io/entry/starting_opentelemetry_with_rust/)を書いたのでよければ読んでみてください。
+opentelemetryやcollectorとはそもそもなにかについては以前、[記事](https://blog.ymgyt.io/entry/starting_opentelemetry_with_rust/)を書いたのでよければ読んでみてください。
 
 ということでnixの設定に戻ります。  
 まず、opentelemetry-collecotr用に`modules/opentelemetry-collector/` directoryを作成して、そこに`default.nix`を以下のように定義します。  
@@ -332,9 +332,18 @@ exporters:
 
 この設定をdeployし、openobserveでdashboardを設定することで以下のようなmetricsを確認できるようになりました。  
 
+openobserveではmetricsにPromQLが利用できるので、`sum without(cpu,state) (system_cpu_utilization_ratio{host_name=~"rpi4",state!="idle"}) * 100`のようにして簡単にdashboardが作れます。
+
+
 {{ figure(images=["images/ss-openobserve-dashboard.png"], caption="openobserveのdashboardの様子")}}
 
 ここまでで、NixOSの設定をraspi上に反映し、metricsを取得できるようになりました。  
 次はRustでraspiのcpu温度を取得し、opentelemetryのmetricsとしてexportするようなapplicationを作ってみようと思っています。
 
 ここまでお読みいただき、ありがとうございました。
+
+[Part 1]: https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-install-nixos/
+[Part 2]: https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-deploy-with-deploy-rs/  
+[Part 3]: https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-secret-management-with-ragenix/  
+[Part 4]: https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-export-metrics-with-opentelemetry-collector/  
+

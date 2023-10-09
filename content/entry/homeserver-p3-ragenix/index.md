@@ -25,7 +25,7 @@ secret管理では[ragenix]を利用します。[ragenix]は[agenix]のrust実�
 
 概ね以下の手順を踏みます。  
 
-1. Secretを`ragenix`とssh keyで暗号化する
+1. Secretを`ragenix` cliとssh keyで暗号化する
 2. 暗号化されたsecretをraspiを設定するflake(nixosConfiguration)で参照する
 3. Deploy先でragenixが暗号化されたsecretを復号する
 4. Secretをserviceが平文として参照する
@@ -57,8 +57,8 @@ rb49pvi3FUy+GKUx3w5trvIjXWALqA==
 
 ### SSH Keypairの準備
 
-[ragenix]での暗号化にはssh keypairが必要です。secretを復号できる公開鍵を複数しているすることができます。  
-復号には指定された公開鍵に対応するどれがひとつの秘密鍵が必要です。  
+[ragenix]での暗号化にはssh keypairが必要です。secretを復号できる公開鍵を複数指定することができます。  
+復号には指定された公開鍵に対応するいずれかの秘密鍵が必要です。  
 自分の復号用にはraspiへのsshに利用するkeyが利用できます。  
 今から作成するsecretはdeploy先のraspiで復号したいので、deploy対象のraspi nodeそれぞれのkeypairが必要です。(暗号化するだけなら公開鍵)  
 新たにssh keypairを作成して、raspiに配布してもよいのですが、すでにraspi上に生成されているkeypairを使うこともできます。今回はraspi上に既に生成されているkeypairを利用してみます。  
@@ -77,7 +77,7 @@ ssh-keyscan -t ed25519 192.168.10.150
 ### Openobserveのsecretの取得
 
 次に実際に暗号化するsecretを取得します。  
-今回はmetricsをopenobserveに書き込むのでそのためのcredentialが必要です。openobserveについてはPart 4で説明する予定です。  
+今回はmetricsをopenobserveに書き込むのでそのためのcredentialが必要です。openobserveについては[Part 4]で説明する予定です。  
 Openobserveの画面からIngestion > Metrics > OTEL Collectorに遷移するとexporterの設定が表示されます。  
 
 `v0.6.4`ではURLとしては`https://cloud.openobserve.ai/ingestion/metrics/otelcollector`でした。  
@@ -100,7 +100,7 @@ credentialとしてはendpointに含まれている`MY_ORGANIZATION`とAuthoriza
 
 ssh公開鍵とcredentialが用意できたので、[ragenix]で暗号化していきます。 
 
-secret管理用のrepo(`mynix.secret`)に`secrets.nix`を以下のよう作成します。  
+secret管理用のrepo(`mynix.secrets`)に`secrets.nix`を以下のよう作成します。  
 
 ```nix
 let 
@@ -134,7 +134,7 @@ OPEN_OBSERVE_TOKEN=OPEN_OBSERVE_TOKEN
 を入力して`$EDITOR`を終了します。  
 暗号化された`openobserve.age` fileが作成されていれば完了です。
 
-内容を更新したり、新しい公開鍵を追加した際とうは以下のcommandで更新できます。  
+内容を更新したり、新しい公開鍵を追加した際は以下のcommandで更新できます。  
 
 ```sh
 nix run github:yaxitech/ragenix -- --rekey -i path/to/key
@@ -262,7 +262,7 @@ systemdまわりの設定の話はPart 4で行います。
 
 これでdeploy-rsでdeployするだけでsecretを配布できるようになりました。管理するものが既存のssh keyだけなので扱いやすいと思っています。  
 
-Part 4ではraspi上でopentelemetry-collectorを動かしてmetricsを取得できるようにします。
+[Part 4]ではraspi上でopentelemetry-collectorを動かしてmetricsを取得できるようにします。
 　
 
 ## 参考
@@ -273,4 +273,9 @@ Part 4ではraspi上でopentelemetry-collectorを動かしてmetricsを取得で
 
 [agenix]: https://github.com/ryantm/agenix
 [ragenix]: https://github.com/yaxitech/ragenix
+[Part 1]: https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-install-nixos/
+[Part 2]: https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-deploy-with-deploy-rs/  
+[Part 3]: https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-secret-management-with-ragenix/  
+[Part 4]: https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-export-metrics-with-opentelemetry-collector/  
+
 
