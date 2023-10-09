@@ -17,7 +17,7 @@ Part 2 deply-rsでNixOS Configurationを適用(👈 この記事)
 
 本記事はNixOSとRaspberry Piで自宅serverをはじめる記事のPart 2です。   
 [Part 1]でRaspberry Pi(以下raspi)にNixOSをinstallしてsshできるところまでを行いました。  
-本記事ではraspiの設定をfalkeで管理して手元のhost machineからdeploy(適用)できるようにしていきます。  
+本記事ではraspiの設定をflakeで管理して手元のhost machineからdeploy(適用)できるようにしていきます。  
 実際のsourceは[こちら](https://github.com/ymgyt/mynix/tree/main/homeserver)で管理しています。 
 
 概要としては[deploy-rs]を利用することでansibleで構成管理するのと近いことができます。  
