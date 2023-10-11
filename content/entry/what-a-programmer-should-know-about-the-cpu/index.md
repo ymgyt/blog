@@ -4,7 +4,6 @@ slug = "what-a-programmer-should-know-about-the-cpu"
 description = "プログラマーのためのCPU入門がとてもわかりやすかったです"
 date = "2023-03-15"
 draft = false
-description = "プログラマーのためのCPU入門が非常によかったので感想を書いた"
 [taxonomies]
 tags = ["book"]
 [extra]
