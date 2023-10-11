@@ -3,6 +3,7 @@ title = "🦀 GATsに入門する"
 slug = "getting-started-with-gats"
 date = "2023-05-27"
 draft = false
+description = "Generic associated typesに入門しよう"
 [taxonomies]
 tags = ["rust"]
 [extra]

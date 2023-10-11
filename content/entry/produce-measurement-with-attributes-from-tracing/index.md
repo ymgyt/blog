@@ -3,6 +3,7 @@ title = "🔭 tracingからAttributesを付与してmetricsを出力できるよ
 slug = "produce-measurement-with-attributes-from-tracing"
 date = "2023-08-26"
 draft = false
+description = "tracing-opentelemetryのMetricsLayerに機能を追加するPRを送った話"
 [taxonomies]
 tags = ["rust"]
 [extra]

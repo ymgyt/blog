@@ -3,6 +3,7 @@ title = "🔭 RustでOpenTelemetryをはじめよう"
 slug = "starting_opentelemetry_with_rust"
 date = "2022-12-18"
 draft = false
+description = "RustではじめるOpenTelemetry"
 [taxonomies]
 tags = ["rust"]
 [extra]

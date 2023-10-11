@@ -3,6 +3,7 @@ title = "📗 もっとCPUの気持ちが知りたいですか？を読んだ感
 slug = "cpu_no_kimochi"
 date = "2022-11-27"
 draft = false
+description = "CPUの気持ち本を読んだ感想"
 [taxonomies]
 tags = ["book"]
 +++

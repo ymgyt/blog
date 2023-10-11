@@ -3,6 +3,7 @@ title = "🔭 tracing/tracing-subscriberでログが出力される仕組みを�
 slug = "how-tracing-and-tracing-subscriber-write-events"
 date = "2022-11-19"
 draft = false
+description = "tracing-subscrierの仕組みについて"
 [taxonomies]
 tags = ["rust"]
 +++

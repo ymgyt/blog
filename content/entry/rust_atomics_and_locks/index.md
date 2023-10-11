@@ -3,6 +3,7 @@ title = "📕 Rust Atomics and Locksを読んだ感想"
 slug = "rust_atomics_and_locks"
 date = "2022-12-31"
 draft = false
+description = "Rust Atomics and Locksが非常によかったので感想を書いた"
 [taxonomies]
 tags = ["rust","book"]
 +++
