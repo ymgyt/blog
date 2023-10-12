@@ -106,7 +106,10 @@ man systemd.directives | grep 'EnvironmentFile=' -A 2
 ```
 
 と表示され、`man systemd.exec`をみればよいことがわかる。  
-stackoverflowのsystemd関連の回答では大抵、このmanの説明と同じことが説明されていた。調べ方を教えてくれるのが一番助かる。
+また、unit fileがどのdirectoryから取得されるかは、`systemd-analyze unit-paths`で表示できることもわかった。   
+stackoverflowのsystemd関連の回答ではこのmanの説明と同じことが説明されていた場合が結構多く、調べ方を教えてくれるのが一番助かる。
+
+
 
 TODO: 各service typeがどのchで説明されているか書く
 
@@ -130,13 +133,89 @@ systemでどんなunitが動いているかは`systemctl list-units`で調べら
 ## Chapter 3 Understanding Service, Path, and Socket Units
 
 Service unitはSysVのinit scriptの役割を果たす。つまりdaemonを制御する。  
-設定でわからない項目は`man systemd.directives`で調べる。  
+設定でわからない項目は`man systemd.directives`で調べられる。  
 `[Unit]`については、`man systemd.unit`、`[Service]`については`man systemd.service`で調べられる。また、実行時に共通する話は`man systemd.exec`にも説明がある。
+
+httpdやsshd serviceの具体例をみながらどんな項目があるのかの概要を説明してくれる。最初からmanをみるのは大変なので、説明があった箇所のmanあたりから読んでいくのが自分にはよかった。
+
+また、`systemd-timesyncd`ではcapabilitiesの設定がなされており、それについても説明があった。
+
+```ini
+# ...
+[Service]
+AmbientCapabilities=CAP_SYS_TIME
+CapabilityBoundingSet=CAP_SYS_TIME
+ExecStart=!!/nix/store/qyxcg96wg1a21sj0sgbaxcapqc1vyq65-systemd-253.6/lib/systemd/systemd-timesyncd
+# ...
+User=systemd-timesync
+```
+
+自分でserviceを定義する際は、root userを利用せずにcapabilitiesをセットできるようにしていきたい。  
+(`ExecStart=!!`の`!!`については`man systemd.service`に説明があった)
+
+socket unitについても説明がある。  
+が、いまいち使いどころがわかっていない。
+
+path unitは、指定のfile pathの変更を監視して、変更があった場合に指定のserviceを起動してくれるものとのことです。  
+これもいまいち使いどころがわかっていないです。
 
 
 ## Chapter 7 Understanding systemd Timers 
 
 systemd timerを使うことでcronのようなscheduling処理ができる。
+
+NixOS上で有効なtimerを確認したところ、logrotationとtmpfileのclean処理が起動していた。
+
+```sh
+$ systemctl list-units -t timer
+  UNIT                         LOAD   ACTIVE SUB     DESCRIPTION
+  logrotate.timer              loaded active waiting logrotate.timer
+  systemd-tmpfiles-clean.timer loaded active waiting Daily Cleanup of Temporary Directories
+```
+
+systemdでtimerを利用して処理をschedulingするには、まずtimer unitを作成してそこからservice unitを起動するという構成にするらしい。  
+
+ということで、logroate.timerを確認してみる。
+
+```ini
+$ systemctl cat logrotate.timer
+
+# /etc/systemd/system/logrotate.timer
+[Unit]
+
+[Timer]
+OnCalendar=hourly
+```
+
+起動する処理が指定されていないが、`man systemd.timer`によると
+
+>  For each timer file, a matching unit file must exist, describing the unit to activate when the
+       timer elapses. By default, a service by the same name as the timer (except for the suffix) is
+       activated. Example: a timer file foo.timer activates a matching service foo.service.
+
+ということで、`logrotate.timer`は`logrotate.service`を起動するようだった。  
+
+`OnCalendar=hourly`と指定した場合、具体的にいつ実行されるかは`man systemd.time`の`CALENDAR EVENTS`に説明があり、`hourly → *-*-* *:00:00`と解釈されるようだった。
+
+`AccuracySec=1h`のようにどの程度schedulingされた時間に対して精度を要求するかも指定できる。manによると消費電力を最適化するためにできるだけ大きい値を設定しておくのが望ましいらしい。
+
+また、`Persistent=true`でschedulingされた期間に電源がoffだった場合、起動時に実行するかも制御できそうだった。  
+
+`Nice=`,`IOSchedulingClass=`,`SchedulingPriority`等で、実行するserviceの優先度も指定できそうだったので、設定する際は調べておきたい。
+
+
+## Chapter 14 Using journald
+
+本章ではjournald,journalctlの説明をしてくれます。  
+journaldとrsyslogの比較の話は勉強になりました。本書執筆時点(2021)では、journaldに完全移行したdistroはないそうで、journaldとrsyslogが並行稼働しているのが実情のようでした。
+
+`journalctl --disk-usage`でlogのdisk使用量みれたりするのも知らなかったので、`man journald.conf`と`man journalctl`を読まないとだめだなと思いました。  
+
+`journalctl --flush`して、`journalctl --rotate --vacuum-time=5d`のようにしてlogをrotateされる方法等についても解説されています。
+`journalctl`についてもいろいろな使い方の具体例がのっているので、一度読んだ後man読むとだいぶ使い方がわかりそうです。  
+
+自分はもっぱら、`journalctl -u opentelemetry-collector -f`のような感じでserviceごとのlogの見方がわかっただけで大変助かりました。  
+logがどこに出力されるのかをきにしなくていいのが良いですね。
 
 ## memo
 
