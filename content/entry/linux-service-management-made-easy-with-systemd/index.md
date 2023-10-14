@@ -159,6 +159,84 @@ socket unitについても説明がある。
 path unitは、指定のfile pathの変更を監視して、変更があった場合に指定のserviceを起動してくれるものとのことです。  
 これもいまいち使いどころがわかっていないです。
 
+## Chapter 4 Controlling systemd Services
+
+`systemctl`の使い方についての解説があります。  
+serviceをserver起動時に起動する`systemctl enable`を実行した際に、`/etc/systemd/system/multi-user.target.wants/`配下にsymlinkが作成されるといった点も解説されます。
+
+
+## Chapter 5 Creating and Editing Services
+
+本章ではserviceをつくる過程の解説があります。  
+`systemctl edit [--full]`で既存を直接編集することもできるみたいです。  
+
+`systemd-analyze security opentelemetry-collector`のように実行するとserviceの設定のsecurity的な評価を表示してくれます。  
+試しに実行してみたところ  
+
+```
+systemd-analyze security opentelemetry-collector
+  NAME                                                        DESCRIPTION                                                             EXPOSURE
+✗ RemoveIPC=                                                  Service user may leave SysV IPC objects around                               0.1
+✗ RootDirectory=/RootImage=                                   Service runs within the host's root directory                                0.1
+✓ User=/DynamicUser=                                          Service runs under a static non-root user identity
+✗ CapabilityBoundingSet=~CAP_SYS_TIME                         Service processes may change the system clock                                0.2
+✓ NoNewPrivileges=                                            Service processes cannot acquire new privileges
+✓ AmbientCapabilities=                                        Service process does not receive ambient capabilities
+```
+
+上記のような出力を得ました。  
+設定fileの改善の余地がありそうです。  
+
+また、podmanを使って新しいserviceを作る例も解説されています。  
+kubernetesのようなcontainer orchestration使うほどでもない場合はsystemdのserviceからcontainer起動するでいいかもと思ってしまいました。
+
+## Chapter 6 Understanding systemd Targets
+
+targetについて。  
+targetとはなにかというと
+
+> In systemd, a target is a unit that groups together other systemd units for a particular purpose. The units that a target can group together include services, paths, mount points, sockets, and even other targets. 
+
+[link](https://learning.oreilly.com/library/view/linux-service-management/9781801811644/B17491_06_Final_NM_ePub.xhtml#:-:text=In%20systemd%2C%20a,even%20other%20targets.)
+
+ということで、他のserviceやpathといったunitをまとめる役割を果たすのがtargetということです。
+
+`systemctl list-units -t target`で確認できます。  
+
+```sh
+ systemctl list-units -t target
+  UNIT                      LOAD   ACTIVE SUB    DESCRIPTION
+  basic.target              loaded active active Basic System
+  cryptsetup.target         loaded active active Local Encrypted Volumes
+  getty.target              loaded active active Login Prompts
+  local-fs-pre.target       loaded active active Preparation for Local File Systems
+  local-fs.target           loaded active active Local File Systems
+  machines.target           loaded active active Containers
+  multi-user.target         loaded active active Multi-User System
+# ...
+```
+
+`strings systemd | grep '\.target'`を実行することでいくつかのtargetはsystemdのsourceに直接定義されていることもわかりました。  
+ただ、手元のNixOSで実行してみたところ、本文より出力されるtargetが少なかったです。
+
+```sh
+ strings  /nix/store/410cjrblagp3kbzlfwn6qxxn5m663jg5-systemd-253.3/lib/systemd/systemd |rg '\.target'
+initrd.target
+default.target
+rescue.target masked
+Failed to load rescue.target
+Falling back to default.target.
+Falling back to rescue.target.
+```
+
+`man systemd.special`にsystemdに特別扱いされるtargetの説明もあります。
+
+また、SysV initのrunlevelとsystemd targetの比較も参考になりました。
+
+target間の依存関係のvisualizeには　　
+`systemd-analyze dot default.target | dot -Tsvg out> /tmp/target.svg`  
+が便利でした。
+
 
 ## Chapter 7 Understanding systemd Timers 
 
@@ -202,6 +280,113 @@ OnCalendar=hourly
 また、`Persistent=true`でschedulingされた期間に電源がoffだった場合、起動時に実行するかも制御できそうだった。  
 
 `Nice=`,`IOSchedulingClass=`,`SchedulingPriority`等で、実行するserviceの優先度も指定できそうだったので、設定する際は調べておきたい。
+
+## Chapter 8 Understanding the systemd Boot Process
+
+systemdのboot時の挙動について。  
+`default.target`が起動の対象となり、その依存関係が解決されていく。  `default.target`は大抵、`graphical.target`か`multi-user.target`へのsymlinkになっている。  
+`man systemd.special`や`man bootup`にも解説がある。  
+
+`man bootup`のこの図がわかりやすかった。　
+
+```text
+                                       cryptsetup-pre.target veritysetup-pre.target                                                             |
+           (various low-level                                v
+            API VFS mounts:             (various cryptsetup/veritysetup devices...)
+            mqueue, configfs,                                |    |
+            debugfs, ...)                                    v    |
+            |                                  cryptsetup.target  |
+            |  (various swap                                 |    |    remote-fs-pre.target
+            |   devices...)                                  |    |     |        |
+            |    |                                           |    |     |        v
+            |    v                       local-fs-pre.target |    |     |  (network file systems)
+            |  swap.target                       |           |    v     v                 |
+            |    |                               v           |  remote-cryptsetup.target  |
+            |    |  (various low-level  (various mounts and  |  remote-veritysetup.target |
+            |    |   services: udevd,    fsck services...)   |             |              |
+            |    |   tmpfiles, random            |           |             |    remote-fs.target
+            |    |   seed, sysctl, ...)          v           |             |              |
+            |    |      |                 local-fs.target    |             | _____________/
+            |    |      |                        |           |             |/
+            \____|______|_______________   ______|___________/             |
+                                        \ /                                |
+                                         v                                 |
+                                  sysinit.target                           |
+                                         |                                 |
+                  ______________________/|\_____________________           |
+                 /              |        |      |               \          |
+                 |              |        |      |               |          |
+                 v              v        |      v               |          |
+            (various       (various      |  (various            |          |
+             timers...)      paths...)   |   sockets...)        |          |
+                 |              |        |      |               |          |
+                 v              v        |      v               |          |
+           timers.target  paths.target   |  sockets.target      |          |
+                 |              |        |      |               v          |
+                 v              \_______ | _____/         rescue.service   |
+                                        \|/                     |          |
+                                         v                      v          |
+                                     basic.target         rescue.target    |
+                                         |                                 |
+                                 ________v____________________             |
+                                /              |              \            |
+                                |              |              |            |
+                                v              v              v            |
+                            display-    (various system   (various system  |
+                        manager.service     services        services)      |
+                                |         required for        |            |
+                                |        graphical UIs)       v            v
+                                |              |            multi-user.target
+           emergency.service    |              |              |
+                   |            \_____________ | _____________/
+                   v                          \|/
+           emergency.target                    v
+                                       graphical.target
+```
+
+ここでも`systemd-analyze`が登場する。  
+引数をつけないと`systemd-analyze time`が実行され起動時の実行時間を出力してくれる。
+
+```sh
+# 手元のlaptop
+> systemd-analyze
+Startup finished in 5.128s (firmware) + 5.824s (loader) + 2.590s (kernel) + 7.575s (userspace) = 21.118s
+graphical.target reached after 7.551s in userspace.
+
+# raspi
+$ systemd-analyze
+Startup finished in 5.496s (kernel) + 33.766s (userspace) = 39.263s
+multi-user.target reached after 33.766s in userspace.
+```
+
+さらに`systemd-analyze blame`で何に時間を要しているかもわかる。  
+```sh
+$ systemd-analyze blame
+30.169s dhcpcd.service
+ 1.646s mount-pstore.service
+ 1.220s firewall.service
+ # ...
+```
+
+手元のraspiの場合、dhcp関連で時間がかかっているようだった。  
+`systemd-analyze critical-chain`というのもあり、実行してみたところ以下の出力をえた。
+
+```sh
+systemd-analyze critical-chain
+The time when unit became active or started is printed after the "@" character.
+The time the unit took to start is printed after the "+" character.
+
+multi-user.target @33.766s
+└─network-online.target @33.765s
+  └─network.target @3.106s
+    └─network-pre.target @2.822s
+      └─firewall.service @964ms +1.220s
+        └─systemd-journald.socket @764ms
+          └─system.slice @726ms
+            └─-.slice @726ms
+```
+
+`blame`だとdhcpが遅そうだったが、そういうわけでもないのだろうか。manをもう少し読んで見方を理解したい。
 
 
 ## Chapter 14 Using journald
