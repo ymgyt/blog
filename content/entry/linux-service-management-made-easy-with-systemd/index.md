@@ -1,7 +1,7 @@
 +++
 title = "📗 Linux Service Management Made Easy with systemdを読んだ感想"
 slug = "linux-service-management-made-easy-with-systemd"
-description = "Linux Service Management Made Easy with systemd本の概要だったりよかったところについて"
+description = "Linux Service Management Made Easy with systemd本の概要だったり良かったところについて"
 date = "2023-10-15"
 draft = false
 [taxonomies]
