@@ -2,17 +2,13 @@
 title = "📗 Linux Service Management Made Easy with systemdを読んだ感想"
 slug = "linux-service-management-made-easy-with-systemd"
 description = "Linux Service Management Made Easy with systemd本の概要だったりよかったところについて"
-date = "2023-10-10"
-draft = true
+date = "2023-10-15"
+draft = false
 [taxonomies]
 tags = ["book"]
 [extra]
 image = "images/emoji/green_book.png"
 +++
-
-## TODO
-* ch02のDefaultCPUAccountingについてcgourp読んでから言及する
-* ch2 unit typeごとのchへの参照
 
 ## 読んだ本
 
@@ -20,16 +16,7 @@ image = "images/emoji/green_book.png"
 
 [Linux Service Management Made Easy with systemd](https://learning.oreilly.com/library/view/linux-service-management/9781801811644/)
 
-systemdについて説明してくれている本ないかなと思っていて見つけたので読んでみました。　　
-
-## 良かったところ
-
-TODO:
-
-* 歴史的経緯
-* distributionの違い
-* cgroup
-* timerd, logind, ...
+systemdについて説明してくれている本、ないかなと思っていたら見つけたので読んでみました。　　
 
 ## Chapter 1 Understanding the Need for systemd
 
@@ -54,7 +41,7 @@ esac
 
 のようにそれぞれのscriptで実装しているのでstatusの出力になにか決まったformatがあるわけではなかった。
 
-systemdの利点の一つとして、linux distributions間での統一性にも言及されていた。用はdistroに限らず同じsystemdのcommandだけ覚えればよい。  
+systemdの利点の一つとして、linux distributions間での統一性にも言及されていた。用はdistroに限らず同じsystemdのcommandだけ覚えればよくなる。  
 また、processをkillする際もsystemdが対象processのchild processも考慮してくれるのでzombieを気にしなくてよい。  
 
 securityという観点からも、accessできるdirectoryを制限できたり、namespaces, cgroups, capabilitiesといった機能を利用できるように設計されている。  
@@ -87,8 +74,6 @@ DefaultLimitCORE=infinity
 この設定値の意味については`man systemd-system.conf`で調べられる。  
 `ManagerEnvironment`はmanager processにsetされる環境変数とのことだった。  nixらしく、`PATH`をnix storeにむけていて、globalをみないという意思を感じられる。  
 
-TODO: Accountingについて調べる。
-
 ここでsystemdにおけるunit fileの概要が説明される。 
 defaultでは`/lib/systemd/system/`配下に格納されており、変更や追加したい場合は`/etc/systemd/system/`を利用する。  
 
@@ -110,8 +95,6 @@ man systemd.directives | grep 'EnvironmentFile=' -A 2
 stackoverflowのsystemd関連の回答ではこのmanの説明と同じことが説明されていた場合が結構多く、調べ方を教えてくれるのが一番助かる。
 
 
-
-TODO: 各service typeがどのchで説明されているか書く
 
 unit fileは以下のtypeをもっている。  
 逆にいうとunit fileとはこれらの設定を抽象化したものともいえると思った。
@@ -182,6 +165,7 @@ systemd-analyze security opentelemetry-collector
 ✗ CapabilityBoundingSet=~CAP_SYS_TIME                         Service processes may change the system clock                                0.2
 ✓ NoNewPrivileges=                                            Service processes cannot acquire new privileges
 ✓ AmbientCapabilities=                                        Service process does not receive ambient capabilities
+# ...
 ```
 
 上記のような出力を得ました。  
@@ -213,7 +197,7 @@ targetとはなにかというと
   local-fs.target           loaded active active Local File Systems
   machines.target           loaded active active Containers
   multi-user.target         loaded active active Multi-User System
-# ...
+  # ...
 ```
 
 `strings systemd | grep '\.target'`を実行することでいくつかのtargetはsystemdのsourceに直接定義されていることもわかりました。  
@@ -233,7 +217,7 @@ Falling back to rescue.target.
 
 また、SysV initのrunlevelとsystemd targetの比較も参考になりました。
 
-target間の依存関係のvisualizeには　　
+target間の依存関係のvisualizeには  
 `systemd-analyze dot default.target | dot -Tsvg out> /tmp/target.svg`  
 が便利でした。
 
@@ -388,6 +372,56 @@ multi-user.target @33.766s
 
 `blame`だとdhcpが遅そうだったが、そういうわけでもないのだろうか。manをもう少し読んで見方を理解したい。
 
+また、systemd generatorの解説もありました。
+
+## Chapter 9 Setting System Parameters
+
+systemの設定にまつわる話。  
+以下の解説があります。  
+
+* localeを制御できる`localectl`
+* timezone関連の`timedatectl` 
+* hostname関連の`hostnamectl`
+
+この手の話もlinux弱者の自分には非常にありがたいです。
+
+## Chapter 10 Understanding Shutdown and Reboot Commands
+
+systemdのshutdownは`systemctl poweroff`で実行できる。  
+`man systemctl`のpoweroffの説明によるとこのcommandは`systemctl start poweroff.target --job-mode=replace-irreversibly --no-block`とほぼ同じらしい。
+
+rebootは`systemctl reboot`。こちらも同様に実際にはreboot.targetの起動になっている。
+
+また、`shutdown`コマンドもsystemctlへのsymlinkになっていることがわかった。ただ、`systemctl now`を実行してもshutdownが実行されるわけではないので、おそらくsystemctl側で、自身の実行commandを取得して、shutdownとして振る舞うような処理があるのではと思われる。
+
+systemdのtargetの仕組みを利用して、終了時に実行したい処理を定義する例ものっている。
+
+## Chapter 11 Understanding cgroups Version 1
+
+systemdとcgroupについて。
+cgroupの歴史についても説明してくれます。
+執筆時点(2021)ではFedora, Arch, Debian, Ubuntu 21.10がcgroup v2を利用しているそうです。
+
+cgroupを用いることでsystem管理者は例えば以下のことができる。  
+
+* resourceの使用をuserやprocess単位で行える
+* multi-tenantのようなシステムにおいてbillingのための正確なresourceの利用量を追跡できる
+* 実行中のprocessを隔離できる
+* processをおなじCPUで実行することでperformanceを向上
+
+`systemd-cgls`でsystemで実行中のcgroupを表示できる。
+
+
+## Chapter 12 Controlling Resource Usage with cgroups Version 1
+
+本章では実際にcgroupのcontrollerを利用して、cpuやmemory割当を変えてみる例が解説されます。
+
+
+## Chapter 13 Understanding cgroup Version 2
+
+本章ではcgroup Version 2について扱います。  
+ちなみにcgroup**s** Version 1とcgroup Version 2は意図的な変更のようです。  
+cgroup難しい。
 
 ## Chapter 14 Using journald
 
@@ -402,7 +436,41 @@ journaldとrsyslogの比較の話は勉強になりました。本書執筆時�
 自分はもっぱら、`journalctl -u opentelemetry-collector -f`のような感じでserviceごとのlogの見方がわかっただけで大変助かりました。  
 logがどこに出力されるのかをきにしなくていいのが良いですね。
 
-## memo
 
-* `man systemd-system.conf`
-* `man systemd.unit`
+## Chapter 15 Using systemd-networkd and systemd-resolved
+
+networkdとresolvedの概要について。  
+ubuntuのnetplanの説明やnetworkctl, resolvectlの使い方の説明もあります。
+
+## Chapter 16 Understanding Timekeeping with systemd
+
+Network Time Protocol(NTP)について。  
+systemd-timesyncdだけでなく、ntpdやchronyについての概要の説明もあります。
+
+NixOSだと`/etc/systemd/timesyncd.conf`は以下のように設定されていました。  
+
+```ini
+[Time]
+NTP=0.nixos.pool.ntp.org 1.nixos.pool.ntp.org 2.nixos.pool.ntp.org 3.nixos.pool.ntp.org
+```
+
+## Chapter 17 Understanding systemd and Bootloaders
+
+systemd-bootについて。systemd-boot**d**ではない。  
+systemd-bootの話に入る前にGRUB2についての解説もありありがたい。
+
+
+## Chapter 18 Understanding systemd-logind
+
+systemdがloginまで管理するのはcgroupと関連するからという話。  
+loginctlやpolkitの説明もあります。
+
+## まとめ
+
+簡単にですが感想を書いてみました。  
+当初はRaspberry PiでNixOSを動かす際に、[systemd.services](https://search.nixos.org/options?channel=23.05&from=0&size=50&sort=relevance&type=packages&query=systemd.services)の設定を理解したいと思い読んだのですが、services以外にもいろいろな解説があったので非常に参考になりました。  
+
+systemctlやjournalctlだけでなく、systemd-analyze,localectl,timedatactl,loginctl,networkctl等も使えるようになっていきたいです。  
+自分の理解が至らない箇所も多かったですが、ひとまずsystemd関連わからないことがあればまずはman読んでみようという心持ちになれたのがよかったです。  
+
+
