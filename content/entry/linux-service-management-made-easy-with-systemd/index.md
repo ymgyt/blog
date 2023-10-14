@@ -407,7 +407,7 @@ cgroupを用いることでsystem管理者は例えば以下のことができ�
 * resourceの使用をuserやprocess単位で行える
 * multi-tenantのようなシステムにおいてbillingのための正確なresourceの利用量を追跡できる
 * 実行中のprocessを隔離できる
-* processをおなじCPUで実行することでperformanceを向上
+* processを同じCPUで実行することでperformanceを向上
 
 `systemd-cgls`でsystemで実行中のcgroupを表示できる。
 
@@ -473,4 +473,5 @@ loginctlやpolkitの説明もあります。
 systemctlやjournalctlだけでなく、systemd-analyze,localectl,timedatactl,loginctl,networkctl等も使えるようになっていきたいです。  
 自分の理解が至らない箇所も多かったですが、ひとまずsystemd関連わからないことがあればまずはman読んでみようという心持ちになれたのがよかったです。  
 
+~~ちなみに筆者は読者の心を読む能力をもっているので注意してください。~~
 
