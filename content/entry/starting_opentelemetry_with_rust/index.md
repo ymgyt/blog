@@ -5,7 +5,7 @@ date = "2022-12-18"
 draft = false
 description = "RustではじめるOpenTelemetry"
 [taxonomies]
-tags = ["rust"]
+tags = ["rust", "opentelemetry"]
 [extra]
 image = "images/emoji/telescope.png"
 +++

@@ -5,7 +5,7 @@ description = "RustにおけるOpenTelemetryの実装を見ながら仕様の理
 date = "2023-07-18"
 draft = false
 [taxonomies]
-tags = ["rust"]
+tags = ["rust", "opentelemetry"]
 [extra]
 image = "images/emoji/telescope.png"
 +++

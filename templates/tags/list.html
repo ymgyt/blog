@@ -9,6 +9,7 @@
   {% set rust_pages = terms_map["rust"][0].pages | length %}
   {% set book_pages = terms_map["book"][0].pages | length %}
   {% set nix_pages = terms_map["nix"][0].pages | length %}
+  {% set opentelemetry_pages = terms_map["opentelemetry"][0].pages | length %}
   {% set event_pages = terms_map["event"][0].pages | length %}
   <ul>
     <li class="tags-list-item">
@@ -26,6 +27,12 @@
     <li class="tags-list-item">
       <a href="{{ config.base_url }}/tags/nix/">
         ❄️  Nix({{ nix_pages }}) Nix関連
+      </a>
+    </li>
+
+    <li class="tags-list-item">
+      <a href="{{ config.base_url }}/tags/opentelemetry/">
+        🔭 OpenTelemetry({{ opentelemetry_pages }}) OpenTelemetry関連
       </a>
     </li>
 

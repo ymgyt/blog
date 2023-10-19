@@ -5,7 +5,7 @@ date = "2023-08-26"
 draft = false
 description = "tracing-opentelemetryのMetricsLayerに機能を追加するPRを送った話"
 [taxonomies]
-tags = ["rust"]
+tags = ["rust", "opentelemetry"]
 [extra]
 image = "images/emoji/telescope.png"
 +++

@@ -5,7 +5,7 @@ description = "opentelemetry-collectorとopenobserveによるmetrics管理"
 date = "2023-10-09T04:00:00Z"
 draft = false
 [taxonomies]
-tags = ["nix"]
+tags = ["nix", "opentelemetry"]
 [extra]
 image = "images/emoji/snowflake.png"
 +++
