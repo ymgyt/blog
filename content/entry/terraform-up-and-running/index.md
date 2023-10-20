@@ -22,3 +22,8 @@ image = "images/emoji/green_book.png"
 
 ## Chapter 1 Why Terraform
 
+最初の書き出しの  
+
+> Software isn’t done when the code is working on your computer. It’s not done when the tests pass. And it’s not done when someone gives you a “ship it” on a code review. Software isn’t done until you deliver it to the user.
+
+がいきなりしびれました。Software isn't doneは翻訳でどう訳されるのかきになります。
