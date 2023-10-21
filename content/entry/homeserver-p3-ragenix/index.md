@@ -14,7 +14,7 @@ image = "images/emoji/snowflake.png"
 [Part 2 deply-rsでNixOS Configurationを適用](https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-deploy-with-deploy-rs/)  
 Part 3 ragenixでsecret管理](👈 この記事)  
 [Part 4 opentelemetry-collectorとopenobserveでmetricsを取得](https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-export-metrics-with-opentelemetry-collector/)  
-[Part 5 CPUの温度をmetricsとして取得](https://blog.ymgyt.io/entry/homeserver-with-nixos-and-respberrypi-get-cpu-temperature/)
+[Part 5 CPUの温度をmetricsとして取得](https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-get-cpu-temperature/)
 
 Part 3ではsecret管理について見ていきます。  
 secretを扱いたいのは、次のPart 4で設定するopentelemetry-collectorにexport先のopenobsreveのtokenを渡したいからです 。 

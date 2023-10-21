@@ -14,7 +14,7 @@ image = "images/emoji/snowflake.png"
 Part 2 deply-rsでNixOS Configurationを適用(👈 この記事)  
 [Part 3 ragenixでsecret管理](https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-secret-management-with-ragenix/)  
 [Part 4 opentelemetry-collectorとopenobserveでmetricsを取得](https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-export-metrics-with-opentelemetry-collector/)   
-[Part 5 CPUの温度をmetricsとして取得](https://blog.ymgyt.io/entry/homeserver-with-nixos-and-respberrypi-get-cpu-temperature/)
+[Part 5 CPUの温度をmetricsとして取得](https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-get-cpu-temperature/)
 
 本記事はNixOSとRaspberry Piで自宅serverをはじめる記事のPart 2です。   
 [Part 1]でRaspberry Pi(以下raspi)にNixOSをinstallしてsshできるところまでを行いました。  

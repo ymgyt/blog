@@ -14,7 +14,7 @@ image = "images/emoji/snowflake.png"
 [Part 2 deply-rsでNixOS Configurationを適用](https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-deploy-with-deploy-rs/)  
 [Part 3 ragenixでsecret管理](https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-secret-management-with-ragenix/)  
 Part 4 opentelemetry-collectorとopenobserveでmetricsを取得(👈 この記事)  
-[Part 5 CPUの温度をmetricsとして取得](https://blog.ymgyt.io/entry/homeserver-with-nixos-and-respberrypi-get-cpu-temperature/)
+[Part 5 CPUの温度をmetricsとして取得](https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-get-cpu-temperature/)
 
 Part 4ではraspi上でopentelemetry-collector(contrib destribution)を動かしてmetricsをとれることを目指します。  metricsのexport先は[openobserve](https://openobserve.ai/)を利用します。今回はcloud版を利用します。  
 現在のところ、openobserveのcloud版は月200GB ingestion, 15日間保持までならfree planで利用できます。  
