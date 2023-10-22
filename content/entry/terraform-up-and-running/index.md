@@ -69,4 +69,15 @@ Terraformと他のtoolとの比較が行なわれます。
 本章からterraformの使い方についての説明が始まります。  
 AWSでEC2建てるところから解説してくれます。  
 terraformを使ったことがあればわかっていることかなと思っていたら`terraform graph`でdotlang出力できるの知りませんでした。  
-systemdもそうですが、依存関係のようなgraphを扱うtoolはdotlang出力するのが共通理解なんですかね?
+systemdもそうですが、依存関係のようなgraphを扱うtoolはdotlang出力するのが共通理解なんでしょうか。  
+
+またどこかでははまる、lifecycleの`create_before_destroy`の説明等もあります。
+
+
+## Chapter 3 How to Manage Terraform State
+
+terraformのstate管理について。  
+stateにどういった情報が保持されているかや複数人での共有に対処するためにremote backendが紹介されます。  
+
+stateをS3に置くためにs3 bucketを定義したいがそのためにはs3以外のところにstateを保持する必要がある問題についての対応も解説してくれています。  
+自分は最初にlocal stateではじめてbucket定義したのち`terraform init -migrate-state`を実行したりしていました。
