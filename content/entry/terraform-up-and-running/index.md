@@ -80,7 +80,38 @@ terraformのstate管理について。
 stateにどういった情報が保持されているかや複数人での共有に対処するためにremote backendが紹介されます。  
 
 stateをS3に置くためにs3 bucketを定義したいがそのためにはs3以外のところにstateを保持する必要がある問題についての対応も解説してくれています。  
-自分は最初にlocal stateではじめてbucket定義したのち`terraform init -migrate-state`を実行したりしていました。
+自分は最初にlocal stateではじめてbucket定義したのち`terraform init -migrate-state`を実行したりしていました。  
+また、backendのconfigを`terraform init -backend-config=backend.hcl`のようにして別fileに切り出せるのは知らなかったです。
+
+### State File Isolation
+
+Remote backendの導入でstate fileを共有できるようにはなったものの、そのままではproductionと開発環境の設定が同一のstate fileに保持されてしまっている。  
+現実ではどうしてもproductionの設定を分離したくなり、そのための方法の一つとしてworkspaceが紹介されます。  
+state fileの分離という文脈でworkspaceを説明するのはわかりやすいと思いました。 
+
+もっともworkspaceによる分離は分離の程度としては弱く、より強い分離としてdirectoryを分ける方法が提案されます。  
+概要としては以下のように環境とcomponentごとにterraform projectのdirectoryを切るというものです。  
+
+```text
+.
+├── production
+│  ├── services
+│  │  ├── dependencies.tf
+│  │  ├── main.tf
+│  │  ├── outputs.tf
+│  │  ├── providers.tf
+│  │  └── variables.tf
+│  ├── storage
+│  └── vpc
+└── staging
+   ├── services
+   ├── storage
+   └── vpc
+```
+
+ただ、この方法ですとdirectoryをまたいだ依存を参照できないので、`terraform_remote_state`を使うことになります。
+
+ここで紹介されていた`terraform console`でREPLできるの知りませんでした。
 
 
 ## Chapter 4 How to Create Reusable Infrastructure with Terraform Modules
