@@ -129,3 +129,62 @@ moduleのはまりどころとして、相対pathの解決やinline blockでリ�
 
 まずcountを紹介して、その欠点を補うためにfor_eachという流れで解説してくれます。  
 for expressionの解説もあります。具体例が豊富で親切です。
+
+またrescourceの作成をconditionalにしたり参照するparameterを切り替える例も解説されています。  
+基本的に複数resourceの作成ではcountよりfor_eachが望ましいですが、作る作らないの制御ではcountでおこなうとsimpleにできると助言されていました。
+
+### Terraform Gotchas
+
+terraformのはまりどころについて。  
+`terraform plan`は成功したけど、`terraform apply`したらalready existsで失敗した場合の対処法等については誰もが一度は経験するところなのではないでしょうか。  
+
+terraformをrefactorする際にresourceの識別をrenameするのは影響が大きい。hcl側とstateの対応を更新したい場合は、`terraform state mv`が利用できるが、それに加えて下記のように`moved` block使うこともできる。
+
+```hcl
+moved {
+  from = aws_security_group.instance
+  to   = aws_security_group.cluster_instance
+}
+```
+
+## Chapter 6 managing Secrets with Terraform
+
+secret managementにおいて重要なruleが2つあって、ひとつがplain textで保持しないこと。もう一つもとても参考になります。  
+最初にterraformでsecretが必要になるのが、providerの認証で、その際にどんな方法があるかを解説してくれます。  
+さらに、CIからterraformを実行する例の具体例もあり、Circle CI, EC2, Github Actionのそのまま使えそうなコードも載っています。  
+Github ActionはOIDCを利用してくれており、github action側にcredentialを保持しなくてよい構成になっています。
+
+Providerの次はresourceにどうやってsecretを渡すかについて。  
+```hcl
+resource "aws_db_instance" "example" {
+  // ...
+  username = "???"
+  password = "???"
+}
+```
+
+最初は`var.db_username`のように変数にしたのち、環境変数経由で渡すことが考えられます。  
+ただ、環境変数経由での管理にも良い点と問題点があります。  
+その一つとして、version管理やterraform管理からはずれるのできちんと渡すのは呼び出し側の責任になり、ミスが介在しやすくなってしまう点にあると思います。  
+
+そこで次にkmsで暗号化した上でsecretをterraformのresourceとして扱う方法が紹介されます。  
+これでsecretをplain textで保持することを避けつつ、terraformの管理化で扱えるようになります。  
+
+が、当然この方法にもいくつか問題があります。  
+例えば、auditであったり、rotationやrevokeさせづらい等です。
+
+ということで、AWS Secret ManagerやHashiCorp Vaultが紹介されます。
+
+### State Files and Plan Files
+
+どうにかしてsecretをplain textでなくしてもterraformに渡したsecretはstate fileではplain textで保持されてしまうそうです。[Storing sensitive vaules in state files](https://github.com/hashicorp/terraform/issues/516)  
+したがって、secret管理とは別に、state fileのaccess管理や暗号化は必須ということになります。  
+また、`terraform plan -out=plan`とした際にもplan fileにsecretが含まれてしまうので注意が必要です。
+
+## Chapter 7 Working with Multiple Providers
+
+本章では、これまでに作成したmoduleをAWSを例に、multi region, multi accountにdeployするにはどうするかについて説明してくれます。  
+
+まずproviderの概要の説明があるのですが、terraformとproviderはRPCでやり取りしているそうです。そうなると、Ruseでprovider書けるのかなと思っていたら、[helloworldをRustで実装された方](https://github.com/palfrey/terraform-provider-helloworld)がおられました。
+
+ひとつのmoduleの中で複数のAWS regionにresourceを定義したい場合にどのように複数providerを設定するかについての解説があります。
