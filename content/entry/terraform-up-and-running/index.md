@@ -81,3 +81,20 @@ stateにどういった情報が保持されているかや複数人での共有
 
 stateをS3に置くためにs3 bucketを定義したいがそのためにはs3以外のところにstateを保持する必要がある問題についての対応も解説してくれています。  
 自分は最初にlocal stateではじめてbucket定義したのち`terraform init -migrate-state`を実行したりしていました。
+
+
+## Chapter 4 How to Create Reusable Infrastructure with Terraform Modules
+
+前章で環境ごとにdirectoryを分けたので、微妙に違うが大体同じような設定を書かなければならなくなってしまった。  
+そこで、moduleを導入して、共通部分と環境ごとの差異を分離できるようにしていく。  
+moduleの作り方を実際にrefactorしながら解説してくれておりわかりやすいです。  
+
+moduleのはまりどころとして、相対pathの解決やinline blockでリソースを定義する点についての説明もあり、参考になりました。  
+
+また、stagingとproductionでmoduleを参照している際にstagingのためにmoduleを変更するとproductionにも影響してしまう。そこで、moduleを別のgit repositoryに定義して、tagでversioningする方法も説明してくれています。
+
+
+## Chapter 5 Terraform Tips and Tricks: Loops, If-Statements, Deployment, and Gotchas
+
+まずcountを紹介して、その欠点を補うためにfor_eachという流れで解説してくれます。  
+for expressionの解説もあります。具体例が豊富で親切です。
