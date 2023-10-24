@@ -17,8 +17,8 @@ image = "images/emoji/green_book.png"
 [Terraform: Up and Running, 3rd Edition](https://learning.oreilly.com/library/view/terraform-up-and/9781098116736/)
 
 会社の方が紹介されていて、おもしろそうだったので読んでみました。  
-出版日は2022年9月で、第3版を読みました。
-
+出版日は2022年9月で、第3版を読みました。  
+sample codeの[repository](https://github.com/brikis98/terraform-up-and-running-code)
 
 ## Chapter 1 Why Terraform
 
@@ -240,9 +240,23 @@ infraの変更は、downtimeやdata loss, securityと怖いことが多い。か
 
 ### Automated Tests
 
-TODO
+unit test, integration test, end-to-end testごとにどのように書くかを解説してくれます。  
+unit testとありますが、実際にaws accountにdeployして検証codeを走らせるので実態としてはintegration testであるとされています。(外部に依存しなpure unit testはterraformではできない)  
+ただ、単位がterraformのmoduleなので、その点を強調してunit testとしていました。  
+terraformのmoduleの単位として、実際にdeployしてtestできるかを尺度にするのもありなんだなと思いました。 
+また、[terratest](https://terratest.gruntwork.io/)というtoolも紹介されていました。 
+
+codeの具体例がかなりしっかり載っています。
 
 
 ## Chapter 10 How to Use Terraform as a Team
 
-* terraformをteamに導入するためのprocessについて。
+terraform(IaC)をteamや会社に導入するためのprocessについて。  
+infra管理のtool選定ってtool自体よりteamや会社の状況のほうが影響する気がしてます。  
+terraformに限らないですが、開発processを変えるような変更はincrementalにやることがよいと書かれています。  
+
+本書の最初で、Software isn’t done until you deliver it to the userとある通り、localでterraform applyするまででなく、実際にdeployするまでの話があります。  
+applicationのworkflowをterraformに適用するとどうなるかについてstepごとに解説してくれます。  
+具体的には、localで変更して、PR作って、reviewしてCIでtestしてdeployという流れをterraformでやるとどうなるかについて見ていきます。  
+terraformとapplicationの差異はterraformでは`prod`,`staging`と環境ごとにdirectoryをきっているので、applicationのようにmain branchはstaging, release branch切ったら本番のようにできない(やりづらい)点です。  
+また、CIでのdeployではerror handlingを必ずいれる必要があり、場合によっては`terraform force-unlock`や`terraform state push`等でrecoveryが必要になるケースについても解説してくれています。
