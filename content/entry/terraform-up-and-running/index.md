@@ -188,3 +188,61 @@ resource "aws_db_instance" "example" {
 まずproviderの概要の説明があるのですが、terraformとproviderはRPCでやり取りしているそうです。そうなると、Ruseでprovider書けるのかなと思っていたら、[helloworldをRustで実装された方](https://github.com/palfrey/terraform-provider-helloworld)がおられました。
 
 ひとつのmoduleの中で複数のAWS regionにresourceを定義したい場合にどのように複数providerを設定するかについての解説があります。
+aliasを利用したmulti regionの設定についての注意点もありますが、AWSの場合、us-east-1にしか建てられないresourceもあったりするのでその際は使えそうです。
+
+multi regionの次はmulti accountの説明があります。
+rootではないreusable module(rootから使われるmodule)に、provider blockを書かずにmulti providerのmoduleを書くために`terraform.required_providers.configuration_aliases`を使えるのは知らなかったのでとても参考になりました。
+
+その他、EKSにdeployする例もあります。
+
+
+## Chapter 8 Production-Grade Terraform Code
+
+筆者によると**production grade**なRDS等のManaged serviceを構築するのに1-2週間、self-managedなdistributedでstatefulなsystemに2-4ヶ月、entire architectureにいたっては規模次第で6-36ヶ月かかるとあります。しかもこれは楽観的な数字です。
+
+では、ここでいうproduction gradeとはどういった性質を指すかというと以下の点について考慮されているということでした。
+
+* Install
+* Configure
+* Provision
+* Deploy
+* High availability
+* Scalability
+* Performance
+* Networking
+* Security
+* Metrics
+* Logs
+* Data backup
+* Cost optimization
+* Documentation
+* Tests
+
+これはかかりますね..!  
+これらを達成するためのmoduleの粒度であったりのadviceもあります。  
+
+testableなmoduleを書くために、`validation`や`precondition`, `postcondition`を利用していこうと思います。  
+そのほか、terraformやmoduleのversioningであったり、terraform以外のtoolとの連携等、実践的な内容となっております。  
+
+## Chapter 9 How to Test Terraform Code
+
+infraの変更は、downtimeやdata loss, securityと怖いことが多い。かといって変更の頻度を減らしても逆効果になってしまう。  
+そこで、testを通じて変更に対する自信を持とうという話。  
+
+では、どうやってterraformをtestするかというと、まずは実際にdeployしてcurlなりで、検証するところからはじまっていた。  
+これができるようにmoduleにはexampleを作ることも推奨されている。  
+また、
+
+> the gold standard is that each developer gets their own completely isolated sandbox environment. For example, if you’re using Terraform with AWS, the gold standard is for each developer to have their own AWS account that they can use to test anything they want
+
+とあり、開発者ごとにAWS accountを用意することもgold standardとされていました。  
+個人でaccount作るとcostがちょっと心配と思いましたが、そこは[aws-nuke](https://github.com/rebuy-de/aws-nuke)や[cloud-nuke](https://github.com/gruntwork-io/cloud-nuke)のようなtoolを定期実行することで対処する方法も紹介されていました。
+
+### Automated Tests
+
+TODO
+
+
+## Chapter 10 How to Use Terraform as a Team
+
+* terraformをteamに導入するためのprocessについて。
