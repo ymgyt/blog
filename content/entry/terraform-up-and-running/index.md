@@ -1,9 +1,9 @@
 +++
-title = "📗 Terraform: Up and Runningを読んだ感想"
+title = "📗 Terraform: Up and Running, 3rd Editionを読んだ感想"
 slug = "terraform-up-and-running"
 description = "Terraform: Up and Runningを読んだ感想について"
-date = "2023-10-22"
-draft = true
+date = "2023-10-25"
+draft = false
 [taxonomies]
 tags = ["book"]
 [extra]
@@ -19,6 +19,16 @@ image = "images/emoji/green_book.png"
 会社の方が紹介されていて、おもしろそうだったので読んでみました。  
 出版日は2022年9月で、第3版を読みました。  
 sample codeの[repository](https://github.com/brikis98/terraform-up-and-running-code)
+
+## まとめ
+
+非常におもしろく参考になりました。  
+AWS account作って実際にterraformでdeployするところから始まり、workspaceによるstate分割、環境ごとのstate分離、module化、multi region, multi account対応と進みます。secret管理についても環境変数経由からfileの暗号化、VaultやKMSとの連携まで具体例つきで解説があります。
+また、planは通ったけどapplyで失敗した場合の説明や、Gihub ActionでのCI例ではOIDC対応されていたりと載っている具体例が非常に実践的です。  
+localでapplyうって終わりではなく、IaCの意義からはじまり、teamや会社への導入、CIからのdeployまで説明があります。  
+
+この本で謳われているIaCのメリットがこれまでで一番納得感ありました。
+
 
 ## Chapter 1 Why Terraform
 
@@ -36,7 +46,7 @@ DevOpsとは。
 devとopsにteamを分けて、opsがhardwareを管理する責務を追っていたけど、今はcloud使うので、opsもsoftware tool(kubernetes, terraform, docker, chef, ...)を使っているよね。devとopsを分けてはいるけど、より緊密な連携が必要になってきている。という話の流れと理解しました。  
 自分が英語の本が好きな理由の一つに最初にはっきり定義書いてくれるというのがあります。  
 What is DevOpsというパラグラフなので、DevOps is ...という定義を期待したのですが、歯切れが悪いように思いました。  
-自分の理解としては、DevOpsがどうであれ、要はreleaseが高頻度で安定していればいるほど、よいのでそこがぶれなければなんでも良いのかなと思っています。
+自分の理解としては、DevOpsがどうであれ、要はreleaseが高頻度で安定していればいるほど、良いのでそこがぶれなければなんでも良いのかなと思っています。
 
 ### What is Infrastrucutre as Code?
 
