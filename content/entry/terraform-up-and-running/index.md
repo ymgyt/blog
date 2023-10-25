@@ -178,7 +178,7 @@ resource "aws_db_instance" "example" {
 その一つとして、version管理やterraform管理からはずれるのできちんと渡すのは呼び出し側の責任になり、ミスが介在しやすくなってしまう点にあると思います。  
 
 そこで次にkmsで暗号化した上でsecretをterraformのresourceとして扱う方法が紹介されます。  
-これでsecretをplain textで保持することを避けつつ、terraformの管理化で扱えるようになります。  
+これでsecretをplain textで保持することを避けつつ、terraformの管理下で扱えるようになります。  
 
 が、当然この方法にもいくつか問題があります。  
 例えば、auditであったり、rotationやrevokeさせづらい等です。
