@@ -270,3 +270,6 @@ applicationのworkflowをterraformに適用するとどうなるかについてs
 具体的には、localで変更して、PR作って、reviewしてCIでtestしてdeployという流れをterraformでやるとどうなるかについて見ていきます。  
 terraformとapplicationの差異はterraformでは`prod`,`staging`と環境ごとにdirectoryをきっているので、applicationのようにmain branchはstaging, release branch切ったら本番のようにできない(やりづらい)点です。  
 また、CIでのdeployではerror handlingを必ずいれる必要があり、場合によっては`terraform force-unlock`や`terraform state push`等でrecoveryが必要になるケースについても解説してくれています。
+
+簡単にですが、感想を書いてみました。  
+ここまでお読みいただきありがとうございます。
