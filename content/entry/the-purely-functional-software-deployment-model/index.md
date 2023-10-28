@@ -13,10 +13,27 @@ image = "images/emoji/closed_book.png"
 本記事では[The Purely Functional Software Deployment Model](https://github.com/edolstra/edolstra.github.io/blob/49a78323f6b319da6e078b4f5f6b3112a30e8db9/pubs/phd-thesis.pdf)を読んだ感想を書きます。  
 Nixについて調べていると度々言及されており、Nixをやっている人は皆さん読まれている気配を感じたので読んでみることにしました。
 
+TODO: 出版日はいつだろうか。google booksだと2006年だった
+
 
 ## まとめ
 
 ## 1 Introduction
+
+### Memo
+
+* この論文はsoftware deploymentについて。
+  * software deploymentとは、computer programsをあるmachineを別のmachineから取得して、動くようにすること
+* deploymentの方法やtoolはad hocなtoolによって行なわれており、fundamental issuesに対して体系的かつ規律だってaddressされてこなかった。
+* nixはsystem for software deployment
+* この章で、deploymentの問題をdescribeする
+
+1.1 
+* deploymentの問題は2つにcategorizeできる
+  * environemnt issues
+    * about correctness
+    * systemに他のcomponentやfileが存在してほしい
+  * manageability issues
 
 ## 2 An Overview of Nix
 
