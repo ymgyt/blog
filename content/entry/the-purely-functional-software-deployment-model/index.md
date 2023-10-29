@@ -33,7 +33,51 @@ TODO: 出版日はいつだろうか。google booksだと2006年だった
   * environemnt issues
     * about correctness
     * systemに他のcomponentやfileが存在してほしい
+    * dependenciesがidentifiedされている必要がある
+    * componentがsourceでdeployされる場合は、build timeの依存も必要(compiler)
+    * dependenciesは特定のfeature flagでbuildされている必要があったりする
+    * またruntime時の依存は見つかるようになっている必要がある(dynamic linker search path, java CLASSPATH)
+    * config file, user account, databaseにstateがあるといったsoftware artifact以外の依存もある
+    * まとめるとcomponentsのrequirementsをidentifyし、どうにかいｓてそれをtarget environmentにrealiseする必要がある
   * manageability issues
+    * 安全にcomponentをuninstallする必要ある
+    * あるcomponentのupgradeによって他のcomponentに影響がでないようにする
+    * rollbackできるようにする
+    * deployの際にvariabilityをexposeする
+
+1.2 the state of the art
+* RPMについて
+* source deployment models
+
+1.3
+1.2でとりあげた様々な手法は以下の問題をもっている
+。これらの問題をもたないdeployment systemが必要。
+* dependency specifications are not validated
+* inexact
+* multiple versionを共存させられない
+* componentが相互に干渉する
+* rollbackできない
+* upgradeがatomicでない
+* monolithicである必要がある。statically contain all dependencies
+* sourceかbinary deploymentのどちらかしかsupportされない
+* component framework が特定のprogramming言語に限定されている
+
+1.4 The nix deployment system
+
+Nixのapproachのmain ideaはcentral component storeにcomponentを分離された形で配置すること。
+そのpathにはcomponentをbuildするためのinputのcryptographic hashが含まれる。
+これにより、宣言されない依存をなくし、versionが違うcomponentを併存させることができる
+
+1.5 contributions
+
+nixによって達成される機能。  
+* componentの分離による相互不干渉
+* componentを独立にinstallしつつも、共有できるものは共有される
+* upgradeはaotmic. systemがinconsistent stateになるtime windowがない
+* O(1)-time rollback
+* automatic garbase collection of unused components
+* 
+
 
 ## 2 An Overview of Nix
 
