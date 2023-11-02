@@ -20,64 +20,67 @@ TODO: 出版日はいつだろうか。google booksだと2006年だった
 
 ## 1 Introduction
 
-### Memo
+この論文はsoftware deploymentついて述べている。  
+ここでいう、software deploymentとはcomputer programをあるmachineから取得して動くようにすること。  
+これまでdeployの手法やtoolはadhocに行われており、dundamentalなissueに対して体系的かつ規律だって扱われてこなかった。  
+本章ではまずsoftware deploymentにはどういった問題があるのかについて述べている。
 
-* この論文はsoftware deploymentについて。
-  * software deploymentとは、computer programsをあるmachineを別のmachineから取得して、動くようにすること
-* deploymentの方法やtoolはad hocなtoolによって行なわれており、fundamental issuesに対して体系的かつ規律だってaddressされてこなかった。
-* nixはsystem for software deployment
-* この章で、deploymentの問題をdescribeする
+deploymentに関する問題は大きく、environment issuesとmanageability issuesという問題に分類できる。  
 
-1.1 
-* deploymentの問題は2つにcategorizeできる
-  * environemnt issues
-    * about correctness
-    * systemに他のcomponentやfileが存在してほしい
-    * dependenciesがidentifiedされている必要がある
-    * componentがsourceでdeployされる場合は、build timeの依存も必要(compiler)
-    * dependenciesは特定のfeature flagでbuildされている必要があったりする
-    * またruntime時の依存は見つかるようになっている必要がある(dynamic linker search path, java CLASSPATH)
-    * config file, user account, databaseにstateがあるといったsoftware artifact以外の依存もある
-    * まとめるとcomponentsのrequirementsをidentifyし、どうにかいｓてそれをtarget environmentにrealiseする必要がある
-  * manageability issues
-    * 安全にcomponentをuninstallする必要ある
-    * あるcomponentのupgradeによって他のcomponentに影響がでないようにする
-    * rollbackできるようにする
-    * deployの際にvariabilityをexposeする
+Environmnet issuesの具体例としては
 
-1.2 the state of the art
-* RPMについて
-* source deployment models
+* systemに他のcomponentやfileが存在していてほしい
+* dependenciesが特定されている必要がある
+* componentがsourceでdeployされる場合は、build timeのdependenciesが必要(compiler等)
+* dependenciesは特定のfeature(flag)でbuildされている必要がある
+* runtimeの依存を見つけられること(dynamic linker search path)
+* config file, user account, databaseに特定のrecordがあるといったsoftware artifact以外の依存
 
-1.3
-1.2でとりあげた様々な手法は以下の問題をもっている
-。これらの問題をもたないdeployment systemが必要。
-* dependency specifications are not validated
-* inexact
-* multiple versionを共存させられない
-* componentが相互に干渉する
+がある。まとめるとcomponentのrequirementsを特定(identify)し、deploy先の環境でrealiseしなければならないという問題。
+
+Manageability issueとしては
+
+* componentのuninstallは安全か
+* あるcomponentのupgradeが他のcomponentを壊さないか
+* rollbackできるか
+* deploy時に様々な設定を行えるか
+
+等がある。
+
+1.2 The state of the artではRPMからはじまって、windowsやmac, .NET等でどのようにdeployがなされているかの説明がある。  
+Zero install systemというものがあることを初めて知った。
+
+既存のdeploymentの問題点を整理すると以下の点が挙げられる。
+
+* dependency specificationが不正確で検証されていない。例えば`foo`というbinaryがあればよいだけ等。
+* 複数versionが共存できない
+* componentが相互に干渉してしまう
 * rollbackできない
-* upgradeがatomicでない
-* monolithicである必要がある。statically contain all dependencies
-* sourceかbinary deploymentのどちらかしかsupportされない
-* component framework が特定のprogramming言語に限定されている
+* upgradeがatomicでない。(systemに不完全な時間が生じる)
+* 静的にすべてを含んでいる必要がある
+* sourceかbinaryどちらかしかサポートされていない
+* frareworkが特定のprogramming言語に限定されている
 
-1.4 The nix deployment system
+これらの問題を解決するためのNixの基本的なapproachはcentral component storeにcomponentを分離された形で配置すること。  
+そのpathにはcomponentのinputのcryptographicなhashが含まれる。これにより宣言されていない依存をなくし、異なるversionを併存させることができる。
 
-Nixのapproachのmain ideaはcentral component storeにcomponentを分離された形で配置すること。
-そのpathにはcomponentをbuildするためのinputのcryptographic hashが含まれる。
-これにより、宣言されない依存をなくし、versionが違うcomponentを併存させることができる
+Nixにより以下の点が達成される。
 
-1.5 contributions
-
-nixによって達成される機能。  
 * componentの分離による相互不干渉
-* componentを独立にinstallしつつも、共有できるものは共有される
-* upgradeはaotmic. systemがinconsistent stateになるtime windowがない
-* O(1)-time rollback
-* automatic garbase collection of unused components
-* 
+* componentは独立しつつも、共有可能なものは共有される(resourceの有効活用)
+* upgradeはatomicになされ、systemがinconsistentな状態にならない
+* O(1)-timeでのrollback
+* 利用されていないcomponentの自動的なgarbage collection
+* componentのbuild方法だけでなく、compositionも表現できるpureなnix language
+* 透過的なsource/binary deployment model
+* multi-platform build
 
+Nixが解決したいdeploymentにまつまる問題の概要がわかりました。  
+Nixを始めた際に書いた[記事](https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/#somosomonixtoha)で
+
+> 現状の自分の理解ではNixとはpackage manager + build systemという認識です。 
+
+と書いたのですが、nixはdeployment systemだったことがわかりました。
 
 ## 2 An Overview of Nix
 
