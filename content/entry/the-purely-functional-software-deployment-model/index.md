@@ -84,6 +84,53 @@ Nixを始めた際に書いた[記事](https://blog.ymgyt.io/entry/declarative-e
 
 ## 2 An Overview of Nix
 
+これまでにでてきたcomponentとはbasic units of deploymentで、fileの集合。  
+Nixは(通常は)`/nix/store`にcomponentを保持する。  
+
+store pahtは`/nix/store/bwacc7a5c5n3qx37nz5drwcgd2lv89w6-hello-2.1.1` のようにhashを含む。このhashは
+
+* source
+* build script
+* build scriptへのargmentsとenvironment variables
+* build dependencies(compiler,linker, libraries,tools, shell,...)
+
+に基づいて算出される。  
+最初にnixをさわったときは、hashが使わていることの意義を理解できていなかったが、componentへのpathにinputをすべて含むhashを加えることで、dependencyの指定が完全になるということが理解できた。  
+`hello`に依存していると宣言するだけでは、不十分で、`hello-2.1.1`のようにversionを足したところでたいして改善しない。inputに基づいて算出されたhashを加えることで、より適切な`hello`への依存を表現できる。
+
+[Closures](https://zero-to-nix.com/concepts/closures)の説明もある。closureをよくわかっていなかったので、この説明がありがたかった。
+
+以下のようなhelloのderivationを例に各行の解説もしてくれる。
+
+```nix
+{stdenv, fetchurl, perl}: # 2
+  stdenv.mkDerivation { # 3
+    name = "hello-2.1.1"; # 4
+    builder = ./builder.sh; # 5
+    src = fetchurl { # 6
+      url = http://ftp.gnu.org/pub/gnu/hello/hello-2.1.1.tar.gz;
+      md5 = "70c9ccf9fac07f762c24f2df2290784d";
+    };
+    inherit perl; # 7
+}
+```
+
+また、`hello`を実行すると`/nix/store/bwacc7a5c5n3qx37nz5drwcgd2lv89w6-hello-2.1.1/bin/hello`が実行される仕組みとして、user-environmentやprofileの仕組みが解説される。  
+これによって、rollbackやgarbage collectionが実現されることがわかる。
+
+Nix expressionからcomponentがbuildされるまでに、store derivationという中間結果を経由する。nix-envはnix-instantiateとnix-store --realizeの合わせ技である旨が説明される。
+
+### Transparent source/binary deployment
+
+nixはsourceからcomponentをbuildsするので、source deployment modelといえる。  
+ただ、sourceからのbuildには問題があり、例えば、hello componentの場合、その依存からbuildするので、stdenv-linux,gcc, bash, gnugar,curl, ...と60以上のderivationをbuildする必要がでてきてしまう。source deploymentはend-userには使いづらいものとなってしまう。  
+そこで、nixはstore pathのderivation outputをあらかじめどこかにuploadしておき、build時に自分でbuildするのではなく、store pathのbuild結果を取得するように動作する。これはbuild結果を置換する点をとらえて、substituteと言われる。  
+
+この仕組みのおかげで、userからみるとsource deploymentが自動でbinary deploymentに最適化される。  
+Nix すごすぎる。
+
+
+
 ## 3 Deployment as Memory Management
 
 ## 4 The Nix Expression Language
