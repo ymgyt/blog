@@ -130,16 +130,70 @@ nixはsourceからcomponentをbuildsするので、source deployment modelとい
 Nix すごすぎる。
 
 
-
 ## 3 Deployment as Memory Management
+
+まず"software component"が以下のように定義されます。
+
+> * A sofeware component is a software artifact that is subject to automatic composition.
+  It can require, and be required by, other components.
+> * A software component is a unit of deployment.
+
+deployをプログラミング言語と対比させる話がおもしろかった。
+programがmemoryを操作するようにdeploymentはfile systemを操作する。memory addressがfile pathに対応するので、`/usr/bin`に`gcc`を付与して、`/usr/bin/gcc`をえるのは、pointer操作に対応する。存在しないcomponentを参照するのは、dangling pointer等など。  
+このアナロジーに従うと、assemblerのようなpointerに対する規律がまったくないのがunix styleのdeployment、pointer disciplineがあるC,C++にあたるのが、Nix、Javaのように完全なpointerに対する規律がある言語に対応するdeployment modelはまだない。ということになる。  
+既存のfile pathを自由に扱うdeploymentはassemblerのようになんでもできると考える発想がなかったです。
+
+どうしてプログラミング言語の話がでてくるかというと、stackを走査して、pointerに見えるもの(実際はintegerかもしれない)があれば、pointerとみなしてgarbage collection時に利用する手法をdeploymentにも応用するためです。具体的には、fileのcontentを走査して、file pathっぽく見えるものがあれば、そのfileはfile pathへ依存しているとみなして、deploymentにおける依存graphを作ります。
+
+fileの中身を自力で走査して依存を判別できるためには、file pathが判別できる必要があります。`/foo`をみたときにそれがfile pathかどうかはあやしいです。  
+Nixはstore pathが`/nix/store/bwacc2gn3...-hello-2.1.1`になっているので、完全ではないですが、file pathが判別しやすいです。  
+ただ、source code上で`["nix", "store", "bwacc2gn3...-hello-2.1.1"]`のようにelementの配列で保持されていたら見逃してしまうので、scanの対象はhash部分のみとするようです。その他、文字コードであったり圧縮されていたりといろいろ考えられますが、実用上問題になっていないらしいです。  
+
+store pathにhashをいれることで、そのhashがsourceやbinaryに含まれていたら依存しているとみなすという発想はすごいです。
 
 ## 4 The Nix Expression Language
 
-## 5 The EXtensional Model
+Nix languageのuntypedで、purely functionalで、lazyな性質がcomponentとcompositionを表現するのに適しているという程度の理解です。  
+
+4.3.4のEvaluation rulesで
+
+$$ SELECT: \frac{e \overset{*}{\mapsto} \lbrace as \rbrace \land \langle n = \acute{e} \rangle \in as }{e.n \mapsto \acute{e} } $$
+
+のような記法がでてくるのですが、これの読み方がわかっていません。WASMのspecを読んでいる際にも登場して読めなかったので理解したいのですが.. (ご存知の方おられましたら教えていただけると非常にありがたいです)
+
+## 5 The Extensional Model
+
+Nixにはextensional modelとintensional modelという2つのmodel(variant)がある。本章ではextensional modelについて。  
+extensionalというのは、componentの中身が実際には異なっても外形的な振る舞いが同じなら同じとみなすというニュアンスと理解した。例えば、linkerが挿入したtimestampはプログラムの動作には影響を与えないので、実際にはbuildするたびに成果物はかわるが、同一(interchangeable)とみなすという考え(前提)
+
+これまでに述べてきた、cryptographic hash, nix store, nix-instantiate(store derivation), nix-store --realize, substittutes, garbage collectionの詳細が解説される。
+
+substituteやgarbage collectionについてよくわかっていなかったので、概要だけでも知れてよかった。(詳細は理解が及んだかあやしい)
+
 
 ## 6 The Intensional Model
 
+前章のextensional modelの問題は、`/nix/store/a7wcgd..hello-3.1.2`のようなpathはそのdirectoryの実際のcontentに基づいているとは限らないという点にあった。なので、信頼できないuserのnix storeをshareできなかったり、substituteする際にも"信頼"するしかなかった。。  
+Intensional modelではstore pathがそのcontentを反映したものにするという考え。
+
+TODO:
+
 ## 7 Software Deployment
+
+* Nix packagesについて
+  * component自身(source, binary)は含んでおらず(fetchしてくる)、expressionとbuilderだけを含んでいる
+  * Static compositions are good (Late static compositions are better)という原則が述べられている
+    * static compositionを用いると、動的linkを使って、libraryのpatchを適用するといったことはできなくなるが
+
+  > To deploy a new version of some shared component, it is neccessary to redeploy Nix expressions of all installed components that depend on it. 
+  > This is expensive, but I feel that it is a worthwhile tradeoff against correctness.
+
+  と述べられており、自分もそう思った。
+
+* nixを利用していると、xxxWrapperというものを時々みかけたが、よくわかったいなかった。fifefoxのpluginを例にwrapperの機能が説明されており、わかりやすかった。
+(plugin等のcomponentを環境変数で設定するscriptを1枚かませるという理解。これにより、pluginの変更がrebuildを伴わずに行える)
+
+7.1.5 6.8を検証しているので、TODO
 
 ## 8 continuous Integration and Release Management
 
