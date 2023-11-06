@@ -1,13 +1,13 @@
 +++
-title = "📕 The Purely Functional Software Deployment Modelを読んだ感想"
+title = "📙 The Purely Functional Software Deployment Modelを読んだ感想"
 slug = "the-purely-functional-software-deployment"
-description = "Edolstra先生のNixの論文 The Purely Functional Software Deployment Modelを読んだ感想"
+description = "Dolstra先生のNixの論文 The Purely Functional Software Deployment Modelを読んだ感想"
 date = "2023-11-06"
 draft = false
 [taxonomies]
 tags = ["book", "nix"]
 [extra]
-image = "images/emoji/closed_book.png"
+image = "images/emoji/orange_book.png"
 +++
 
 本記事では[The Purely Functional Software Deployment Model](https://github.com/edolstra/edolstra.github.io/blob/49a78323f6b319da6e078b4f5f6b3112a30e8db9/pubs/phd-thesis.pdf)を読んだ感想を書きます。  
