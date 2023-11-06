@@ -164,7 +164,8 @@ $$ SELECT: \frac{e \overset{*}{\mapsto} \lbrace as \rbrace \land \langle n = \ac
 ## 5 The Extensional Model
 
 Nixにはextensional modelとintensional modelという2つのmodel(variant)がある。本章ではextensional modelについて。  
-extensionalというのは、componentの中身が実際には異なっても外形的な振る舞いが同じなら同じとみなすというニュアンスと理解した。例えば、linkerが挿入したtimestampはプログラムの動作には影響を与えないので、実際にはbuildするたびに成果物はかわるが、同一(interchangeable)とみなすという考え(前提)
+extensionalというのは、componentの中身が実際には異なっても外形的な振る舞いが同じなら同じとみなすというニュアンスと理解した。例えば、linkerが挿入したtimestampはプログラムの動作には影響を与えないので、実際にはbuildするたびに成果物はかわるが、同一(interchangeable)とみなすという考え(前提)  
+裏をかえすとnixは同じinputであってもbinaryレベルでの同一のoutputまでは要求していないということだったんですね。
 
 これまでに述べてきた、cryptographic hash, nix store, nix-instantiate(store derivation), nix-store --realize, substittutes, garbage collectionの詳細が解説される。
 
@@ -174,30 +175,35 @@ substituteやgarbage collectionについてよくわかっていなかったの�
 ## 6 The Intensional Model
 
 前章のextensional modelの問題は、`/nix/store/a7wcgd..hello-3.1.2`のようなpathはそのdirectoryの実際のcontentに基づいているとは限らないという点にあった。なので、信頼できないuserのnix storeをshareできなかったり、substituteする際にも"信頼"するしかなかった。。  
-Intensional modelではstore pathがそのcontentを反映したものにするという考え。
+Intensional modelはequalityを外部からの振る舞いではなく、内部のcontentに基づいて判定するという考え。
 
-TODO:
+6.8ではNixでbuildしたりinstallできるためのcomponentに対する前提が記載されている。
 
 ## 7 Software Deployment
 
-* Nix packagesについて
-  * component自身(source, binary)は含んでおらず(fetchしてくる)、expressionとbuilderだけを含んでいる
-  * Static compositions are good (Late static compositions are better)という原則が述べられている
-    * static compositionを用いると、動的linkを使って、libraryのpatchを適用するといったことはできなくなるが
+Nix packageについて説明がある。nix packageはcomponentのsourceやbinaryを含んでおらず、fetchして、buildするexpressionだけを含んでいる。  
+また、static compositions are good(late static compositions are better)という原則が述べられている。  
+static compositionを用いると、動的linkを使って、libraryのpatchを適用するといったことはできなくなるが
 
-  > To deploy a new version of some shared component, it is neccessary to redeploy Nix expressions of all installed components that depend on it. 
-  > This is expensive, but I feel that it is a worthwhile tradeoff against correctness.
+ > To deploy a new version of some shared component, it is neccessary to redeploy Nix expressions of all installed components that depend on it. 
+ > This is expensive, but I feel that it is a worthwhile tradeoff against correctness.
 
-  と述べられており、自分もそう思った。
+と述べられており、自分もそう思った。
 
-* nixを利用していると、xxxWrapperというものを時々みかけたが、よくわかったいなかった。fifefoxのpluginを例にwrapperの機能が説明されており、わかりやすかった。
+nixを利用していると、xxxWrapperというものを時々みかけたが、よくわかったいなかった。fifefoxのpluginを例にwrapperの機能が説明されており、わかりやすかった。
 (plugin等のcomponentを環境変数で設定するscriptを1枚かませるという理解。これにより、pluginの変更がrebuildを伴わずに行える)
 
-7.1.5 6.8を検証しているので、TODO
 
-## 8 continuous Integration and Release Management
+## 8 Continuous Integration and Release Management
+
+CI環境にnixが適しているという話。  
+CIでは適宜、依存しているcomponentをinstallする必要があるが、nixが面倒をみてくれる。  
+自分はまだnixをGithub actions等でうまく利用できていないが、nixでの環境構築が魅力的なのはCIでも透過的に利用できるからと思っていたところもあった。
 
 ## 9 Service Deployment
+
+* service deploymentについて。
+  * 複数processが関与する
 
 ## 10 Build Managment
 
