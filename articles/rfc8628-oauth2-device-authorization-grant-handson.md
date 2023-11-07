@@ -4,21 +4,21 @@ emoji: "🦀"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["rust"]
 published: false
-# publication_name: "fraim"
+publication_name: "fraim"
 ---
 
-本記事では[RFC8628 OAuth 2.0 Device Authorization Grant](https://datatracker.ietf.org/doc/html/rfc8628)を読みながらGithubのaccess tokenを取得するcliをrustで実装していきます。
+本記事では[RFC8628 OAuth 2.0 Device Authorization Grant](https://datatracker.ietf.org/doc/html/rfc8628)を読みながらGithubのaccess tokenを取得するCLIをrustで実装していきます。
 
 ## 概要
 
-CLIから[OAuth](https://datatracker.ietf.org/doc/html/rfc6749)の[authorization code grant](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1)や[implicit grant](https://datatracker.ietf.org/doc/html/rfc6749#section-4.2)を利用して、Github等のauthorization serverからaccess tokenを取得したい場合、userがCLIへの権限委譲に同意したあと、authorization serverからのredirectをうけるhttp serverが必要になります。  
+CLIから[OAuth](https://datatracker.ietf.org/doc/html/rfc6749)の[authorization code grant](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1)や[implicit grant](https://datatracker.ietf.org/doc/html/rfc6749#section-4.2)を利用して、Github等のauthorization serverからaccess tokenを取得したい場合、userがCLI applicationへの権限委譲に同意したあと、authorization serverからのredirectをうけるhttp serverが必要になります。  
 CLIの場合、localhostでlistenしているhttp serverを起動しておき、authorization serverから`http://localhost:8080`等へredirectさせるという方法も考えられますが、以下の問題があると思いました。
 
 * 指定のportでlistenできるとは限らない
 * 同一hostでCLIを複数個同時に起動するとportが衝突する
 
-Portが既に利用されている場合は、利用portをincrementして使えるportを見つける処理をいれれば、対応できるかなと考えていたところ、本仕様を見つけました。  
-RFC8628を使えば、http serverを建てることなくOAuthの認可処理を行うことができたので、本記事では仕様を実際にrustで実装しながらその過程をみていこうと思います。
+Portが既に利用されている場合は、利用portをincrementして使えるportを見つける処理を行うことで、対応できるかなと考えていたところ、本仕様を見つけました。  
+RFC8628を使えば、http serverを建てることなくOAuthの認可処理を行うことができたので、本記事ではrustで実装しながらその過程をみていこうと思います。
 
 目標は以下の処理を実装することです。
 
@@ -34,7 +34,7 @@ CLIを実行すると、code入力画面がbrowserに表示されるので
 
 ![Device Flow Code Input Page](/images/rfc8628-oauth2-device-authorization-grant-handson/device-flow-ss-1.png)
 
-Github上の画面でcodeを入力すると、cliがaccess tokenを取得できます。
+Github上の画面でcodeを入力すると、access tokenを取得できます。
 
 ## Device Authorization Grantとは
 
@@ -45,7 +45,7 @@ Github上の画面でcodeを入力すると、cliがaccess tokenを取得でき�
 > This OAuth 2.0 [RFC6749](https://datatracker.ietf.org/doc/html/rfc6749) protocol extension enables OAuth clients to
    request user authorization from applications on devices that have limited input capabilities or lack a suitable browser.
   
-とあり、CLIはhttp requestを処理できないので、lack a suitable browserにあたるでしょうか。
+とあり、今回のCLIではhttp serverを用いない為、http requestを処理できないので、lack a suitable browserにあたるでしょうか。
 
 また、
 
@@ -58,7 +58,7 @@ Github上の画面でcodeを入力すると、cliがaccess tokenを取得でき�
 > The device authorization grant is not intended to replace browser-based OAuth in native apps on capable devices like smartphones.
    Those apps should follow the practices specified in "OAuth 2.0 for Native Apps" [RFC8252](https://datatracker.ietf.org/doc/html/rfc8252).
 
-とあり、browserを利用できる場合はdevice flowを使うべきではないようです。
+とあり、native app等ではdevice flowを使うべきではないようです。
 
 ## Requirements for device authorization grant
 
@@ -105,21 +105,21 @@ Device authorization grantにおいて、各種情報がどのようにやり取
   
 ```
 
-今回の場合、DeviceClientがCLI、Authorization ServerがGithub,にあたる。
+今回の場合、DeviceClientがCLI、Authorization ServerがGithubにあたります。
 
 (A) まずuserによってcliが実行されると、cliはauthorization serverにdevice flowの開始を要求するrequestを送る。
 
-(B) するとauthorization serverはuserのbrowserで表示すべきURI(verification URI)と入力するdevice codeをresponseで返す
+(B) するとauthorization serverはuserのbrowserで表示すべきURI(verification URI)と入力するuser codeをresponseで返す
 
-(C) CLIはbrowserを開いて、verification URIを表示して、device codeの入力を促す 
+(C) CLIはbrowserを開いて、verification URIを表示して、user codeの入力を促す 
 
 (D) Userはverification URI上で、CLIが委譲を要求する権限を確認して同意を判断する
 
-(E) CLIはuserにverification URIとdevice codeを表示した後はauthorization serverにpollingを行い、userの判断/入力の結果を待つ
+(E) CLIはuserにverification URIとuser codeを表示した後はauthorization serverにpollingを行い、userの判断/入力の結果を待つ
 
-(F) Userがdevice codeの入力を完了すると、access tokenがauthorization serverからresponseとして返され、処理が完了する
+(F) Userがuser codeの入力を完了すると、access tokenがauthorization serverからresponseとして返され、処理が完了する
 
-CLIが実装するrequest/responseは2種類だけと非常にシンプルになっている。  
+CLIが実装するrequest/responseは2種類だけと非常にシンプルになっています。  
 処理の概要が把握できたので、それぞれのステップを実装していきます。
 
 
@@ -243,7 +243,7 @@ struct DeviceAuthorizationResponse {
 * `user_code` userに遷移先のbrowserで入力してもらうcodeです
 * `verification_uri` userのbrowserの遷移先URIです
 * `verification_uri_complete` QRコード等のtext以外の表示手段です。今回は利用しません。
-* `device_code`のTTLです。この時間以内に処理を完了できなければ処理をやり直す必要があります。
+* `expires_in` device codeのTTLです。この時間以内に処理を完了できなければ処理をやり直す必要があります。
 * `interval` pollingする際のintervalです。仕様でdefaultが5秒と定められています。
 
 device authorization requestは以下のように実装しました。
@@ -277,8 +277,7 @@ impl DeviceFlow {
 ```
 
 > The client initiates the authorization flow by requesting a set of verification codes from the authorization server by making an HTTP "POST" request to the device authorization endpoint.
-> The client makes a device authorization request to the device authorization endpoint by including the following parameters using the "application/x-www-form-urlencoded" format, per Appendix B of
-   [RFC6749], with a character encoding of UTF-8 in the HTTP request entity-body:
+> The client makes a device authorization request to the device authorization endpoint by including the following parameters using the "application/x-www-form-urlencoded" format, per Appendix B of [RFC6749], with a character encoding of UTF-8 in the HTTP request entity-body:
 
 とあるので、POSTかつ、form-urlencodedが仕様のようでした。  
 Githubではjsonでも受け付けてくれそうでした。
@@ -318,7 +317,7 @@ impl DeviceFlow {
         println!("Enter CODE: `{user_code}`");
 
         // attempt to open input screen in the browser
-        open::that(verification_uri.to_string()).ok();
+        open::that(verification_uri.to_string()).ok(); // 👈
 
         // ...
     }
@@ -389,8 +388,7 @@ impl<'s> DeviceAccessTokenRequest<'s> {
 requestはdevice authorization request同様に、POSTで、form-urlencodedで行います。
 
 続いてresponseについて。  
-まず、userがcodeを入力し、権限委譲に同意した場合のresponseは[RFC6749 The OAuth 2.0 Authorization Framework 5.
-1](https://datatracker.ietf.org/doc/html/rfc6749#section-5.1)に定義されている、通常のOAuthのresponseです。
+まず、userがcodeを入力し、権限委譲に同意した場合のresponseは[RFC6749 The OAuth 2.0 Authorization Framework 5.1](https://datatracker.ietf.org/doc/html/rfc6749#section-5.1)に定義されている、通常のOAuthのresponseです。
 
 ```rust
 #[derive(Deserialize, Debug)]
@@ -405,9 +403,9 @@ pub struct DeviceAccessTokenResponse {
 
 Githubの場合は以下のような値が返ってきました。
 
-* `access_token` `gho_`からはじまるaccess token
-* `token_type` `bearer`
-* `expires_in` `None`
+* `access_token`: `gho_`からはじまるaccess token
+* `token_type`: `bearer`
+* `expires_in`: `None`
 
 Device flowでは、pollingでuserの判断を確認するので、まだuserの判断が示されていないという状態をハンドリングする必要があります。  
 
@@ -430,7 +428,7 @@ Device flowでは、pollingでuserの判断を確認するので、まだuserの
 と、errorの場合は400で返すとあるので、userの入力がまだ完了していない場合は400で返ってくるのかなと思いました。
 
 が、結果としては、Githubは`authorization_pending`を200で返す実装となっていました。  
-HTTPのsemantics的にも、request自体のparameterはただしいので、200はおかしいと思わないのですが、どうしてここが仕様で曖昧になっているのか疑問でした。
+HTTPのsemantics的にも、request自体のparameterは正しいので、200はおかしいと思わないのですが、どうしてここが仕様で曖昧になっているのか疑問でした。
 
 ということで、rustの実装的には、httpのstatus codeからdeserializeする型を決めたいところなのですが、200であってもresponseの型が違うので以下のように実装しました。
 
@@ -505,9 +503,7 @@ impl DeviceFlow {
 
 `request::Response::bytes()`でresponse bodyを取得して、`DeviceAccessTokenResponse`にdeserializeできたら、成功、失敗した場合、`DeviceAccessErrorResponse`に変換したのち、処理が継続できるか判定します。
 
-> The "authorization_pending" and "slow_down" error codes define particularly unique behavior, as they indicate that the OAuth client
-   should continue to poll the token endpoint by repeating the token request (implementing the precise behavior defined above).  If the client receives an error response with any other error code, it MUST
-   stop polling and SHOULD react accordingly, for example, by displaying an error to the user.
+> The "authorization_pending" and "slow_down" error codes define particularly unique behavior, as they indicate that the OAuth client should continue to poll the token endpoint by repeating the token request (implementing the precise behavior defined above).  If the client receives an error response with any other error code, it MUST stop polling and SHOULD react accordingly, for example, by displaying an error to the user.
 
 と定義されており、特定のerrorの場合にのみ、pollingを継続しなければならないようなので以下のように実装しました。
 
