@@ -1,5 +1,5 @@
 ---
-title: "RFC8628 OAuth 2.0 Device Authorization Grantを読みながらGithubのaccess tokenを取得するcliを作ってみる"
+title: "RFC8628 OAuth 2.0 Device Authorization Grantを読みながらaccess tokenを取得するcliを実装する"
 emoji: "🦀"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["rust"]
