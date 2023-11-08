@@ -9,6 +9,8 @@ publication_name: "fraim"
 
 本記事では[RFC8628 OAuth 2.0 Device Authorization Grant](https://datatracker.ietf.org/doc/html/rfc8628)を読みながらGithubのaccess tokenを取得するCLIをrustで実装していきます。
 
+作成したCLIは[こちら](https://github.com/ymgyt/yaru/blob/ea57d7905f7e0fea05bc6650d72e422f464324bd/yaru/src/cli/login/oauth.rs#L33)
+
 ## 概要
 
 CLIから[OAuth](https://datatracker.ietf.org/doc/html/rfc6749)の[authorization code grant](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1)や[implicit grant](https://datatracker.ietf.org/doc/html/rfc6749#section-4.2)を利用して、Github等のauthorization serverからaccess tokenを取得したい場合、userがCLI applicationへの権限委譲に同意したあと、authorization serverからのredirectをうけるhttp serverが必要になります。  
@@ -35,6 +37,7 @@ CLIを実行すると、code入力画面がbrowserに表示されるので
 ![Device Flow Code Input Page](/images/rfc8628-oauth2-device-authorization-grant-handson/device-flow-ss-1.png)
 
 Github上の画面でcodeを入力すると、access tokenを取得できます。
+
 
 ## Device Authorization Grantとは
 
