@@ -1,10 +1,13 @@
 +++
 title = "🕸  GraphQL Specificationを読んでみる"
 slug = "graphql-specification-2021"
+description = "GraphQLの仕様を読んでみた感想について"
 date = "2022-11-04"
 draft = false
 [taxonomies]
 tags = ["book"]
+[extra]
+image = "images/emoji/spider_web.png"
 +++
 
 {{ figure(images=["images/gql_spec.png"] )}}
