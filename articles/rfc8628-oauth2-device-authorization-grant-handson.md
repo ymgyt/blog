@@ -3,7 +3,7 @@ title: "RFC8628 OAuth 2.0 Device Authorization GrantでCLIからaccess tokenを�
 emoji: "🦀"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["rust"]
-published: false
+published: true
 publication_name: "fraim"
 ---
 
