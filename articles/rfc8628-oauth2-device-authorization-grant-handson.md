@@ -9,7 +9,7 @@ publication_name: "fraim"
 
 本記事では[RFC8628 OAuth 2.0 Device Authorization Grant](https://datatracker.ietf.org/doc/html/rfc8628)を読みながらGithubのaccess tokenを取得するCLIをrustで実装していきます。
 
-作成したCLIは[こちら](https://github.com/ymgyt/yaru/blob/ea57d7905f7e0fea05bc6650d72e422f464324bd/yaru/src/cli/login/oauth.rs#L33)
+作成したCLIは[こちら](https://github.com/ymgyt/yaru/blob/078649cb201a7adafcbed4e3633bdb3a7b846553/yaru/src/cli/login/oauth.rs#L33)
 
 ## 概要
 
