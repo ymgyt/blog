@@ -70,7 +70,7 @@ Github上の画面でcodeを入力すると、access tokenを取得できます�
 1. Internetに接続されていること
 2. Outbound http requestができること
 3. URIとcode sequenceをuserに表示できること
-4. Usrはrequestを処理するために別のdevice(personal computer, smartphone等)をもっていること
+4. Userはrequestを処理するために別のdevice(personal computer, smartphone等)をもっていること
 
 と定義されていました。  
 CLIとしてはbrowserかsmartphoneをuserが使えることを期待するのは特に問題ないといえそうです。
