@@ -6,6 +6,8 @@ draft = false
 description = "Rust Atomics and Locksが非常によかったので感想を書いた"
 [taxonomies]
 tags = ["rust","book"]
+[extra]
+image = "images/emoji/closed_book.png"
 +++
 
 ## 読んだ本
