@@ -2,8 +2,8 @@
 title = "📕 詳解 Rustアトミック操作とロックを読んだ感想"
 slug = "rust-atomics-and-locks-ja"
 description = "std::sync::atomic::{Ordering,fence}がわかる本"
-date = "2023-11-25"
-draft = true
+date = "2023-11-28"
+draft = false
 [taxonomies]
 tags = ["rust","book"]
 [extra]
@@ -20,16 +20,16 @@ image = "images/emoji/closed_book.png"
 訳者: [中田秀基](https://twitter.com/hidemotoNakada)
 
 あの、[Rust Atomics and Locks](https://marabos.nl/atomics/)の日本語翻訳がついに販売されました。  
-こちらについては去年、[読んだ感想](https://blog.ymgyt.io/entry/rust_atomics_and_locks/)を書きました。  
+Rust Atomics and Locksについては去年、[読んだ感想](https://blog.ymgyt.io/entry/rust_atomics_and_locks/)を書きました。  
 
-あらためて日本語訳を読んだ感想を書きます。  
+本記事ではあらためて日本語訳を読んだ感想を書きます。  
 
 ## Rust Atomics and Locksを読んでから
 
-Rust Atomics and Locksを読む前は、CPUはメモリから命令をfetchした後、実行して結果をregisterないしメモリに書きもどすというのが自分のメンタルモデルでした。  
+Rust Atomics and Locksを読む前は、CPUはメモリから命令をfetchした後、実行して結果をregisterないしメモリに書き戻すというのが自分のメンタルモデルでした。  
 CPUとメモリの間にはcacheがあるものの、performanceを考慮しなければプログラマーには透過的で意識しなくてよいものと思っていました。  
-しかし、このメンタルモデルは誤っていることがわかりました。  実際にはCPUコアごとに独立したcacheが存在している。CPUコアごとのcacheの整合性(cache coherence)を保つためにCPUコアはなんらかのprotocolでcacheの問い合わせや無効を行っている。cacheの更新自体もqueueでうけられて非同期。したがって、CPUコアAによる変数A,Bへの書き込みがなされても、CPUコアBには変数Bの変更しか観測されないという場合がありえる。   
-と考えるようになりました。ので、atomicについて知るにはもうすこしCPUのことがわかりたいと思うようになり、以下の本を読みました。  
+しかし、このメンタルモデルは誤っていることがわかりました。  実際はCPUコアごとに独立したcacheが存在している。CPUコアごとのcacheの整合性(cache coherence)を保つためにCPUコアはなんらかのprotocolでcacheの問い合わせや無効を行っている。cacheの更新自体もqueueでうけられて非同期。したがって、CPUコアAによる変数A,Bへの書き込みがなされても、CPUコアBには変数Bの変更しか観測されないという場合がありえる。   
+と考えるようになりました。そのため、atomicについて知るにはもうすこしCPUのことがわかりたいと思うようになり、以下の本を読みました。  
 
 * [もっとCPUの気持ちがしりたいですか?](https://blog.ymgyt.io/entry/cpu_no_kimochi/) 
 * [プログラマーのためのCPU入門](https://blog.ymgyt.io/entry/what-a-programmer-should-know-about-the-cpu/)
@@ -48,6 +48,12 @@ CPUとメモリの間にはcacheがあるものの、performanceを考慮しな�
 あっているかわかりませんが、このような仮説をもって本書を読みました。
  
 ## まとめ
+
+自分のように[`std::sync::atomic::Ordering`](https://doc.rust-lang.org/std/sync/atomic/enum.Ordering.html)や[`compare_exchange()`](https://doc.rust-lang.org/std/sync/atomic/struct.AtomicU32.html#method.compare_exchange)がよくわからないと思っている方に是非読んでみてほしいと思いました。  
+`AtomicI32::store(Ordering::Release)`と`AtomicI32::load(Ordering::Acquire)`にどのような意図が込められているかわかるようになります。
+
+また、具体例が豊富で、atomic関連だけでなくrust全般の理解も進むと思います。 
+
 
 ## 1章 Rust平行性の基本
 
@@ -166,6 +172,25 @@ fn main() {
 
 ## 6章 Arcの実装
 
+本章では`Arc`を実装します。  
+`Arc`の実態は以下のように定義されたheap上に確保された`ArcData`ということがわかります。  
+
+```rust
+struct ArcData<T> {
+    ref_count: AtomicUsize,
+    data: T,
+}
+
+struct Arc<T> {
+    ptr: NonNull<ArcData<T>>,
+}
+```
+
+`Arc`をdropする際に、それが最後の`Arc`の場合に限って、orderingを変えたい際に`fence`が利用できる例の解説があります。
+また、循環参照を表現できるように`Weak`も実装します。  
+`Weak`もheap上の`ArcData`を参照しているはずなのに、`Arc`がなくなれば`Arc<T>`の`T`はdropされる一見不思議なapiがどのように実装されているかわかります。    
+
+愚直に実装しようと思うと、`Arc`と`Weak`の数を別々のatomic変数で管理したくなります。しかしながら、２つのatomic変数が同時に0であることは確かめられないので、いかにWeakの数を管理するかが課題となります。最終的な実装はstdの実装とほぼ同じになるそうです。
 
 
 ## 7章 プロセッサを理解する
@@ -454,3 +479,82 @@ predecessor set unordered with non-AMO loads in its successor set.
 fence命令がriscvにおけるatomic理解の鍵となりそうなので、今後調べていきたいです。
 
 また本章ではcacheの一貫性(coherence)やcache line、x86-64とARM64のorderingの違い等が説明されます。
+
+## 8章 OSプリミティブ
+
+4章のスピンロックを利用すれば、kernelの機能を利用せずにロックを実装することができる。しかしスケジューリングを通じてthreadを動かしたり止めたりするのはkernelなので、kernelにthreadが何かをまっていることを伝えたほうがリソースを有効活用できる。  
+
+本章では各Platform(Linux,macOS,Windows,...)でRustがどのようにロック関連のsystem callを行うかの概要が説明される。  
+特にLinuxのsystem callの1つである、futex(fast user-space mutex)が解説されます。  
+Futexでは、atomic変数を起点にして、waitやwakeを実装することができます。  
+
+```rust
+use std::{
+    sync::atomic::{AtomicU32, Ordering::*},
+    thread,
+    time::Duration,
+};
+
+#[cfg(not(target_os = "linux"))]
+compile_error!("Linux only.");
+
+fn wait(a: &AtomicU32, expected: u32) {
+    unsafe {
+        libc::syscall(
+            libc::SYS_futex,
+            a as *const AtomicU32,
+            libc::FUTEX_WAIT,
+            expected,
+            std::ptr::null::<libc::timespec>(),
+        );
+    }
+}
+
+fn wake_one(a: &AtomicU32) {
+    unsafe {
+        libc::syscall(libc::SYS_futex, a as *const AtomicU32, libc::FUTEX_WAKE, 1);
+    }
+}
+fn main() {
+    let a = AtomicU32::new(0);
+
+    thread::scope(|s| {
+        s.spawn(|| {
+            thread::sleep(Duration::from_secs(3));
+            a.store(1, Relaxed);
+            wake_one(&a);
+        });
+
+        println!("Waiting...");
+        while a.load(Relaxed) == 0 {
+            wait(&a, 0);
+        }
+        println!("Done!");
+    });
+}
+
+// Waiting...
+// Done!
+```
+
+## 9章ロックの実装
+
+`wait()`,`wake_one()`,`wake_all()`の機能を提供する[`atomic-wait`](https://crates.io/crates/atomic-wait)を利用して、`Mutex`, `Condvar`, `RwLock`を実装します。(Mara先生のcrateです)  
+`atomic-wait`の内部で、Linuxでは`SYS_futex`, FreeBSDでは`_umtx_op`, Windowsでは`Wait{On,By}Address`, macOSでは`libc++`を利用して、futex類似のapiを抽象化してくれているそうです。  
+
+`wait()`はsystem callを伴うので、それを呼ぶ前に一定回数spin lockを試みる等の最適化も紹介されます。  
+さらに、spin lockでのloopの中で、compare_exchange等の比較交換操作を読んでしまうと、cache coherenceのprotocol上排他アクセスを要してしまうので、loadで読むようにするといった点も解説されます。  
+
+futex likeなapiとatomic変数だけで、read lockとwrite lockを提供する`RwLock`を作れるのは驚きです。
+
+## 10章 アイディアとインスピレーション  
+
+平行性に関する様々なデータ構造やアルゴリズムが紹介されます。  
+自分は[`parking_lot`](https://crates.io/crates/parking_lot)について知りたいと思っていたので挙げられている[参考文献](https://webkit.org/blog/6161/locking-in-webkit/)を読んでみよと思いました。
+
+## 最後に
+
+ということで、Rust Atomics and Locksの翻訳を読んでみました。  日本語翻訳もとても読みやすく、読んでいてとても楽しい本でした。  
+来年は本書でもでてきた、`NonNull`,`UnsafeCell`,`ManuallyDrop`,`MaybUninit`等のunsafeなコードも読んでいければなどと思っています。  
+
+~~著者のMara Bos先生をマラと読んでいましたが、マーラみたいでした。~~
