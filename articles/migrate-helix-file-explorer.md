@@ -131,6 +131,8 @@ pub fn default() -> HashMap<Mode, KeyTrie> {
 E = "reveal_current_file"
 ```
 
+(設定fileは`:config-open`で開くことができ、`:config-reload`で反映できます)
+
 `reveal_current_file()`は下記のように実装されています。
 
 ```rust
@@ -309,7 +311,7 @@ impl<T: TreeViewItem + Clone> TreeView<T> {
 
 これでついにdirectory構造が描画できました。  
 `surface.set_stringn()`にfileの種別に応じたiconを渡せば、より一般的なfile explorerに近づきそうです。  
-やってみようかとも思ったのですが、[Helix]本体で[iconの管理方法](https://github.com/helix-editor/helix/pull/2869)が議論されているので、それをまってからにすることにしました。
+やってみようかとも思ったのですが、[Helix]本体で[iconの管理方法](https://github.com/helix-editor/helix/pull/2869)が議論されているので、それを待ってからにすることにしました。
 
 # 移動
 
@@ -434,7 +436,7 @@ impl Component for Explorer {
 ```
 
 作成は`a`, deleteは`d`, renameは`r`を割り当てています。  
-例えば、file explorerをfocus中に`a`を押すと、以下のように作成するfileをうけつけるpromptが表示されます。
+例えば、file explorerをfocus中に`a`を押すと、以下のように作成するfileを受け付けるpromptが表示されます。
 
 ![Prompt](/images/migrate-helix-file-explorer/helix-ss-prompt.png)
 
