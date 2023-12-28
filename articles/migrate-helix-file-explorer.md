@@ -10,7 +10,7 @@ publication_name: "fraim"
 現在のdirectory構造を左側に表示する機能は各種editorに一般的に備わっているものかと思います。
 [Helix]にその機能を追加しようとした[PR File explorer and tree helper (v3)](https://github.com/helix-editor/helix/pull/5768)は残念ながらmergeに至りませんでした。  
 自分はこのPR branchを利用していたのですが、更新から10ヶ月程度経ち、masterとの乖離が大きくなってきました。
-そこで、[Helix]を[fork](https://github.com/ymgyt/helix)して、このPRを最新のmasterに移植して利用することにしました。 
+そこで、[Helix]を[fork](https://github.com/ymgyt/helix/tree/explorer)して、このPRを最新のmasterに移植して利用することにしました。 
 本記事では[Helix]にfile explorerというdirectory構造を表示するcomponentを追加するうえで必要だった変更について書きます。  
 そもそもどうやって[Helix]がfileを表示しているかについては以前、[Helixがfileをrenderingする仕組みを理解する]で書いたりしていました。 
 File explorerは下記の画像のdirectory構造を表示している左側のcomponentです。 
