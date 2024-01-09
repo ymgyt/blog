@@ -3,7 +3,7 @@ title: "最新のHelixでFile explorerを使いたい"
 emoji: "📁"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["rust", "helix"]
-published: false
+published: true
 publication_name: "fraim"
 ---
 
