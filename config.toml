@@ -25,9 +25,9 @@ default_language = "ja"
 generate_feed = true
 feed_filename = "atom.xml"
 
-taxonomies = [
-  { name = "tags", feed = true, render = true },
-]
+taxonomies = [{ name = "tags", feed = true, render = true }]
+
+author = "ymgyt"
 
 
 [markdown]
@@ -79,4 +79,3 @@ skip_anchor_prefixes = [
 name = "ymgyt"
 github = "ymgyt"
 twitter = "YAmaguchixt "
-

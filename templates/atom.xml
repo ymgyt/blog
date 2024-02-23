@@ -16,6 +16,7 @@
         {{ config.base_url ~ '/entry/' | escape_xml | safe }}
       {%- endif -%}
     "/>
+    <author><name>{{ config.author }}</name></author>
     <generator uri="https://www.getzola.org/">Zola</generator>
     <updated>{{ last_updated | date(format="%+") }}</updated>
     <id>{{ feed_url | safe }}</id>
