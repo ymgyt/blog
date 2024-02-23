@@ -24,10 +24,9 @@ default_language = "ja"
 # Feed configuration
 generate_feed = true
 feed_filename = "atom.xml"
+author = "ymgyt"
 
 taxonomies = [{ name = "tags", feed = true, render = true }]
-
-author = "ymgyt"
 
 
 [markdown]
