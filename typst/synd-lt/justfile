@@ -1,6 +1,6 @@
 set shell := ["nu", "-c"]
 
 watch *flags:
-	^open ./presen.pdf || true
+	try { ^open ./presen.pdf } 
 	nix run nixpkgs#typst watch presen.typ -- {{ flags }}
 
