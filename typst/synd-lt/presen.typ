@@ -407,7 +407,7 @@ class Synd < Formula
 #west-slide(title: "cargo-distがやってくれる")[
   cargo-releaseと一緒に使うことが想定されており \
   cargo publishとgitのtag pushまでがcargo-release \
-  それ移行の配布処理がcargo-distという役割分担がよかったので使ってみた
+  それ以降の配布処理がcargo-distという役割分担がよかったので使ってみた
 ]
 
 
