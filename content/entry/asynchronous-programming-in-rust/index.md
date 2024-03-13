@@ -51,34 +51,211 @@ Rustの本なのにFutureの話がでてくるのが6章なのが素晴らしい
 
 ### Chapter 2: How Programming Languages Model Asynchronous Program Flow
 
+OSのthreadという機構があるのになぜ、さらにもう1つ抽象化のレイヤーを設けるのか、 
+Thread,future,goroutine, promise等がなにを抽象化しているかについて説明されます。  
+Cooperativeやstackfulといった分類の観点の説明もあります。  
+OS threadとuser-lebel thread(green thread)の共通点や違いの説明もわかりやすかったです。  
+Green threadではprogram(runtime)でgreen threadごとのstackを管理しますが、最初の割り当てが足りなくなった場合に新しい領域を割り当てて移動させることの難しさについての言及はなるほどでした。(stackを単純に移動させるとpointerが壊れてしまいますが、garbage collectorでどのみちpointerを管理するコストを払っている等)
 
-#### Memo
+Green thread, fiber, future, promiseがどういった関係にあるのか整理されており、本章もRust関係なく参考になると思います。green threadいまいちピンときていない方も5章で実際に作りながら詳しく解説してくれるので大丈夫です。  
 
-- threads, futures, fibers, goroutines, promises,がなにを抽象化しているかについて
-- Definitions
-  - Cooperative: 自主的にscheduler等にyield(制御を返す)tasks。Rustのasync/awaitとjsのpromises
-  - Non-cooperative: schedulerがpre-emptyするtask(stop) OS threadやgoroutines(after Go 1.14)
 
-  - Stafkful: call stackをもつ: executionを任意の地点でsuspendできる
-  - stackless: separateなstackがなく、same call stackを共有する
+### Chapter 3: Understanding OS-Backed Event Queues, System Calls, and Cross-Platform Abstractions
 
-- Threads
-  - Threadの指すところについて。OS Threadsとuser-level threadの区別。OS threadでもOS間で代替一致するが、必ずしもすべてのOSで共通するわけではない。
-  - threadの作成/廃棄には時間がかかる
-  - 専用の固定長のstackがある
-  - context switching
+[mio](https://github.com/tokio-rs/mio)や[polling](https://github.com/smol-rs/polling),[libuv](https://libuv.org/)等で利用されているOS-backed event queueについて。
 
-- ad of decoupling aynschronous ops from os threads
-  - Rustではstd::threadがあるのにasync/awaitのような抽象化レイヤーを利用するとどういったメリットがあるのかについて
-    - stack sizeやthread間でのcontext switch
+Blocking I/Oを行うと、そのOS threadはsuspendされ、dataが到着すると再び起こされ、CPUのstateを復元したのち、実行が再開される。I/Oの完了を待っている間に他にすることがなければこの仕組みは効率的だが、そうでない場合は新たにthreadを起動させるしかない。  
+そこで、threadをsuspendさせないsyscallを行い、blockする代わりにeventの状態を問い合わせるためのhandleを取得する。(polling)。ただし、この手法だと、pollの間隔が短すぎるとCPUを浪費してしまうし、長すぎるとthroughputが落ちてしまう。そこで、epoll,kqueue,IOCP等のevent queueを利用する。
 
-- Fibers and green threads
- - いわゆるM:N threadingについて
- - stackful coroutinesとも
- - "green threads"という用語がM:N threadingの異なる実装に結びついている
- - goroutinesはstackfull coroutinesの実装の一例(ただし、coroutineは暗黙的にco-operativeを意味するが、goroutinesはpre-emptingなのでこれまでの分類からするとグレー)
- - green threadsはOS threadと似た性質がある
-  - stackが最初の割当より多く必要になった場合に対処する必要がある
-    - 特に別領域にstackを割当、旧stackを移動させる際に、stackに保持されているpointerを壊さないようする必要がある。
-    - この点、garbase collectorがあるprogramの場合はどのみちpointerをgcのために管理している。
-    - 実行期間の短い間だけ、多くstackを必要として、それ以外の間はあまりstackを利用しないタスクの場合、必要以上にstackを消費することをうけいれるか、stack sizeを小さくするようなことをする必要がある
+event queueには、I/Oの準備ができたことを通知するReadiness basedとbuffer等を渡してI/Oの完了を通知するCompletion basedなものがある。epollとinput/output completion port(IOCP)を具体例に両者の説明もある。cross platformなevent queue apiを作る際はどちらをベースにするか決める必要があり、不一致を埋めるのはなかなか大変という説明もあります。
+
+後半ではsyscallの解説があります。ABIやcalling conventionも説明してくれます。  
+Rustからsystem callを行う方法として、以下のような`asm!` macroやFFIが紹介されます。  
+`asm!` macroについては詳しい解説もあります。
+
+```rust
+#[inline(never)]
+fn syscall(message: String) {
+    let msg_ptr = message.as_ptr();
+    let len = message.len();
+    unsafe {
+        asm!(
+            "mov rax, 1",
+            "mov rdi, 1",
+            "syscall",
+            in("rsi") msg_ptr,
+            in("rdx") len,
+            out("rax") _,
+            out("rdi") _,
+            lateout("rsi") _,
+            lateout("rdx") _
+        );
+    }
+}
+```
+
+### Chapter 4: Create Your Own Event Queue
+
+本章では、epollを用いて、簡単なevent queueを実装していきます。  
+この例は[mio]に基づいていて、mioの理解にも繫る親切設計です。
+
+具体的には以下のように実際にepollを利用した`Poll`を実装しながら、epollの仕組みが解説されます。  
+また、`#[repr(packed)]`やbitflags, level-triggerとedge-trigger, `TcpStream::set_nodelay`といった関連する前提についての説明もあります。
+
+```rust
+
+#[link(name = "c")]
+extern "C" {
+    // ...
+    pub fn epoll_wait(epfd: i32, events: *mut Event, maxevents: i32, timeout: i32) -> i32;
+}
+
+impl Poll {
+    pub fn poll(&mut self, events: &mut Events, timeout: Option<i32>) -> Result<()> {
+        // ...
+        let res = unsafe { epoll_wait(fd, events.as_mut_ptr(), max_events, timeout) };
+        // ...
+    }
+}
+```
+
+上記のepollを利用した具体例の他にも同じ処理を[mio]を利用したversionの具体例も載っており、[mio]よくわからないと思っていた自分にとっては非常にありがたい章となっておりました。
+
+
+
+
+### Chapter 5: Creating Our Own Fibers
+
+本章では、fiber, green threadといわれるstackful coroutineを作ります。  
+green threadとは要するに、programでassemblyを書いて、CPUのregister特にstack pointerやinstruction pointerを書き換えて実行する命令流を切り替えるというのが自分の理解です。  
+
+具体的には以下のようにthreadのデータ構造を定義。
+
+  ```rust
+#[derive(PartialEq, Eq, Debug)]
+enum State {
+    Available,
+    Running,
+    Ready,
+}
+
+struct Thread {
+    stack: Vec<u8>,
+    ctx: ThreadContext,
+    state: State,
+}
+
+#[derive(Debug, Default)]
+#[repr(C)]
+struct ThreadContext {
+    rsp: u64,
+    r15: u64,
+    // ...
+}
+```
+
+現在の`ThreadContext`と実行を切り替えたい`ThreadContext`を引数(`rdi`,`rsi`)でもらって、切り替えるassemblyを
+
+```rust
+unsafe extern "C" fn switch() {
+    asm!(
+        "mov [rdi + 0x00], rsp",
+        // ...
+        "mov [rdi + 0x30], rbp",
+        "mov rsp, [rsi + 0x00]",
+        // ...
+        "mov rbp, [rsi + 0x30]",
+        "ret",
+        options(noreturn)
+    );
+}
+
+Runtimeが呼び出すという感じです。
+
+fn yield(&mut self) {
+  // ...
+  unsafe {
+      let old: *mut ThreadContext = &mut self.threads[old_pos].ctx;
+      let new: *const ThreadContext = &self.threads[pos].ctx;
+      asm!("call switch", in("rdi") old, in("rsi") new, clobber_abi("C"));
+  }
+  // ...
+}
+```
+
+この説明をしながら、ISAであったり、calling convention、`asm!` macroを解説してくれます。
+
+
+### Chapter 6: Futures in Rust
+
+6章はRustのFutureの概要についての短い章です。  
+Rustではbuiltinのruntimeは提供されていないであったり、stdが提供しているもの(Future trait, Waker type)の説明があります。  
+また、async runtimeのmental modelとして、Reactor, Executor,Futureの関係が解説されます。
+
+
+### Chapter 7: Coroutines and async/await
+
+Green threadはtaskを停止/再開させるための情報をstackに保持できるが、stackless coroutine(Future)は停止/再開のための情報をstateごとに保持するstate machineとして実装されている。  
+ただ、このstateを直接書くようなことはせずに、`.await`を書くたびにそこが、停止/再開のポイントとなり、stateが定義される。  
+というような、async/awaitは内部的にはStateになっているというような説明はrustのfutureの説明でよくみかけると思います。本書のユニークなところは、async/awaitを書いてしまうとこの変換処理がrustのcompiler側で行われてしまうので、独自にcoroutine/waitを定義して、stateへの変換処理を自作の`corofy`で行う点です。
+
+具体的には以下のようなcodeを
+
+```rust
+coroutine fn async_main() {
+    let txt = Http::get(&get_path(0)).wait;
+    println!("{txt}");
+    let txt = Http::get(&get_path(1)).wait;
+    // ...
+}
+```
+
+`corofy`で変換して以下のようなcodeを出力します。
+
+```rust
+fn async_main() -> impl Future<Output=String> {
+    Coroutine0::new()
+}
+        
+enum State0 {
+    Start,
+    Wait1(Box<dyn Future<Output = String>>),
+    Wait2(Box<dyn Future<Output = String>>),
+    // ...
+    Resolved,
+}
+
+struct Coroutine0 {
+    state: State0,
+}
+
+impl Coroutine0 {
+    fn new() -> Self {
+        Self { state: State0::Start }
+    }
+}
+
+impl Future for Coroutine0 {
+    type Output = String;
+
+    fn poll(&mut self) -> PollState<Self::Output> {
+        loop {
+        match self.state {
+            State0::Start => {
+              // ...
+            }
+
+            State0::Wait1(ref mut f1) => {
+              / ...
+            }
+        }
+    }
+}
+```
+
+うごく具体例があるので、`.await`を書くたびにstateが定義されるというのがとてもわかりやすいと思いました。
+
+
+### Chapter 8: Runtimes, Wakers, And The Reactor-Executor Pattern
+
+[mio]: https://github.com/tokio-rs/mio
