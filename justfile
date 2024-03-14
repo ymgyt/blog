@@ -1,7 +1,7 @@
 # Run zola server
 serve:
-    zola serve --drafts
+    nix run nixpkgs#zola -- serve --drafts
 
 # Check links
 check:
-    zola check --drafts
+    nix run nixpkgs#zola -- check --drafts
