@@ -2,8 +2,8 @@
 title = "📕 Asynchronous Programming in Rustを読んだ感想"
 slug = "asynchronous-programming-in-rust"
 description = "CF Samson先生のFuture解説がついに本になった"
-date = "2024-03-09"
-draft = true
+date = "2024-03-14"
+draft = false
 [taxonomies]
 tags = ["rust", "book"]
 [extra]
@@ -15,7 +15,7 @@ image = "images/emoji/closed_book.png"
 {{ figure(images=["images/apir-book.jpg"], caption="Asynchronous Programming in Rust", href="https://www.packtpub.com/product/asynchronous-programming-in-rust/9781805128137") }}
 
 著者: [Carl Fredrik Samson](https://github.com/PacktPublishing/Asynchronous-Programming-in-Rust/tree/main?tab=readme-ov-file#get-to-know-the-author)  
-[Repository](https://github.com/PacktPublishing/Asynchronous-Programming-in-Rust/tree/main?tab=readme-ov-file#get-to-know-the-author)
+[Sample code Repository](https://github.com/PacktPublishing/Asynchronous-Programming-in-Rust/tree/main?tab=readme-ov-file#get-to-know-the-author)
 
 今はもう読めなくなってしまった[Futures Explained in 200 Lines of Rust](http://web.archive.org/web/20230324130904/https://cfsamson.github.io/books-futures-explained/)や[Exploring Async Basics with Rust](http://web.archive.org/web/20220814154139/https://cfsamson.github.io/book-exploring-async-basics/introduction.html)を書かれたCF Samson先生Async解説本がついに出版されました。  
 
@@ -24,11 +24,27 @@ image = "images/emoji/closed_book.png"
 
 ## まとめ
 
-TODO
+RustのFuture,async/awaitの解説として非常に参考になりました。
+最終的に[mio]のみの依存で以下のコードが動くruntimeを作れます。
 
-## Part 1:Asynchronous Programming Fundamentals
+```rust
+fn main() {
+    let mut executor = runtime::init();
+    executor.block_on(async_main());
+}
 
-### Chapter 1: Concurrency and Asynchronous Programming: a Detailed Overview
+async fn async_main() {
+    let txt = Http::get("/600/HelloAsyncAwait").await;
+    println!("{txt}");
+    let txt = Http::get("/400/HelloAsyncAwait").await;
+    println!("{txt}");
+}
+```
+
+本書が素晴らしいのは、Futureを説明するためにassembly,ISA,thread,systemcall,epoll,calling convention, green thread, coroutineといった概念から説明してくれる点です。1章から5章まではRustをやっていなくても参考になると思います。
+
+
+## Chapter 1: Concurrency and Asynchronous Programming: a Detailed Overview
 
 本書の前提となるMultitaskingの歴史や言葉の定義、OSとCPUの関係等が説明されます。  
 Preemptiveの概念や本書におけるconcurrencyとparallelismの違いが取り上げられます。　　
@@ -43,13 +59,13 @@ Concurrency,parallelism,resource,task,asynchronous programmingといったとも
 という冗談もあり、もろもろの定義はあくまで本書の理解を助けるためにしているというスタンスです。
 (日本以外でも並列/並行警察っているんですね)
 
-ReadのI/Oを行う場合に3つの選択肢があり、それぞれthreadをsuspendするかだったりの違いが図で解説されているところもわかりやすかったです。epollとかの話なのですが、epoll等については3章で詳しく説明してくれます。  
+ReadのI/Oを行う場合に3つの選択肢があり、それぞれthreadをsuspendするかだったりの違いが図で解説されているところもわかりやすかったです。epoll等については3章で詳しく説明してくれます。  
 
-Rustの本なのにFutureの話がでてくるのが6章なのが素晴らしいです。また、firmwareにはmicrocontroller(samll CPU)が備わっており、concurrencyとは効率性を上げることなのだから、同じ仕事をプログラムにさせないという話はとても参考になりました。  
+Rustの本なのにFutureの話がでてくるのが6章なのが素晴らしいです。また、firmwareにはmicrocontroller(small CPU)が備わっており、concurrencyとは効率性を上げることなのだから、同じ仕事をプログラムにさせないという話はとても参考になりました。  
 知っている人にとっては当たり前なのかもしれませんが、このあたりを説明してくれるのは珍しいと思いました。
 
 
-### Chapter 2: How Programming Languages Model Asynchronous Program Flow
+## Chapter 2: How Programming Languages Model Asynchronous Program Flow
 
 OSのthreadという機構があるのになぜ、さらにもう1つ抽象化のレイヤーを設けるのか、 
 Thread,future,goroutine, promise等がなにを抽象化しているかについて説明されます。  
@@ -60,7 +76,7 @@ Green threadではprogram(runtime)でgreen threadごとのstackを管理しま�
 Green thread, fiber, future, promiseがどういった関係にあるのか整理されており、本章もRust関係なく参考になると思います。green threadいまいちピンときていない方も5章で実際に作りながら詳しく解説してくれるので大丈夫です。  
 
 
-### Chapter 3: Understanding OS-Backed Event Queues, System Calls, and Cross-Platform Abstractions
+## Chapter 3: Understanding OS-Backed Event Queues, System Calls, and Cross-Platform Abstractions
 
 [mio](https://github.com/tokio-rs/mio)や[polling](https://github.com/smol-rs/polling),[libuv](https://libuv.org/)等で利用されているOS-backed event queueについて。
 
@@ -94,7 +110,7 @@ fn syscall(message: String) {
 }
 ```
 
-### Chapter 4: Create Your Own Event Queue
+## Chapter 4: Create Your Own Event Queue
 
 本章では、epollを用いて、簡単なevent queueを実装していきます。  
 この例は[mio]に基づいていて、mioの理解にも繫る親切設計です。
@@ -124,7 +140,7 @@ impl Poll {
 
 
 
-### Chapter 5: Creating Our Own Fibers
+## Chapter 5: Creating Our Own Fibers
 
 本章では、fiber, green threadといわれるstackful coroutineを作ります。  
 green threadとは要するに、programでassemblyを書いて、CPUのregister特にstack pointerやinstruction pointerを書き換えて実行する命令流を切り替えるというのが自分の理解です。  
@@ -186,14 +202,14 @@ fn yield(&mut self) {
 この説明をしながら、ISAであったり、calling convention、`asm!` macroを解説してくれます。
 
 
-### Chapter 6: Futures in Rust
+## Chapter 6: Futures in Rust
 
 6章はRustのFutureの概要についての短い章です。  
 Rustではbuiltinのruntimeは提供されていないであったり、stdが提供しているもの(Future trait, Waker type)の説明があります。  
 また、async runtimeのmental modelとして、Reactor, Executor,Futureの関係が解説されます。
 
 
-### Chapter 7: Coroutines and async/await
+## Chapter 7: Coroutines and async/await
 
 Green threadはtaskを停止/再開させるための情報をstackに保持できるが、stackless coroutine(Future)は停止/再開のための情報をstateごとに保持するstate machineとして実装されている。  
 ただ、このstateを直接書くようなことはせずに、`.await`を書くたびにそこが、停止/再開のポイントとなり、stateが定義される。  
@@ -253,9 +269,93 @@ impl Future for Coroutine0 {
 }
 ```
 
-うごく具体例があるので、`.await`を書くたびにstateが定義されるというのがとてもわかりやすいと思いました。
+動く具体例があるので、`.await`を書くたびにstateが定義されるというのがとてもわかりやすいと思いました。また、変換処理を自作することで後述のself referenceの問題のわかりやすさにも繋がっていると思いました。
 
 
-### Chapter 8: Runtimes, Wakers, And The Reactor-Executor Pattern
+## Chapter 8: Runtimes, Wakers, And The Reactor-Executor Pattern
+
+7章では、作っていなかったRuntimeを作ります。reactorにはmioを使います。
+自分はruntimeはfutureをpollしてくれているくらいの理解で、reactor(mio)をどのように利用するのかがピンときていなかったので本章はとてもありがたかったです。最初はexecutorが直接reactorに依存する形で実装したのち、executorとreactorを疎結にするために、`Waker`を利用した形にしていくという流れなのもわかりやすかったです。  
+`Waker`のwake処理は`Thread::unpark()`を利用します。threadのpark関連は[Rustアトミック操作とロック](https://blog.ymgyt.io/entry/rust-atomics-and-locks-ja/)で詳しく説明してくれていたので、すんなり理解できたのがうれしかったです。  
+(なお、本章の例ではwork stealまでは実装されません。)
+
+
+## Chapter 9: Coroutines, Self-Referential Struct, And Pinning
+
+RustのFutureといえば、Pinみたいなところがありますが、実はこれまでの例では巧妙にPinの問題を避けていました。  
+本章では以下のようにwaitをまたいで関数内の変数(`counter`)の参照を追加することで、生成されるstateにlocal変数を保持できるような対応を追加します。
+
+```rust
+coroutine fn async_main() {
+    let mut counter = 0;
+    let txt = http::Http::get("/600/HelloAsyncAwait").wait;
+    counter += 1;
+    let txt = http::Http::get("/400/HelloAsyncAwait").wait;
+    counter += 1;
+    // ...
+}
+```
+
+これによって、async(coroutine)内で書いたlocal変数がどのように変換されるかを理解したあとに本命のself referenceの問題が紹介されます
+
+```rust
+coroutine fn async_main() {
+    let mut buffer = String::from("\nBUFFER:\n----\n");
+    let writer = &mut buffer;
+    let txt = http::Http::get("/600/HelloAsyncAwait").wait;
+    let txt = http::Http::get("/400/HelloAsyncAwait").wait;
+    writeln!(writer, "{txt}").unwrap();
+}
+```
+
+上記のように、`&mut buffer`のような参照をlocal変数とすると
+
+```rust
+#[derive(Default)]
+struct Stack0 {
+    buffer: Option<String>,
+    writer: Option<*mut String>,
+}
+
+struct Coroutine0 {
+    stack: Stack0,
+    state: State0,
+    _pin: PhantomPinned,
+}
+```
+
+生成されるstate(`Coroutine0`)で自身のfieldへの参照(保持できないのでpointer)を保持する必要があり、このstructをmoveするとpointerの参照が壊れてしまうとつながります。  
+ここから、`Pin`や`Unpin`の解説があります。`Pin`の説明は図が豊富で、local変数の参照をstruct fieldに変換する処理を実際に動くコードにしてくれているので、具体的でわかりやすいです。
+
+
+## Chapter 10: Creating Your Own Runtime
+
+これまで利用してきた自作のWakerであったりFuture traitであったりをrustのstdのものにしてyour own runtimeを完成させます。 
+
+```toml
+[dependencies]
+mio = { version = "0.8", features = ["net", "os-poll"] }
+```
+
+mioだけの依存で、以下のコードが動くようになります!
+
+```rust
+fn main() {
+    let mut executor = runtime::init();
+    executor.block_on(async_main());
+}
+
+async fn async_main() {
+    println!("Program starting");
+    let txt = Http::get("/600/HelloAsyncAwait").await;
+    println!("{txt}");
+    let txt = Http::get("/400/HelloAsyncAwait").await;
+    println!("{txt}");
+}
+```
+
+現状のRustの非同期エコシステムの課題の説明もあります。
+tokioでasync_stdの違いとしてreactorの明示的な起動を要求するかどうかであったり、Ascyn dropについてが解説されます。
+
 
 [mio]: https://github.com/tokio-rs/mio
