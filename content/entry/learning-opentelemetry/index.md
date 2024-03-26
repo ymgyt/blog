@@ -133,6 +133,40 @@ o11y backendはscope外だし、今後も変わらない
     * なぜこれが重要かというと、samplingの設定はanalysis toolに依存するところが大きく、analysis toolにsamplingの設定を委ねる必要がある
 
 * Gateway and specialized workload
+  * traceやmetricsごとに異なるpipelineを設けることには合理性がある
+    * collectorのbinar sizeさげれる
+    * workloadが特定されているほうが楽
+  * [otel arrow](https://github.com/open-telemetry/otel-arrow)
+
+* Pipeline Operations
+  * まず最初に不要なdataを落とすfilterlingから
+  * filterlingとsamplingの違い
+    * filterlingをSKDとcollectorどっちでやるか
+  * Sampling
+    * Head-based sampling
+      > We don’t suggest using head-based sampling in OpenTelemetry, since you could miss out on important traces.
+    * Tail-based sampling
+    * Storage based sampling
+      * telemetry pipelineではなくanalysis tool側で行うsampling
+        * 1週間は全trace保持したのち、samplingして削除等
+    * どれを使うべきかは難しい。さらに誤った実装/設定の影響が大きい
+
+    * Filtering is easy, sampling is dangerous
+      * どのsampling strategyを使うか、どう設定するかについてのuniversal answerはない
+        * dataの質とanalysisのtypeに強く依存するから
+      * tail-basedはすべてのspanが同じcollectorに送られる必要がある
+      * >  If sampling your logs sounds like a bad idea, why would you want to sample your traces?
+    * そもそも人間は適切なsampling configurationを見つけられないので、analysys toolにまかせたほうがよい。OpAMP protocolはこれを念頭においてdesignされているらしい
+    * > In general, we do not recommend sampling at all until your egress and storage costs become significant. 
+
+  * Transforming, Scrubbing, and Versioning
+    * 不要なものを取り除いたあとはprocessする(transformation)
+    * redaction, collector, span to metrics
+    * traceやlogをmetricsに変換するのは、cost抑制の観点から効率的
+
+  * Transforming Telemetry with OTTL
+    
+    
 
 ## Chapter 9
 ## Appendix A
