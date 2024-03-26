@@ -105,68 +105,34 @@ o11y backendはscope外だし、今後も変わらない
 
 ## Chapter 7 Observing Infrastructure
 
+### Memo
+
 
 ## Chapter 8 Designing Telemetry Pipelines
 
-### Memo
-まず、collectorの機能が必要ないなら、applicationから直接analysis toolにtelemetryを送るのはありと説明されていた。
+Telemetry pipeline、具体的にはopentelemetry collectorに関する話。  
+collectorがない場合の構成から始まり、applicationと同一hostでcollectorを動かす場合, LoadBalander越しに複数のcollectorを用意する構成等の説明があります。  
+Collectorの機能が不要なら必ずしも使う必要はないと前置きしつつも、filteringやsampling、hostやkubernetesの情報取得等、collectorを利用するメリットが説明されます。    
+[Open Agent Management Protocol(OpAMP)](https://github.com/open-telemetry/opamp-spec/blob/main/specification.md)というprotocolも紹介されており、将来的にはcollectorの設定がより容易になるかもしれません。  
+大規模になると、traceやmetricsごとに専用のcollector poolを分ける構成も紹介されていました。まだstableに達していないものの、OTLP以外にも[Otel Arrow](https://github.com/open-telemetry/otel-arrow)というprotocolがあるのは知りませんでした。
 
-* 次にcollectorをappと同一hostで動かす
-  * environment resource(pod名とかどこで動いてるかの情報)
-    * この仕事は、api callやsystem callを必要とするので、appからdelegateできると望ましい。
-  * telemetry送信のbatchをまかせられるので、appは小さいchunkでmemoryから追い出せる
+Collectorの構成に続き、filteringやsamplingの話もあります。  
+私はsampling特に、head-basedとtail-basedをどうしようか迷っていたので、本章の説明は非常に参考になりました。  
+意外だったのは
 
-* pipelineが大きくなってくると、filteringやsamplingをしたくなる
-  * 一般にcollectorはそれぞれの言語のSDKよりrobust and efficient
-  * telemetryをどこに送るか、formatはどするか、必要なprocessはなにかはapplication個別ではなく、service全体で共通するので、appからdelegateする理由になる
-  * collectorの設定とapplicationではlifecycleも違う
-  * appの設定がsimpleになる(batch sizeとtimeoutくらい)で後はotlpでなげるだけになる
+> We don’t suggest using head-based sampling in OpenTelemetry, since you could miss out on important traces. 
 
-* local collectorはsufficient starting pointだけど次にcollectorのpoolがほしくなる
-  * load balancerの背後に複数のcollectorを設置する構成
-  * メリットはlocal collectorの送るtelemetryのdataが多くなった際にもLBによってcollectorのbufferが増えるので、telemetryがdropされないこと(これはotlpがstatelessだからできる)
-  * この場合、local collectorの責務はappからtelemetryをもらうことと、hostmetricsを取得することになる。CPUとMemoryを使いすぎるとapplicationに影響するので、Pool側にまかせたい
+と思ったよりはっきり、head-based samplingを勧めないと書いてあったことです。また
 
-* [Open Agent Management Protocol(OpAMP)](https://github.com/open-telemetry/opamp-spec/blob/main/specification.md)も紹介されていた。
-  * collectorの設定管理をより用意にできるらしい
-  * これはanalysis tool側からcollectorの設定を変更できることにつながる
-    * なぜこれが重要かというと、samplingの設定はanalysis toolに依存するところが大きく、analysis toolにsamplingの設定を委ねる必要がある
+> If sampling your logs sounds like a bad idea, why would you want to sample your traces?
 
-* Gateway and specialized workload
-  * traceやmetricsごとに異なるpipelineを設けることには合理性がある
-    * collectorのbinar sizeさげれる
-    * workloadが特定されているほうが楽
-  * [otel arrow](https://github.com/open-telemetry/otel-arrow)
+(logをsamplingしないのに、どうしてtraceをsamplingしようとするのか)
 
-* Pipeline Operations
-  * まず最初に不要なdataを落とすfilterlingから
-  * filterlingとsamplingの違い
-    * filterlingをSKDとcollectorどっちでやるか
-  * Sampling
-    * Head-based sampling
-      > We don’t suggest using head-based sampling in OpenTelemetry, since you could miss out on important traces.
-    * Tail-based sampling
-    * Storage based sampling
-      * telemetry pipelineではなくanalysis tool側で行うsampling
-        * 1週間は全trace保持したのち、samplingして削除等
-    * どれを使うべきかは難しい。さらに誤った実装/設定の影響が大きい
+これは確かにそのとおりかもと思わされました。  
 
-    * Filtering is easy, sampling is dangerous
-      * どのsampling strategyを使うか、どう設定するかについてのuniversal answerはない
-        * dataの質とanalysisのtypeに強く依存するから
-      * tail-basedはすべてのspanが同じcollectorに送られる必要がある
-      * >  If sampling your logs sounds like a bad idea, why would you want to sample your traces?
-    * そもそも人間は適切なsampling configurationを見つけられないので、analysys toolにまかせたほうがよい。OpAMP protocolはこれを念頭においてdesignされているらしい
-    * > In general, we do not recommend sampling at all until your egress and storage costs become significant. 
+その他、OTTLやConnector,backpressure, kubernetes operator等、collectorの各種機能が紹介されているので、本章を読んでおくとcollectorの全体感がつかめて良いと思いました。
 
-  * Transforming, Scrubbing, and Versioning
-    * 不要なものを取り除いたあとはprocessする(transformation)
-    * redaction, collector, span to metrics
-    * traceやlogをmetricsに変換するのは、cost抑制の観点から効率的
 
-  * Transforming Telemetry with OTTL
-    
-    
 
 ## Chapter 9
 ## Appendix A
