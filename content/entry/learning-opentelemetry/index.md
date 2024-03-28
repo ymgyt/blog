@@ -84,28 +84,75 @@ image = "images/emoji/green_book.png"
   
 ## Chapter 3
 
-* Trace
-* Metrics
-* Logs
-* Context
-* Semantic conventions, Attributes, Resources
-  * 自分たちの組織でもsemantic conventions作るの推奨らしい
+OpenTelemetryで扱われる、Traces, Metrics, Logs, Context, Attributes/Resources, Semantic Conventions, OTLP, Telemetry Schemas等の概要が説明されます。
+
+Semanti conventionsに関して、あるprometheusのmaintainerの方が
+
+> these semantic conventions are the most valuable thing I’ve seen in a while.
+
+と話されたエピソードが印象的でした。  
+個人的にはprodとかstagingのkeyを`deployment.environment`としたり、userのidを`enduser.id`と決めたことはいろいろなtoolで利用できそうだなと思っています。
+
+また、
+
+> you can write a semantic conventions library yourself that includes attributes and values that are specific to your technology stack or services. 
+
+として公式のconventions以外にもチームや組織でもconventionsを作っていくのはよい考えだなと思いました。(なんらかの方法で各プログラミング言語への生成の仕組みは必要そうですが)  
+
+[OpenSLO](https://openslo.com/)や[OpenFeature](https://openfeature.dev/)への言及もありました。
+
 
 ## Chapter 4 The OpenTelemetry Architecture
 
+OpenTelemetryの各種componentの概要の説明と実際のdemoの紹介があります。
+
 > What OpenTelemetry does not include is almost as critical as what it does include. Long-term storage, analysis, GUIs, and other frontend components are not included and never will be.
 
-o11y backendはscope外だし、今後も変わらない
+(OpenTelemetryが扱わないものは扱っているものと同じくらい重要です。永続化ストレージ、分析用ダッシュボード等は含まれておらず、これからも含まれないでしょう)
+
+という感じで、OpenTelemetryだけでは、実際の運用が完結しない点が強調されています。  
+ここをvendorやOSSにまかせるというところがopentelemetry普及の鍵なのかなとか思っています。(vendorやossが協力してくれる(せざるを得ない))
+
+最後に"The new model of observability tools"という将来像が載っているのですがそこにある、universal query apiがはやく実用化されてほしいと思っています。  
+本書では紹介されていませんでしたが、[query language standardization](https://www.cncf.io/blog/2023/08/03/streamlining-observability-the-journey-towards-query-language-standardization/)が気になっています。
 
 ## Chapter 5 Instrumenting Applications
+
+Applicationへの計装について。  
+OpenTelemetryにおけるSDKとAPIの責務の違い等の説明があります。  
+自動計装に対応している言語として、JavaやNode.js, pythonが挙げられていますが、GoがeBPFを利用して対応しているのがすごいです。Rustには現状、自動計装はなく、対応するにはGo同様、eBPFを使うものになるのでしょうか。  [issue](https://github.com/open-telemetry/opentelemetry-rust/issues/801)はあるのですが、あまり盛り上がっていないです。  
+
+Traces,metrics,logsそれぞれのcomponent(providerやprocessor)の概要の説明もあります。  
+自分は最初このあたりの説明をdocで読んでもピンとこなかったのですが、rustのsdkの実装をみてみると、仕様通りの型が実装されていて、具体的なイメージがわきました。一度componentの概要がわかると、別の言語でも基本的には同様の型がいるはずなので理解も進むと思います。(Metricsのexport頻度の設定はPeriodicMetricsReaderが設定する等)  
+その他、設定に関するBest practicesも紹介されています。  
+Service resourceとして、`service.name`,`service.namespace`,`service.version`を設定しておくことの重要性が強調されています。これらは基本的にapplicationのbuild時にわかると思うので、付与するのは特に問題ないのですが`service.instance.id`はruntime時にしかわからず、しかもapplication自身からだと(外部に問い合わせないと)わからないと思うのでcollector側で付与する必要があると思っています。  
+Grafana cloudにexportした際は、`service.instance.id`がloki,prometheusの`instance` labelに対応する[仕様](https://grafana.com/docs/grafana-cloud/monitor-applications/application-observability/setup/resource-attributes/)だったりで、前提にされていることがあったので気をつけたいです。  
+
+また、RUM(Real User Monitoring)については簡単にunder active developmentと紹介されています。  
+ここが揃わないとanalysis tool以外のvendor agnosticが達成できないと思っているので期待したいです。
 
 
 ## Chapter 6  Instrumenting Libraries
 
+Libraryへの計装について。  
+Libraryが直接opentelemetryで計装されることの重要性が説かれます。hook等を用意して、opentelemetryをplugin的に差し込むのではどうしてダメかの説明がなるほどでした。  
+OpenTelemetryがanalysis toolには踏み込まず、telemetryの生成と伝播までをスコープとしていることで、得られるvendor中立性のメリットはlibraryのmaintainerが自分から計装してくれることにあるのかなと考えています。  
+
+> As a library maintainer, you have a relationship and a responsibility to your users.
+
+ここを読んでいて、libraryのpublic apiが変わったら基本的にはsemverのmajor versionを上げる必要があると思いますが、libararyが生成するmetricsの名前や型(counterがhistrogram等)が変わった場合、どういう扱いになるのかなと思いました。(applicationのcompileは失敗しないですが、userのanalysys toolやalertは壊れると思うので)
+
+また、applicationが依存しているlibrary A,Bがotel v1とv2で一緒に使えないということが起きないようにopentelemetryにv2は来ないという話も紹介されます。
+
 
 ## Chapter 7 Observing Infrastructure
 
-### Memo
+Cloud provider(AWS,GCP, Azure,..)やplatform(kubernetes,FaaS,CI/CD service)でopentelemetryをどう活用していくかに関して述べられています。  
+OpenTelemetry Collectorに関しては[builder](https://opentelemetry.io/docs/collector/custom-collector/)を使いましょうであったり、collector自信のmetricsを取得することがアドバイスされています。  
+
+Kubernetesに関してはcollectorのreceiverで情報を取得しようとすると[k8sclusterreiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/k8sclusterreceiver),[k8seventreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/k8seventsreceiver), [k8sobjectreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/k8sobjectsreceiver), [kubeletstatsreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kubeletstatsreceiver)等があって、うまいこと使い分ける必要がある。  将来的には1つのreceiverに統合されることを期待するとあったので、そうなればいいなと思いました。  
+
+Traceに[span links](https://opentelemetry.io/docs/concepts/signals/traces/#span-links)というfieldがありいまいち使い所がわかっていなかったのですが、queueを介した非同期処理での利用例が紹介されており参考になりました。
 
 
 ## Chapter 8 Designing Telemetry Pipelines
