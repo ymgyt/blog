@@ -2,8 +2,8 @@
 title = "📗 Learning OpenTelemetryを読んだ感想"
 slug = "learning-opentelemetry"
 description = "OreillyのLearning OpenTelemetryを読んだ感想"
-date = "2024-03-22"
-draft = true
+date = "2024-03-29"
+draft = false
 [taxonomies]
 tags = ["book", "opentelemetry"]
 [extra]
@@ -13,73 +13,55 @@ image = "images/emoji/green_book.png"
 
 ## 読んだ本
 
+{{ figure(images=["images/otelbook.jpeg"], caption="Learning OpenTelemetry", href="https://learning.oreilly.com/library/view/learning-opentelemetry/9781098147174/") }}
+
+著者: Ted Young, Austin Parker
+
+OpenTelemetryを導入しようとしていたところ、ちょうどオライリーから本が出たので読んでみました。  
+本記事では本書を読んだ感想について書きます。
+
 ## まとめ
+
+OpenTelemetryの全体像を掴むうえでとても参考になりました。  
+最初にOpenTelemetryのdocを読んだときは、signalやapiとsdkの関係がわかりづらかったので、もっと早くこの本を読みたかったです。 
+
 
 ## Chapter 1 The State of Modern Observability
 
-* 現代のsoftwareではend user experienceが非常に重視されている
-  * ECではloadに2secかかるとと離脱する
-* uptime requirementsも課されている
-  * issueの素早い特定が必要
-    * そのためにはdataが必要
-      * ただのdataではなく、整理され分析の用に供される状態になっているdata
+現在のobservabilityを取り巻く状況についてから始まります。  
 
-* otelはこれらの問題をlog,met,traceをcoherent,unifed graph of informationにかえることでこれらの問題を解決する
+現代のsoftwareではend user experienceが非常に重視されている(ECではloadに2secかかるとuserが離脱するらしい)。一方で開発者にはuptime requirementsも課されている。そのため、issueの素早い特定が必要で、それにはdata、しかもただのdataではなく整理され分析の用に供される状態になっているdataが必要。  
+OpenTelemtryはこれらの問題をlogs,metrics,tracesをcoherentなunifed graph of informationにかえることで解決する。　　
 
-* 2024年現在、observabilityの分野には30年ぶりの"津波"がきている
-* なぜo11yへの新しいアプローチが重要であるかを知るには、これまでのo11yのarchitectureやlimitationsを知る必要がある
-
-* 本書の対象はdistributed system
-  * componentが異なるnetworkに配置され、messageをやり取りすることで協調するsystem
+用語の説明として
 
 * telemetry: describes what your system is doing
-  * signalはparticular form of telemetry
-    * signalはinstrumentationとtransmission systemの2つからなる
-      * instrumentationはtelemetry dataをemitするcode
-      * transmission systemはdataをnetworkごしにanalysis toolに送る
-    * このtelemetryをemitするsystemとanalyzeするsystemを分離することが重要
+* signalはparticular form of telemetry
+  * signalはinstrumentationとtransmission systemの2つからなる
+    * instrumentationはtelemetry dataをemitするcode
+    * transmission systemはdataをnetwork越しにanalysis toolに送る
+* このtelemetryをemitするsystemとanalyzeするsystemを分離することが重要
 * telemetry + analysis = observability
 
-* o11yはpractice
-  * devops同様、organizational practice
-    * observability soruceはwide and variedなので、組織全体の向上のために継続的に使われる必要がある(訳が変)
+の説明はわかりやすかったです。
 
-* telemetryの名前の由来
-  * power plantsの監視で使われた
+Logs,Metrics,Tracesが3本柱と呼ばれるのは歴史的にその順番でsystemに追加されたからであって
 
-* 歴史
-  * 最初はlog
-    * full text-searchに特化したdatabaseに貯めて検索した
-  * loggingは個別のeventがいつ起きたのかを教えてくれるが、時系列にそった変化を捉えるためにはよりdataが必要だった
-    * storage spaceが足りずにfile書き込みが失敗したことはわかるが、storage capacityをtrackして、足りなくなる前に対応したいよね
-  * metricsはcompact statistical representation of system state and resource utilization
-  * trace
-    * systemがより複雑になり、transactionsがより多くのoperationを多くのmachineで行うようになった
-    * localizing the source of a problemはより重要になった
-    * しかし、traceはsample(resource制約の観点から)されるので、その有用性はperformance analysisに限定されることになってしまう
-  * これまでは、log,metrics,traceごとにinstrumentation, data format, data transmission, storage,analysisが独立していた(だから3本柱と呼ばれていた)
-  * これは歴史的にその順番で追加されてきたからそうなっているだけ
-    * だから3つのbrowser tabが必要になってしまう
+> The three pillars are a great way to describe how we currently practice observability—but they’re actually a terrible way to design a telemetry system!
 
-* 解決への手掛かりは異なるdata streamのcorrelationsを見つけることから得られる
-  * three pillars are acutually a bad design!
+とはっきり、terrible wayとされていたのが意外でした。  
+"three pillars"と呼ぶとなにかよいarchitectureに聞こえるので、"three browser tabs of observability"と呼ぶ話はおもしろいです。
 
-* 重要なのはtelemetryの統合
-* この本は、otelのguideで、otelのdocのreplacementを意図していないphilosophyとdesignの説明する
-    
+大切なのはdata streamのcorrelationsを見つけることなので
+
+> three pillars are acutually a bad design!
+
+ということでOpenTelemetryが必要となります。  
+また、この本はOpenTelemetryの公式documentに代わることは意図しておらずphilosophyとdesignの説明を意図しているとありました。
 
 ## Chapter 2 Why Use OpenTelemetry
 
-* production debuggingの3つの課題
-  * the amount of data they need to parse
-  * the quality of that data
-  * how the data fits together
-
-* k8sではcodeを実行する状況がすぐに変わる(nodeが廃棄されたり)
-* 種々の問題はhigh-quality standards-based consistent telemetry dataの欠如から生まれている
-* hard context(=metadata)を付与して、log,trace,metricsを関連づける
-* monitoring is passive action, o11y active practice
-  * passive dashboardやalert based telemetry dataに頼る以上のこと?
+Production debuggingの3つの課題からはじめてなぜOpenTelemetryを使うのかが説明されます。また、これらの課題はhigh-quality, standard-based, consistent telemetry dataの欠如から生じるとして、Hard and Soft Context, Telemetry Layering, Semantic Telemetryという考え方が紹介されます。
 
   
 ## Chapter 3
@@ -116,6 +98,7 @@ OpenTelemetryの各種componentの概要の説明と実際のdemoの紹介があ
 最後に"The new model of observability tools"という将来像が載っているのですがそこにある、universal query apiがはやく実用化されてほしいと思っています。  
 本書では紹介されていませんでしたが、[query language standardization](https://www.cncf.io/blog/2023/08/03/streamlining-observability-the-journey-towards-query-language-standardization/)が気になっています。
 
+
 ## Chapter 5 Instrumenting Applications
 
 Applicationへの計装について。  
@@ -150,7 +133,7 @@ OpenTelemetryがanalysis toolには踏み込まず、telemetryの生成と伝播
 Cloud provider(AWS,GCP, Azure,..)やplatform(kubernetes,FaaS,CI/CD service)でopentelemetryをどう活用していくかに関して述べられています。  
 OpenTelemetry Collectorに関しては[builder](https://opentelemetry.io/docs/collector/custom-collector/)を使いましょうであったり、collector自信のmetricsを取得することがアドバイスされています。  
 
-Kubernetesに関してはcollectorのreceiverで情報を取得しようとすると[k8sclusterreiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/k8sclusterreceiver),[k8seventreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/k8seventsreceiver), [k8sobjectreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/k8sobjectsreceiver), [kubeletstatsreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kubeletstatsreceiver)等があって、うまいこと使い分ける必要がある。  将来的には1つのreceiverに統合されることを期待するとあったので、そうなればいいなと思いました。  
+Kubernetesに関してはcollectorのreceiverで情報を取得しようとすると[k8sclusterreiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/k8sclusterreceiver),[k8seventreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/k8seventsreceiver), [k8sobjectreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/k8sobjectsreceiver), [kubeletstatsreceiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kubeletstatsreceiver)等があって、うまいこと使い分ける必要があります。  将来的には1つのreceiverに統合されることを期待するとあったので、そうなればいいなと思いました。  
 
 Traceに[span links](https://opentelemetry.io/docs/concepts/signals/traces/#span-links)というfieldがありいまいち使い所がわかっていなかったのですが、queueを介した非同期処理での利用例が紹介されており参考になりました。
 
@@ -179,8 +162,31 @@ Collectorの構成に続き、filteringやsamplingの話もあります。
 
 その他、OTTLやConnector,backpressure, kubernetes operator等、collectorの各種機能が紹介されているので、本章を読んでおくとcollectorの全体感がつかめて良いと思いました。
 
+## Chapter 9 Rolling Out Observability
+
+> Telemetry is not observability
+
+ということで最終章は、組織における実践についてです。  
+
+> Observability is a commitment to building teams, organizations, and software systems in ways that allow you to interpret, analyze, and question their results so you can build better teams, organizations, and software systems.  
+
+このobservabilityの定義が一番好きです。  
+どうしても一人でできることではなく、組織的な関与が必要になるので、どうやってうまく進めるかについての説明があります。  
+計装を最初に深くやるか、広く浅くはじめるかであったり、codeを変更するか、collector側でがんばるかであったり、中央の主導するチームを作ったり等の話がのっていました。  
+
+Traceやmetricsをtestで活用しようという話も載っており、時々そういう記事もみかけるので注目していきたいです。  
+最後にOpenTelemetry Rollout Checklistが載っており参考になります。  
+Is management involved?のようなチェック項目があります。
 
 
-## Chapter 9
-## Appendix A
-## Appendix B
+## Appendix A The OpenTelemetry Project
+
+SIGであったり、Specificationであったり、OpenTelemetryというprojectがどのように運営されているかの説明があります。
+
+
+## Appendix B Further Resources
+
+OpenTelemetry関連のWebsiteのリンクと関連書籍の紹介があります。
+
+
+
