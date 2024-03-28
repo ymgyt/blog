@@ -1,7 +1,7 @@
 +++
 title = "📗 Learning OpenTelemetryを読んだ感想"
 slug = "learning-opentelemetry"
-description = "OreillyのLearning OpenTelemetryを読んだ感想"
+description = "Observability is a commitment"
 date = "2024-03-29"
 draft = false
 [taxonomies]
