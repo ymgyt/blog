@@ -64,7 +64,7 @@ Logs,Metrics,Tracesが3本柱と呼ばれるのは歴史的にその順番でsys
 Production debuggingの3つの課題からはじめてなぜOpenTelemetryを使うのかが説明されます。また、これらの課題はhigh-quality, standard-based, consistent telemetry dataの欠如から生じるとして、Hard and Soft Context, Telemetry Layering, Semantic Telemetryという考え方が紹介されます。
 
   
-## Chapter 3
+## Chapter 3 OpenTelemetry Overview
 
 OpenTelemetryで扱われる、Traces, Metrics, Logs, Context, Attributes/Resources, Semantic Conventions, OTLP, Telemetry Schemas等の概要が説明されます。
 
