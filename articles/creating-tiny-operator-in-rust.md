@@ -220,7 +220,7 @@ Server sideのvalidationはvalidationの情報を生成されるschemaに埋め�
 
 ### Client side validation
 
-[kube-rs]のdocではserver-sideとclient-sideが並列に扱われていますが、client sideは自前でoperatorのcodeにvalidationの呼び出しを書くだけで、なにかkubenetes apiやkube-rs側で特別扱いされているわけではありません。[kube-rs]もdev-dependencies以外では[garde]に依存していませんでした。  
+[kube-rs]のdocではserver-sideとclient-sideが並列に扱われていますが、client sideは自前でoperatorのcodeにvalidationの呼び出しを書くだけで、なにかkubernetes apiやkube-rs側で特別扱いされているわけではありません。[kube-rs]もdev-dependencies以外では[garde]に依存していませんでした。  
 そのため、CRDのstructに[garde]のannotationを付与して生成される`validation()` methodもoperatorの処理で呼び出す必要があります。  
 Server side validationとの違いは、`kubectl apply`時にvalidationがerrorになるかどうかと理解しています。
 
@@ -245,7 +245,7 @@ async fn signal() {
 async fn run() -> anyhow::Result<()> {
     let kube_client = Client::try_default()
         .await
-        .context("Expecte a valid KUBECONFIG environment variable")?;
+        .context("Expected a valid KUBECONFIG environment variable")?;
 
     Operator::new().run(kube_client, signal()).await;
 
@@ -354,7 +354,7 @@ pub struct Api<K> {
 ```
 
 基本的には、`impl<K: Resource> Api<K> {}`で`K`が`Resource` traitを実装している前提となっています。  
-`Resoure` traitはKubernetesのresourceの情報取得用のmethodを定義しているtraitです。`DynamicType`はcompile時に情報のないResourceを扱う仕組みのようですが、本記事では割愛します。
+`Resource` traitはKubernetesのresourceの情報取得用のmethodを定義しているtraitです。`DynamicType`はcompile時に情報のないResourceを扱う仕組みのようですが、本記事では割愛します。
 
 ```rust
 pub trait Resource {
@@ -658,7 +658,7 @@ async fn reconcile(hello: Arc<Hello>, context: Arc<Context>) -> Result<Action, E
 
 ここでの必要な処理は以下です。  
 
-1. `Hello`初回作成時は`metada.finalizers`に識別子を追加したのち、reconcile処理を実行
+1. `Hello`初回作成時は`metadata.finalizers`に識別子を追加したのち、reconcile処理を実行
 1. 更新時はreconcile処理のみ実行
 1. 初回削除時は、削除用のreconcile処理を実行したのち、`metadata.finalizers`から追加した識別子を削除
 1. `metadata.finalizers`に自身の識別子がない場合の削除時はなにもしない
@@ -808,7 +808,7 @@ api.patch(
 .await
 ```
 
-`Api::patch()`で`Patch::Apply`を利用するとServer side applyが利用できます。`&PatchParams::aplly()`にはServer side applyで利用するfield managerを指定します。
+`Api::patch()`で`Patch::Apply`を利用するとServer side applyが利用できます。`&PatchParams::apply()`にはServer side applyで利用するfield managerを指定します。
 
 ### `Hello` delete
 
@@ -991,7 +991,7 @@ Controller::new(crd_api, wc)
 ![kube-runtime overview](/images/creating-tiny-operator-in-rust/kube-runtime-overview.png)
 
 Streamは大きく、watcher, reflector, controllerで処理されています。  
-watcherは実際にkubenetes apiをcallしてresourceの監視結果を取得します。  
+watcherは実際にkubernetes apiをcallしてresourceの監視結果を取得します。  
 reflectorは内部的に`Arc<RwLock<AHashMap<ObjectRef<Resource>,Arc<Resource>>>>`型のstoreを保持しており、そこにresourceの情報をcacheしています。  
 controller側では、それらの情報や終了処理のsignal, scheduling等を行い、最終的にuserのreconcile処理をtriggerしています。  
 watcherやreflectorもpubとして公開されているので、operatorの実装以外でもkubernetes関連のtoolを作成する際には利用できそうだと思いました。
