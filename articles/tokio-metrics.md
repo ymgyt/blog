@@ -13,7 +13,6 @@ Versionは[0.3.1](https://docs.rs/tokio-metrics/0.3.1/tokio_metrics/index.html)�
 ```toml
 [dependencies]
 tokio-metrics      = { version = "0.3.1", default-features = false, features = ["rt"] }
-
 ```
 
 # Task Metrics
@@ -84,7 +83,7 @@ pub struct TaskMonitor {
 ```
 
 [`TaskMonitor`]はArcで内部のデータ構造をwrapしているので`clone()`できます。  
-instrumentしたtaskのmetricsを取得するには`TaskMonitor::intervals()`でmetricsを返すiteratorを取得して、loopします。
+instrumentしたtaskのmetricsを取得するには`TaskMonitor::intervals()`でmetricsを返すiteratorを取得して、loop内でmetricsを処理します。
 
 
 ## Task metricsのtemporality
@@ -138,7 +137,7 @@ taskへの計装方法とmetricsの取得方法がわかったので次に具体
 全てのmetricsや詳細についてはdocumentを確認してください。ここでは実際に自分が利用したmetricsについて述べます。
 
 まずtaskのlifecycleの概要としては自分は以下のように理解しています。  
-task(future)が生成されると、runtimeから`poll`される。その中で`.await`した際にI/Oが発生すると、taskはidle(I/O待ち)になる。この際、OSのthreadはyieldされず、[mio](https://github.com/tokio-rs/mio)等のI/O driverに登録され、runtimeは別のtaskを実行する。I/Oが完了すると、`Waker`によってtaskはruntimeのqueueに入り再び、`poll`されるまで待機する。(このあたりは[Asynchronous Programming in Rust](https://blog.ymgyt.io/entry/asynchronous-programming-in-rust/)がわかりやすいのでオススメです。)
+task(future)が生成されると、runtimeから`poll`される。その中で`.await`した際にI/Oが発生すると、taskはidle(I/O待ち)になる。この際、OSのthreadはyieldされず、[mio](https://github.com/tokio-rs/mio)等のI/O driverに登録され、runtimeは別のtaskを実行する。I/Oが完了すると、`Waker`によってtaskはruntimeのqueueに入り、再び`poll`されるまで待機する。(このあたりは[Asynchronous Programming in Rust](https://blog.ymgyt.io/entry/asynchronous-programming-in-rust/)がわかりやすいのでオススメです。)
 
 ということで最初の出発点として、taskの`poll`に掛かっている時間、I/Oを待機している時間、queueで再scheduleを待っている時間を計測できるようにしようと思いました。
 
@@ -227,7 +226,7 @@ Runtimeの内部構造についてもっと知れたらこのmetricsが欲しい
 利用しているlibraryは`axum`と`async-graphql`です。  
 
 最初の出発点として、graphql taskのmetricsを取得することにしました。  
-特定のresolverにしようかと迷ったのですが、どちらにせよgraphql全体のmetricsがあったほうが、特定のresolverに計装した際に比較できて便利だと考えまずはgraphqlの取得から始めました。
+特定のresolverにしようかと迷ったのですが、どちらにせよgraphql全体のmetricsがあったほうが、特定のresolverに計装した際に比較できて便利だと、考えまずはgraphqlの取得から始めました。
 
 ```rust
 pub async fn serve(
@@ -338,7 +337,8 @@ Metricsの出力はtracing -> tracing_opentelemetry::MetricsLayer -> opentelemet
 
 ここで実際にserverにrequestを行いました。feedを取得するtoolなので登録しているfeedの数だけ、http requestが実行される処理です。
 
-実際に試してみると以下のようなmetricsを取得できました。
+実際に試してみると以下のようなmetricsを取得できました。  
+青がidle、黄色がslow poll, 緑がpoll, 赤がscheduleを表しています。
 
 Task metrics
 
