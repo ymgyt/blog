@@ -73,7 +73,7 @@ async fn main() {
 }
 ```
 
-[`TaskMonitor`]を生成したのち、計測したいtaskを`TaskMonitor::instrument()`に渡します。。
+[`TaskMonitor`]を生成したのち、計測したいtaskを`TaskMonitor::instrument()`に渡します。
 
 ```rust
 #[derive(Clone, Debug)]
