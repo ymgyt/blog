@@ -2,6 +2,7 @@
 #import themes.bipartite: *
 
 #show: bipartite-theme.with(aspect-ratio: "16-9")
+#show link: underline
 
 #set text(
   size: 25pt,
@@ -13,7 +14,7 @@
 
 #title-slide(
   title: [RustでOpenTelemetry],
-  subtitle: [tracingと一緒に使ってわかった課題と学び],
+  subtitle: [tracingと一緒に使ってわかった課題],
   author: [ymgyt],
   date: [2024-04-10],
 )
@@ -50,7 +51,7 @@
 #west-slide(title: "OpenTelemetry APIを直接利用するか")[
   tracing経由でOpenTelemetryを利用することにした
   - 既にtracingを計装済だった
-  - 利用しているlibの多くがtracingで計装されている
+  - 利用しているlibの多くがtracingで計装されていた
   - #link("https://github.com/tokio-rs/tracing-opentelemetry")[tracing-opentelemetry]が#link("https://github.com/tokio-rs")[tokio]から提供されていた
 ]
 
@@ -110,9 +111,7 @@ pub fn resource(
 #west-slide(title: "Traces")[
 #set text(size: 18pt)
 ```rust
-#[tracing::instrument(
-  skip_all, fields(%url)
-)]
+#[tracing::instrument(skip_all, fields(%url))]
 async fn fetch_feed(&self, url: Url) -> Result<Feed,Error> 
 { /* ... */ }
 ```
@@ -278,7 +277,7 @@ fn view() -> impl View {
                     )
                     .unit(Unit::new("s")),
             ),
-            name => {
+            _ => {
                 None
             }
         }
@@ -293,10 +292,74 @@ MetricsのViewという仕組みで、SDK初期化時に変換処理を追加す
 - Metrics生成箇所とSDK初期化処理でcodeが別れてしまった
 - 名前(Instrument.name)で一致させているので型/compile時の保証がない
 ]
+
+#west-slide(title: "Logs")[
+Logsの収集には2つの方法を利用した
+- Kubernetes環境ではstdoutに出力したのち、nodeに配置したcollectorからfilelog receiverで収集  
+- #link("https://github.com/open-telemetry/opentelemetry-rust/tree/main/opentelemetry-appender-tracing")[opentelemetry-appender-tracing]
+]
+
+#west-slide(title: "Logs")[
+  Logsのspec #link("https://opentelemetry.io/docs/specs/otel/logs/")[OpenTelemetry Logging]では\
+  Tracesやmetricsのように新しいAPIを提供するのではなく\
+  Logs Bridge APIを用意して、言語ごとの既存のlogging ecosystemに組み込んでもらう方針が説明されている
+
+  > Our approach with logs is somewhat different. For OpenTelemetry to be successful in logging space we need to support existing legacy of logs and logging libraries 
+]
+
+#west-slide(title: "Logs")[
+  この方針があってか、traces,metricsではtracingが提供しているtracing-opentelemetryでopentelemetryと連携していたが\opentelemetry-appender-tracingはopentelemetry-rustが提供している
+]
+
+#west-slide(title: "Logs")[
+opentelemetry-appender-tracingを利用すると\
+`info!("message")`といったこれまでのloggingがそのまま
+OTLPでcollectorに送られる  
+]
+
+#west-slide(title: "Logsの課題")[
+
+```rust
+#[tracing::instrument]
+async fn foo() {
+  info!("message");
+}
+```
+
+とした場合
+- foo Spanのeventに"message"が記録される
+- Logのrecordとしても"message"が記録される
+]
+
+#west-slide(title: "Logsの課題")[
+tracing(tracing_subsriber::FmtLayer)では、
+```text
+http{method=POST path=/graphql request_id=Fsg3zhkIS4}:
+service{query="foo"}:
+db{connection=1} "message"
+```
+のようにlogにspanの情報を埋め込んでくれるのでLog側もtraceの情報を一部保持することになる
+
+#pause traceはsamplingされたりlogとはlifecycleが違うのでlogにどの程度context情報を付与するか悩ましい
+]
+
+#west-slide(title: "実際のコード")[
+趣味で作っているツールのbackend apiでもOpenTelemetryを利用しました\
+本スライドで話した内容の実際のコード、collectorの設定file、grafana dashboardを公開しています。
+
+#link("https://github.com/ymgyt/syndicationd/blob/943b9c4d36b3e45a616deb9065f384faf5c193a0/crates/synd_api/src/main.rs#L45")
+]
+
+#west-slide(title: "まとめ")[
+- Rustでtracingを利用してOpenTelemetryの各signalを導入できた
+- tracingを通じてOpenTelemetry APIを利用することのメリットもある一方で課題もわかった
+]
+
 #west-slide(title: "リンク")[
   - #link("https://github.com/tokio-rs")
   - #link("https://github.com/tokio-rs/tracing-opentelemetry")
   - #link("https://github.com/open-telemetry/opentelemetry-rust/discussions/1032")
   - #link("https://github.com/open-telemetry/opentelemetry-rust/issues/1571")[OpenTelemetry Tracing API vs Tokio-Tracing API for Distributed Tracing]
+  - #link("https://github.com/ymgyt/syndicationd/blob/943b9c4d36b3e45a616deb9065f384faf5c193a0/crates/synd_api/src/main.rs#L45")[OtelLayerのcompose]
 ]
 
