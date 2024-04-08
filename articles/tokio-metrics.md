@@ -3,7 +3,7 @@ title: "tokio-metricsでruntimeとtaskのmetricsを取得する"
 emoji: "🔭"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["rust"]
-published: false
+published: true
 publication_name: "fraim"
 ---
 
@@ -136,8 +136,8 @@ pub fn intervals(&self) -> impl Iterator<Item = TaskMetrics> {
 taskへの計装方法とmetricsの取得方法がわかったので次に具体的に取得できるmetricsについて見ていきます。  
 全てのmetricsや詳細についてはdocumentを確認してください。ここでは実際に自分が利用したmetricsについて述べます。
 
-まずtaskのlifecycleの概要としては自分は以下のように理解しています。  
-task(future)が生成されると、runtimeから`poll`される。その中で`.await`した際にI/Oが発生すると、taskはidle(I/O待ち)になる。この際、OSのthreadはyieldされず、[mio](https://github.com/tokio-rs/mio)等のI/O driverに登録され、runtimeは別のtaskを実行する。I/Oが完了すると、`Waker`によってtaskはruntimeのqueueに入り、再び`poll`されるまで待機する。(このあたりは[Asynchronous Programming in Rust](https://blog.ymgyt.io/entry/asynchronous-programming-in-rust/)がわかりやすかったのでオススメです。)
+まずtaskのlifecycleの概要としては自分は以下のように理解しています。(multi thread scheduler前提)  
+task(future)が生成されると、runtimeから`poll`される。その中で`.await`した際にI/Oが発生すると、taskはidle(I/O待ち)になる。この際、OSのthreadはyieldされず(CPU上で引き続き実行される)、[mio](https://github.com/tokio-rs/mio)等のI/O driverにI/Oの完了の通知を登録して、runtimeは別のtaskを実行する。I/Oが完了すると、`Waker`によってtaskはruntimeのqueueに入り、再び`poll`されるまで待機する。(このあたりは[Asynchronous Programming in Rust](https://blog.ymgyt.io/entry/asynchronous-programming-in-rust/)がわかりやすかったのでオススメです。)
 
 ということで最初の出発点として、taskの`poll`に掛かっている時間、I/Oを待機している時間、queueで再scheduleを待っている時間を計測できるようにしようと思いました。
 
