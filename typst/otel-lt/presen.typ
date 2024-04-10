@@ -27,6 +27,7 @@
 
   [company]
   name = "FRAIM Inc."
+  blog = "https://zenn.dev/p/fraim"
   ```
 ]
 
@@ -235,7 +236,7 @@ OpenTelemetry -> Prometheusの変換を意識する必要がある
 Prometheusとの互換性に関してはPrometheusの
 #link("https://prometheus.io/blog/2024/03/14/commitment-to-opentelemetry/")[Our commitment to OpenTelemetry]というブログで互換性向上の取り組みが紹介されていた
 
-- `http.server.request.duration` -> `http_server_requrest_duration`の変換をなくす
+- `http.server.request.duration` -> `http_server_request_duration`の変換をなくす
 - Native support for resource attributes(prometheusはmetrics attributesとresourceをflatなlabelにする)
 - OTLPのsupport
 ]
@@ -332,7 +333,7 @@ async fn foo() {
 ]
 
 #west-slide(title: "Logsの課題")[
-tracing(tracing_subsriber::FmtLayer)では、
+tracing(tracing_subscriber::FmtLayer)では、
 ```text
 http{method=POST path=/graphql request_id=Fsg3zhkIS4}:
 service{query="foo"}:
@@ -345,9 +346,17 @@ db{connection=1} "message"
 
 #west-slide(title: "実際のコード")[
 趣味で作っているツールのbackend apiでもOpenTelemetryを利用しました\
-本スライドで話した内容の実際のコード、collectorの設定file、grafana dashboardを公開しています。
+本スライドで話した内容の#link("https://github.com/ymgyt/syndicationd/blob/943b9c4d36b3e45a616deb9065f384faf5c193a0/crates/synd_api/src/main.rs#L45")[実際のコード]、#link("https://github.com/ymgyt/mynix/blob/main/homeserver/modules/opentelemetry-collector/config.yaml")[collectorの設定file]、#link("https://ymgyt.grafana.net/public-dashboards/863ebddd82c44ddd9a28a68eaac848ff")[grafana dashboard]を公開しています
 
-#link("https://github.com/ymgyt/syndicationd/blob/943b9c4d36b3e45a616deb9065f384faf5c193a0/crates/synd_api/src/main.rs#L45")
+#figure(
+  grid(
+    columns: 2,
+    gutter: 10mm,
+    image("./images/example-ss-1.png", width: 100%,height: 50%, fit: "contain"),
+    image("./images/dashboard-ss-1.png", width: 100%,height: 50%, fit: "contain"),
+  )
+)
+
 ]
 
 #west-slide(title: "まとめ")[
