@@ -105,7 +105,7 @@ struct Example {
 この処理を実装するには、structのfieldをparseする必要があります。  
 この例を通じて、`quote::ToTokens`や`syn::parse::Parse`の仕組みを学べます。`proc_macro2::TokenStream`も登場します。  
 fieldを加工できるようになるといよいよできることが広がってきておもしろくなってきます。  
-また、read worldのusecaseとして、dtolnay先生の[no-panic](https://github.com/dtolnay/no-panic)も紹介されます。  
+また、real worldのusecaseとして、dtolnay先生の[no-panic](https://github.com/dtolnay/no-panic)も紹介されます。  
 章末のexercisesまでやると、各種structとenumの対応まで実装できます。
 
 
