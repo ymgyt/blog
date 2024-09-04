@@ -5,6 +5,8 @@ date = "2020-12-24"
 draft = false
 [taxonomies]
 tags = ["rust"]
+[extra]
+image = "images/emoji/tokyo_tower.png"
 +++
 
 本エントリーではKey Value Storeを[tokio](https://github.com/tokio-rs/tokio)で作るうえで学んだことを書いていきます。  
