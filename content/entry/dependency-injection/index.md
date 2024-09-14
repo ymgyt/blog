@@ -292,7 +292,7 @@ fn main() {
     let lazy_foo = LazyFoo {
         foo: LazyCell::new(|| FooImpl {}),
     };
-    let service = Service::new2(lazy_foo);
+    let service = Service::new(lazy_foo);
 }
 ```
 
