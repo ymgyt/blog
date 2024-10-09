@@ -4,7 +4,6 @@ emoji: "🔭"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["rust", "opentelemetry", "tracing"]
 published: true
-publication_name: "fraim"
 ---
 
 現在、[FRAIM]では[OpenTelemetry]の導入を進めています。  

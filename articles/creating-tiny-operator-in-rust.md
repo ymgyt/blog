@@ -4,7 +4,6 @@ emoji: "🦀"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["rust", "kubernetes", "kubers"]
 published: true
-publication_name: "fraim"
 ---
 
 社内で行っているRustの勉強会で[kube-rs]を利用したKubernetes operatorを扱いました。

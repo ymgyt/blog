@@ -4,7 +4,6 @@ emoji: "📁"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["rust", "helix"]
 published: true
-publication_name: "fraim"
 ---
 
 現在のdirectory構造を左側に表示する機能は各種editorに一般的に備わっているものかと思います。  
