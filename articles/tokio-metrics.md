@@ -4,7 +4,6 @@ emoji: "🔭"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["rust"]
 published: true
-publication_name: "fraim"
 ---
 
 本記事では、[tokio-metrics]を利用してtokioのruntimeとtaskのmetricsを取得する方法について書きます。  
