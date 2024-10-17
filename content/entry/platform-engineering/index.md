@@ -71,3 +71,157 @@ Platformの意味
 
 
 Platform engineering
+  * Platform engineering is the discipline(専門分野) of developing and operating platforms.
+  * The goal of this discipline is to mange overall system complexity to delier leverage to the business
+  * software-based abstrations that serve a broad base of application developers
+  * curated product approach
+
+Leverage
+  * PEの価値のcoreになるコンセプト
+  * 少数のPEの仕事で組織全体の仕事を減らす
+    * application engineersをmore productiveにする
+    * application teams全体でのduplicate workをeliminateする
+
+Product
+  * platformをproductとして捉えることが重要
+    * customer-centri approchにつながる
+  * 多様な要求に対して製品を意図的かつセンス良くキュレーションすること
+
+#### The Oveneral Swamp
+
+* infraやdev toolは、public cloudやossと密接に関連しており、時間の経過と共にsystemの所有コストを増加させる一因になっている。
+  * この分野がPEの需要を生み出している
+  * applicationの構築は容易になったが、maintenanceは難しくなった
+  * systemが大きくなればなるほど速度が落ちていく点をとらえて、沼
+
+* softwareの主要なcostはmaintenance
+  * cloudとossはこの問題を拡大している(amplify) 
+    * ever-growing layer of primitives(general purpose building block)を増やすから
+      * 機能させるには"glue"(integration code config, managment tools)
+      * 変更をhardにしている
+
+* "glue"が広がるにつれ、over-general swampが形成される
+  * application teamはprimitives中からそれぞれ必要な選択を行い、custom glueを作成する
+  * glueが広がると、些細な変更でも組織全体として多大な時間を消費する
+
+* この問題に対処する方法は、glueの量を制限すること。
+  * PEは限定されたOSSやvendorの選択肢を組織のニーズにあわせて抽象化することでこれを実現する
+
+* PEはabstractionとencapsulationの概念(concepts)を実装して、interfaceを作成することでuserをunderlying complexityから保護し、glueの量を制限する
+  * これらのconceptはよく知られているにもかかわらず、なぜPEが必要とされているのか
+
+
+#### How We Got Stuck in the Over-General Swamp
+
+##### Change 1 Explosion of Choice 
+
+* internetの登場, hardware大量購入、apiで制御できるcloudの隆盛
+
+* Heroku等のPassSでは多様なapplicationをサポートできず、結果的にIaaSが選ばれた
+* Kubernetesの隆盛は、PaaS, IaaSが共にenterpriseのニーズを満たせなかったことの現れといえる
+  * applicationが"cloud native"であることを強制することで、IaaS ecosystemをsimplifyする試み
+  * ただ以前として多くの詳細な設定が必要であり、典型的な"leaky" abstraction
+
+* OSSの問題は選択肢の増加
+  * application teamはマッチするOSSを見つけることができるが、他のチームに最適であるとは限らない
+    * 初期リリースを迅速に行うために選んだ選択肢は最終的にburdenになる
+      * 独立してメンテナンスコストを支払う必要があるから
+
+
+##### Higher Operational Needs
+
+* 誰が運用するか
+
+
+#### How Platform Engineering Clears the Swamp
+
+* platformを作るには大きな投資が必要
+  * app teamのOSSやcloudの選択肢を限定するというcostもかかる
+  * 組織の再構成、役割の変更
+  * これらの投資を正当化できるか
+
+* 選択肢が多いことは悪いことばかりでない 
+  * より早く出荷できる
+  * 使っていて楽しいsystemを選べることで自立性と所有感をもてる
+
+* 一方で、組織が長期のcostを減らすことを考え始めると忘れ去られる
+  * リーダーシップが権威を用いて標準を強制することがよくある
+  * 権威によるstandardizationでは十分ではない
+    * expertsはbusinessのneedを十分に理解できないから
+
+* PEは開発チームが使っていて楽しいsystemを使うべきだと認識している
+  * cost削減やサポートの負担軽減だけを目指さない
+  * curatedなsmall set of primitivesを提供する
+  * うまくいけば、権威に頼ることなく、OSSやCloudのprimitiveを減らせる
+
+
+#### Reducing Per-Application Glue
+
+* 利用されるprimitivesの数を減らすだけでなく、glueを減らすことを目指す
+  * platform capabilitiesとして、primitivesを抽象化する
+
+* 具体例としてterraformの場合
+  * 各application teamにcloudをprovisioningする権限を付与する
+    * ほとんどのエンジニアは頻繁に使わないタスクのために新しいツールセットを学びたくない
+    * これらの作業は新しいメンバーか、DevOpsに興味をもつ稀なエンジニアが担当することになる
+    * provisioningのexpertに成長したとしても、これらのエンジニアはapplication teamに長くとどまらない
+
+  * terraformを書くチームを作る
+    * feature shop mindestに囚われている
+      * 作業依頼をうけてそれを処理する
+    * strong developerが参加したがらない
+      * 構造を変えて、よりよい抽象を提供したい人
+    * 時間の経過と共に、codebaseはspaghettiになる    
+
+  * 単に中央化されたterraform writingチーム以上のより一貫性のある手段がある
+    * glue保守部隊からplatformを構築するengineering centerへ
+    * 言われたものを作るだけでなく、提供するものに意見をもち、単なるprovisioningを超えたなにかを作る
+
+  * 専門チームを集中させて効率化することが重要
+    * 各チームがDevOpsやSREを雇うのではなく
+    * 単発の変更をサポートするだけでなく、基盤の複雑さを抽象化するプラットフォームを作成する
+
+
+#### Centralizing the Cost of Migrations
+
+* migrationはplatformの重要な価値のひとつ
+
+* OSSのdiversityを減らす
+  * 少ないほどmigrationの頻度は減る
+* Encapsulating OSS and vendor systems with API
+* Creaing observability of platform usage
+  * metadataを制御できるメカニズムをもてるので、upgrade時に活用できる
+* Giving ownership of OSS and cloud systems to teams with software developer
+  * APIでwrapしているので、migrationをapplication teamに透過的に実施できる
+
+
+#### Allowing Application Developers to Operate What They Develop
+
+* ossとそのglueが引き起こすoperational problemsがapplication codeのそれを上回っている
+
+* 基盤システムの運用上の複雑さをplatformの抽象化で隠蔽できれば、この複雑さはplatformチームが所有できます。
+
+
+#### Empowering Teams to Focus on Building Platforms
+
+* Platform adjacent approaches
+  * Infrastructure
+    * infraの抽象化にはあまり注力しない
+    
+  * DevTools
+    * productionでのdeveloperのproductivityに対してlittle focus
+
+  * DevOps
+    * little focus on automation/toolsがhelp the widest possible audience
+
+  * SRE
+    * little focus on systemic issues other than reliability
+    * delivering impact through organizational practives instead of developing better systems
+
+* PEはこれらのgroupの人々と協同して、platformを構築する
+  * infra: infra capabilitiesとdeveloper centered simplicityのbalance
+  * devtool: development experience with production support experience
+  * devops: optimal(最適) per-application glueからより一般的なsoftwareへ
+  * sre: balancing reliability with other system attributes(feature agility, cost efficiency, security, performance)
+    
+* あえてshadow platformsを作らせるという判断もときには必要
