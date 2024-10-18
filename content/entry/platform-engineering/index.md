@@ -225,3 +225,100 @@ Product
   * sre: balancing reliability with other system attributes(feature agility, cost efficiency, security, performance)
     
 * あえてshadow platformsを作らせるという判断もときには必要
+
+
+## Chapter 2. The Pillars of Platform Engineering
+
+PE practiceのfour pillars
+
+* Product: Taking a curated product approach
+* Development: Developing software-based abstractions
+* Breadth: Serving a broad base of application developers
+* Operations: Operating as foundations for the business
+
+
+### Taking a Curated Product Approach
+
+* product approach
+  * technical mindset
+  * focus customers need, experience using system
+  * これがないと、実際のneedsに沿わないものを提供することにつながる
+* curated approach
+  * platformのscopeに対して意見をもって、キュレーションする
+  * これがないとcoherent strategyなくcustomerに対応することになり、service centerに成り下がってしまう
+
+* A successful curated product approachには２つのtypeがある  
+  * Paved paths
+    * 強制ではない
+
+  * Railways
+
+
+### Developing Software-Based Abstractions
+
+* softwareを作っていないならば、PEをやっていない
+  * 抽象化していないならば複雑製をuserに転嫁しているだけ
+
+
+#### The Major Abstractions: Platform Service and It' APIs
+
+* APIによる抽象化は必要だが、PostgreSQLのようなOSSを提供するplatformはSQLを完全に抽象化してAPI requestを要求するべきだろうか
+  * 正しい抽象度を見極めるには、application engineerの目線に立つ必要がある
+    * appの生産性があがったと確信できるまでは直接的なアクセスを許可したほうがよい
+
+
+#### thick Clients
+
+* OSSのClientをplatformのlibとして提供する方法もある。
+  * observabilityやupgrade cycleをplatform teamで制御できなくなるが、trade-offを考慮して、検討の価値はある
+
+
+#### OSS Customizations
+
+* OSSをカスタマイズすることが求められる場合がある
+  * カスタマイズの一環として、pluginやcontributionが必要になる場合もある
+  * forkする場合もある
+  * OSSのコードを修正する能力はPEの付加価値の一部
+
+
+#### Integrating Metadata Registries
+
+* PEの仕事として、OSやCloud primitivesの問題や変更にuserのかわりに対処することである
+  * このためには、各primitivesに関するmetadataを管理しておく必要がある。これらのmetadataで以下の問に答える
+    * Ownership
+    * Access Control
+    * Cost efficiency
+    * Migrations
+
+* systemとしては
+  * tag management systems
+  * api/schema registries
+   i Internal developer portals
+
+##### IS AN IDP A REQUIRED COMPONENT OF A PE
+
+* An IDP is not a requirement for building a great platform
+  * なくてもいいというスタンス。
+  * 反対しているわけでもない
+
+
+### Serving a Broad Base of Application Developers
+
+* 単なる機能開発から、devloping capabilitiesの開発に移行する必要がある。これはsystemをcheaper, safer, easierにする。
+  * Self-service interfaces
+    * 新しいcustomerのonboardingのたびにmanual workや複数チーム間の調整が必要な場合、leverageを失う
+
+  * User observability
+    * user observabilityは重要
+      * userが間違っているのか、platformが間違っているのか判断できるか
+
+  * Guardrails
+    * 単純なご設定が大きな影響を及ぼすことがある。userが全員、underlyingなsystemに通じているわけではない
+    * expensive misconfigurationを防止する、protectionとしてのguardrailsが必要
+
+  * Multitenancy
+    * applicationごとに one systemではなく、同一のruntime componentで複数のapplicationをサポートする必要がある
+      * multitenancyをはじめると難しい問題が生じるので、これもPEにsoftware engineerが必要な理由の一つ
+
+
+### Operationg as Foundations
