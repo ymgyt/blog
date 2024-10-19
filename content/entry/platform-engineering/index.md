@@ -322,3 +322,61 @@ PE practiceのfour pillars
 
 
 ### Operationg as Foundations
+
+* 運用も重要
+  * Platformがflakyだと、customerはplatformの運用に習熟しないといけなくなる
+    * leverageをもたらさない
+    * 体験としても悪い
+
+* platformがfoundationたるために重要な3つの側面がある
+  * taking operational responsibility for full platform
+  * ensuring the platform is supported
+  * being disciplined in operational practices
+
+
+#### Responsibility for the Full Platform
+
+* Platformすべてを運用する
+  * 運用の一部をcustomerにまかせるとleverageを失う
+  * 簡単に使い始められても、本番でissueが起きれば、抽象化しようとしていたものに詳しくなる必要がある
+
+* vendorやOSSの運用責任を追わない形のplatformの類型
+  * provisioning platform
+    * provisioningしたあとはappの責任
+  * framework platform
+    * OSSやvendorのlibraryのversionやin-house logicを加えるが、appがoperationの責務を負う
+  * Tools platform
+    * toolやUIは提供するが、appが責務を負う
+
+* provisioning, frameworks, toolだけを行い運用の責務を追わないのは、運用の複雑さをuserにさらけ出してしまい、スケールしない。
+
+#### Supporting the Platform
+
+* userのsupportはPEの重要な一部
+  * customer empathy cultureをチーム全体に醸成するうえでも重要 
+
+
+#### Operational Discipline
+
+* Operational discipline
+  * by which we mean a focus on carrying out operational practices on a routine basis
+  * application開発のbackgroundをもつ人が見落としやすい領域
+  * APIを正しく実装すればこの手の問題はおきないと考えている人もいる
+    * 他人のcodeとも付き合う必要がある
+
+  
+### What does generative AI mean for PE
+
+* AIやMLとの向き合い方
+  * ちゃんと読んでない
+
+
+## Part 2. Platform Engineering Practices
+
+Part1: Why and What
+* PEは単なるrebranding(DevOps,SREの)ではないのか
+* 8章を使って、"how"を扱う
+
+ 失敗例
+
+* You start too early or underestimate the amount of change needed when it's time
