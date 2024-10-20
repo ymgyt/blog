@@ -1,0 +1,7 @@
+set shell := ["nu", "-c"]
+
+# Watch and compile presentation file
+[no-cd]
+watch *flags:
+	try { ^open ./presen.pdf } 
+	nix run nixpkgs#typst watch presen.typ -- {{ flags }}
