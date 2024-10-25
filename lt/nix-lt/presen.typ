@@ -95,13 +95,13 @@
 ```sh
 # 全nodeのdeploy
 deploy .
-
 # nodeの指定
 deploy .#myhost
-
 # profileの指定
 deploy .#myhost.foo
 ```
+
+#image("./images/deploy_ss.png", height: 50%)
 ]
 
 #west-slide(title: "Rollback")[
@@ -209,6 +209,88 @@ nix copy
   --to ssh://${ssh_user}@${hostname} 
   /nix/store/abc...xyz-activatable-nixos-system-host-xyz
 ```
+]
+
+#west-slide(title: "deploy-rs.lib")[
+  deploy-rsの機能は`deploy-rs.lib`の形で提供されている
+]
+
+#west-slide(title: "deploy-rs.lib")[
+```nix
+{
+nodes = {
+  myhost = {
+    hostname = "myhost";
+    profiles.system.path = 
+      deploy-rs.lib.aarch64-linux.activate.nixos 
+        self.nixosConfigurations.myhost;
+  };
+}
+```
+
+`deploy-rs.lib.activate.nixos` は引数のnixosConfigurationに対してactivate commandを追加する
+]
+
+#west-slide(title: "deploy-rs.lib")[
+#set text(size: 14pt)
+```nix
+activate = rec {
+  custom = {
+    __functor =
+      customSelf: base: activate:
+      final.buildEnv {
+        name = ("activatable-" + base.name);
+        paths = [
+          base
+          (final.writeTextFile {
+            name = base.name + "-activate-path";
+            text = ''
+            # ...
+            ${activate}
+            '';
+            executable = true;
+            destination = "/deploy-rs-activate";
+          })
+          (final.writeTextFile {
+            name = base.name + "-activate-rs";
+            text = ''
+              #!${final.runtimeShell}
+              exec ${final.deploy-rs.deploy-rs}/bin/activate "$@"
+            '';
+            executable = true;
+            destination = "/activate-rs";
+          })
+        ];
+      };
+  };
+```
+]
+
+#west-slide(title: "check")[
+flake.nixに定義した`outputs.deploy`に対するcheckも提供されている
+
+```nix
+checks = builtins.mapAttrs 
+  (system: deployLib: 
+    deployLib.deployChecks self.deploy) 
+  deploy-rs.lib;
+```
+]
+
+#west-slide(title: "check")[
+#set text(size: 14pt)
+```nix
+deployChecks =
+  deploy:
+  builtins.mapAttrs (_: check: check deploy) {
+    deploy-schema =
+      deploy:
+      final.runCommand "jsonschema-deploy-system" { } ''
+        ${final.check-jsonschema}/bin/check-jsonschema --schemafile ${./interface.json} ${final.writeText "deploy.json" (builtins.toJSON deploy)} && touch $out
+      '';
+```
+
+ユーザのdeploy定義をjsonに変換して、jsonschemaに違反していないかチェックしている
 ]
 
 #west-slide(title: "まとめ")[
