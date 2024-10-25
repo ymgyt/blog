@@ -380,3 +380,75 @@ Part1: Why and What
  失敗例
 
 * You start too early or underestimate the amount of change needed when it's time
+  * ch3でどうやって小さくはじめるかについて説明
+
+* You don't have the right blend of people
+  ch4 team builing skill set的な?
+
+* You don't think your platforms need product management
+  * ch5 product mindsetが必要
+
+* You don't operate your platform well
+  * platformが安定していなければ誰も使わない
+  * ch6では運用の話
+
+* You struglle to plan and deliver new value on a continuous basis
+  * ch7は機能のdeliveryについて
+
+* You are stuck with naive architectures
+  * ch8 rearchitectureについて
+
+* You burn goodwill with costly migrations
+  * ch9 migration関連?
+
+* You fail to communicate your value to peer leaders(stackholders)
+  * 政治について 
+
+
+### Chapter 3. How and When to Get Started
+
+* 本章はまだPEをはじめていない人むけ
+  * small startup
+  * formal platformへの移行
+  * older and larger companiesが遭遇する問題
+
+#### Fostering platform cooperation at small scale
+
+* day oneからkubernetesが必要か?
+  * No, it does not. Seriously, no
+  * focus on simple, cost-effective solutions that work for now
+
+* Try to balance
+  * Complexity
+  * Cost
+  * Scale
+  * Lifespan
+
+
+* Socialize change and decision making
+  * RFC-like process(react, swift, rust)
+  * ADR
+
+
+#### Creating the Platform Teams That Replace Cooperation
+
+
+##### Are the Benefits of Centralizing Ownerhsip Worth the Costs?
+
+
+#### Realize the Collectice Dynamic Is Gone
+
+* Platform的なアプローチが批判されることもある
+
+#### Focus on Solving Problems, Not Net Technology or Architecture
+
+* You need to deliver value quickly to develop trust
+  * userは価値をみるまで懐疑的
+*  make sure you are delivering incremental value throughout.
+
+#### Beware of New Engineers Comping from Much Bigger Companies
+
+
+#### Be Slow to Hire Product Managers (and Avoid Project Managers)
+
+

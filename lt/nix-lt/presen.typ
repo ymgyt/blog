@@ -22,7 +22,7 @@
   ```toml
   [speaker]
   name   = "Yamaguchi Yuta"
-  github = "https://github.com/ymgyt"
+  github = "ymgyt"
   blog   = "https://blog.ymgyt.io/"
   ```
 ]
@@ -52,9 +52,9 @@
 #image("./images/deploy_rs_logo.svg")
 > A Simple, multi-profile Nix-flake deploy tool
 
-#pause - multi-profile: deployの単位はprofile
+#pause - multi-profile: profile単位でdeploy
 
-#pause - Nix-flake: 設定はflake.nixに定義
+#pause - Nix-flake:     設定はflake.nixに定義
 ]
 
 #west-slide(title: "flake.nix")[
@@ -214,6 +214,9 @@ nix copy
 #west-slide(title: "まとめ")[
 - deploy-rsで簡単にNixOS configurationを複数hostにdeployできた
 - deployやrollbackはnixの機能を利用していることがわかった
+- NixOSの設定の切り替えの仕組みを理解していきたい
+  - switch-to-configuration
+  - config.system.build.toplevel
 ]
 
 
