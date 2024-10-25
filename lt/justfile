@@ -4,4 +4,5 @@ set shell := ["nu", "-c"]
 [no-cd]
 watch *flags:
 	try { ^open ./presen.pdf } 
-	nix run nixpkgs#typst watch presen.typ -- {{ flags }}
+	# typst 0.12 does not render fonts
+	typst watch presen.typ -- {{ flags }}

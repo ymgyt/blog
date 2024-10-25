@@ -1,0 +1,39 @@
+digraph {
+    graph [
+        layout=dot,
+        rankdir=TB,
+        label="Magic Rollback flow",
+        labelloc="top", // t(top) | b(bottom)
+        labeljust="left", // l(left) | c(center) | r(right)
+        fontname="Helvetica,Arial,sans-serif"
+        compound=true; 
+        newrank=true
+    ];
+
+    node [ shape="box" ]
+
+    subgraph cluster_remote {
+        rankdir=TB
+        label="Remote"
+
+        activate
+        profile
+        canary [label="canary file"]
+
+        activate -> profile [ label="2. activate" ]
+        activate -> canary [ label="3. create" ]
+
+        // { rank=same; activate; profile; canary; }
+    }
+
+    subgraph cluster_local {
+        label="Local"
+
+        deploy
+    }
+
+    deploy -> activate [ label="1. activate" ]
+    deploy -> canary [ label="4. rm" ]
+
+    { rank=same; deploy; activate;}
+}
