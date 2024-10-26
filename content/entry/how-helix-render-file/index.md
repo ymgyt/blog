@@ -163,7 +163,7 @@ fn main() -> Result<()> {
 }
 ```
 
-[https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-term/src/main.rs#L37]([https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-term/src/main.rs#L37])
+[https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-term/src/main.rs#L37](https://github.com/helix-editor/helix/blob/0097e191bb9f9f144043c2afcf04bc8632021281/helix-term/src/main.rs#L37)
 
 mainはexit codeの処理のみ行います。 
 以下が実質的なmain処理です。 
