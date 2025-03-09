@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="ja">
+    <title>Happy developing</title>
+    <subtitle>楽しい開発ライフ</subtitle>
+    <link href="https://blog.ymgyt.io/atom.xml" rel="self" type="application/atom+xml"/>
+    <link href="https://blog.ymgyt.io/entry/"/>
+    <author><name>ymgyt</name></author>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2025-03-08T00:00:00+00:00</updated>
+    <id>https://blog.ymgyt.io/atom.xml</id>
+    <entry xml:lang="ja">
+        <title>🗓️ なにかを習慣にしたければそれを習慣にしてはいけないという逆説</title>
+        <published>2025-03-08T00:00:00+00:00</published>
+        <updated>2025-03-08T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/habitparadox/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/habitparadox/</id>
+        
+        <summary type="html">なぜその習慣化は失敗するのか</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>⚙️ Ironies of Automationを読んだ感想</title>
+        <published>2024-09-28T00:00:00+00:00</published>
+        <updated>2024-09-28T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/ironies-of-automation/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/ironies-of-automation/</id>
+        
+        <summary type="html">自動化するほどつらいところだけ人に残されて逆に大変になる</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📗 なぜ依存を注入するのか DIの原理・原則とパターンを読んだ感想</title>
+        <published>2024-09-14T00:00:00+00:00</published>
+        <updated>2024-09-14T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/dependency-injection/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/dependency-injection/</id>
+        
+        <summary type="html">DIという観点からコードの設計を考える本</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>🌸 Kubernetes Upstream Training Japanに参加してきました</title>
+        <published>2024-08-26T00:00:00+00:00</published>
+        <updated>2024-08-26T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/kubernetes-upstream-traning-japan-2024-08/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/kubernetes-upstream-traning-japan-2024-08/</id>
+        
+        <summary type="html">イベントの感想など</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📗 Write Powerful Rust Macrosを読んだ感想</title>
+        <published>2024-07-15T00:00:00+00:00</published>
+        <updated>2024-07-15T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/write-powerful-rust-macros/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/write-powerful-rust-macros/</id>
+        
+        <summary type="html">一冊まるごとMacroについての本</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📗 OSSライセンスを正しく理解するための本を読んだ感想</title>
+        <published>2024-05-17T00:00:00+00:00</published>
+        <updated>2024-05-17T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/understand-the-open-source-software-license-correctly/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/understand-the-open-source-software-license-correctly/</id>
+        
+        <summary type="html">OSSライセンスと著作権の関係</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📗 Learning OpenTelemetryを読んだ感想</title>
+        <published>2024-03-29T00:00:00+00:00</published>
+        <updated>2024-03-29T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/learning-opentelemetry/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/learning-opentelemetry/</id>
+        
+        <summary type="html">Observability is a commitment</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📕 Asynchronous Programming in Rustを読んだ感想</title>
+        <published>2024-03-14T00:00:00+00:00</published>
+        <updated>2024-03-14T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/asynchronous-programming-in-rust/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/asynchronous-programming-in-rust/</id>
+        
+        <summary type="html">CF Samson先生のFuture解説がついに本になった</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>✏️ 最新のHelixでFile explorerを使いたい</title>
+        <published>2024-01-17T00:00:00+00:00</published>
+        <updated>2024-01-17T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/migrate-helix-file-explorer/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/migrate-helix-file-explorer/</id>
+        
+        <summary type="html">Helixのmaster branchでfile tree explorerを利用するために自前で移植した</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📕 詳解 Rustアトミック操作とロックを読んだ感想</title>
+        <published>2023-11-28T00:00:00+00:00</published>
+        <updated>2023-11-28T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/rust-atomics-and-locks-ja/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/rust-atomics-and-locks-ja/</id>
+        
+        <summary type="html">std::sync::atomic::{Ordering,fence}がわかる本</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>🦀 RFC8628 OAuth 2.0 Device Authorization GrantでCLIからGithubのaccess tokenを取得する</title>
+        <published>2023-11-18T00:00:00+00:00</published>
+        <updated>2023-11-18T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/rfc8628-oauth2-device-authorization-grant-handson/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/rfc8628-oauth2-device-authorization-grant-handson/</id>
+        
+        <summary type="html">通称Device flowをRustで実装する</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📙 The Purely Functional Software Deployment Modelを読んだ感想</title>
+        <published>2023-11-06T00:00:00+00:00</published>
+        <updated>2023-11-06T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/the-purely-functional-software-deployment/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/the-purely-functional-software-deployment/</id>
+        
+        <summary type="html">Dolstra先生のNixの論文 The Purely Functional Software Deployment Modelを読んだ感想</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📗 Terraform: Up and Running, 3rd Editionを読んだ感想</title>
+        <published>2023-10-25T00:00:00+00:00</published>
+        <updated>2023-10-25T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/terraform-up-and-running/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/terraform-up-and-running/</id>
+        
+        <summary type="html">Terraform: Up and Runningを読んだ感想について</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>❄️ NixOSとRaspberry Piで自宅server | Part 5 CPUの温度をmetricsとして取得</title>
+        <published>2023-10-22T00:00:00+00:00</published>
+        <updated>2023-10-22T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-get-cpu-temperature/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-get-cpu-temperature/</id>
+        
+        <summary type="html">CPUの温度を取得してopentelemetryのmetricsとして扱えるようにします</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>🔭 OpenTelemetry Meetup 2023-10にいってきました</title>
+        <published>2023-10-19T00:00:00+00:00</published>
+        <updated>2023-10-19T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/opentelemetry-meetup-2023-10/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/opentelemetry-meetup-2023-10/</id>
+        
+        <summary type="html">OpenTelemetry Meetupにいってきたので感想を書きます</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📗 Linux Service Management Made Easy with systemdを読んだ感想</title>
+        <published>2023-10-15T00:00:00+00:00</published>
+        <updated>2023-10-15T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/linux-service-management-made-easy-with-systemd/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/linux-service-management-made-easy-with-systemd/</id>
+        
+        <summary type="html">Linux Service Management Made Easy with systemd本の概要だったり良かったところについて</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>❄️ NixOSとRaspberry Piで自宅server | Part 4 opentelemetry-collectorでmetricsを取得</title>
+        <published>2023-10-09T04:00:00+00:00</published>
+        <updated>2023-10-09T04:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-export-metrics-with-opentelemetry-collector/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-export-metrics-with-opentelemetry-collector/</id>
+        
+        <summary type="html">opentelemetry-collectorとopenobserveによるmetrics管理</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>❄️ NixOSとRaspberry Piで自宅server | Part 3 ragenixでsecret管理</title>
+        <published>2023-10-09T03:00:00+00:00</published>
+        <updated>2023-10-09T03:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-secret-management-with-ragenix/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-secret-management-with-ragenix/</id>
+        
+        <summary type="html">ragenixによるsecretの管理について</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>❄️ NixOSとRaspberry Piで自宅server | Part 2 deploy-rsでdeploy</title>
+        <published>2023-10-09T01:00:00+00:00</published>
+        <updated>2023-10-09T01:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-deploy-with-deploy-rs/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-deploy-with-deploy-rs/</id>
+        
+        <summary type="html">deploy-rsを使ってRaspberry Piにdeploy</summary>
+        
+    </entry>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</feed>

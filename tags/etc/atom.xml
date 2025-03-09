@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="ja">
+    <title>Happy developing - etc</title>
+    <subtitle>楽しい開発ライフ</subtitle>
+    <link href="https://blog.ymgyt.io/tags/etc/atom.xml" rel="self" type="application/atom+xml"/>
+    <link href="https://blog.ymgyt.io/entry/"/>
+    <author><name>ymgyt</name></author>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2025-03-08T00:00:00+00:00</updated>
+    <id>https://blog.ymgyt.io/tags/etc/atom.xml</id>
+    <entry xml:lang="ja">
+        <title>🗓️ なにかを習慣にしたければそれを習慣にしてはいけないという逆説</title>
+        <published>2025-03-08T00:00:00+00:00</published>
+        <updated>2025-03-08T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/habitparadox/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/habitparadox/</id>
+        
+        <summary type="html">なぜその習慣化は失敗するのか</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>🚛 BlogをZola + Github Pagesに移行した</title>
+        <published>2023-02-13T00:00:00+00:00</published>
+        <updated>2023-02-13T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/migrated-blog-to-zola-and-github-pages/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/migrated-blog-to-zola-and-github-pages/</id>
+        
+        <summary type="html">Rust製 static site generator zolaとGithub Pagesでblogを公開するまで</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>⌨️ 自作キーボードLily58Proを組み立てる</title>
+        <published>2020-08-09T00:00:00+00:00</published>
+        <updated>2020-08-09T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/build-lily58pro/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/build-lily58pro/</id>
+        
+        <content type="html">&lt;p&gt;この記事では自作キーボード&lt;a href=&quot;https:&#x2F;&#x2F;yushakobo.jp&#x2F;shop&#x2F;lily58-pro&#x2F;&quot;&gt;Lily58 Pro&lt;&#x2F;a&gt;の組み立て工程について書いていきます。&lt;&#x2F;p&gt;
+&lt;p&gt;普段はHHKBを使っていたのですが分離型キーボードを試してみたいと思っていました。
+HHKBに近い感じがよく、CapsLock、FunctionKeyがなくてUS配列あたりで探していたのですがしっくりくるものが見つかりませんでした。
+そんな中たまたま見つけた&lt;a href=&quot;https:&#x2F;&#x2F;keyhive.xyz&#x2F;shop&#x2F;lily58&quot;&gt;Lily58 Pro&lt;&#x2F;a&gt;がよさそうだったので作ってみることにしました。
+詳細な&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kata0510&#x2F;Lily58&#x2F;blob&#x2F;master&#x2F;Pro&#x2F;Doc&#x2F;buildguide_jp.md&quot;&gt;ビルドガイド&lt;&#x2F;a&gt;もあり自分でもできそうと思えました。&lt;&#x2F;p&gt;
+&lt;p&gt;自作キーボードとは別にRustで組み込みがやってみたくて、オライリーからでている&lt;a href=&quot;https:&#x2F;&#x2F;www.oreilly.co.jp&#x2F;books&#x2F;9784873118970&#x2F;&quot;&gt;Make: Electronics&lt;&#x2F;a&gt;に手をだしており、はんだづけまわりの道具が一通り揃っていたのでキット買うだけで始められそうだったのもちょうどよかったです。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;zhun-bei&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#zhun-bei&quot; aria-label=&quot;Anchor link for: zhun-bei&quot;&gt;準備&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+
+&lt;figure class=&quot;&quot;&gt;
+  &lt;div class=&quot;fig-images-row&quot;&gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_prepare.jpeg&quot; 
+      alt=&quot;&quot;, 
+       
+      
+    &gt;
+    
+  &lt;&#x2F;div&gt;
+  &lt;figcaption&gt;パーツと道具&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;yushakobo.jp&#x2F;shop&#x2F;lily58-pro&#x2F;&quot;&gt;キット&lt;&#x2F;a&gt;は遊舎工房で購入しました。このキット以外で必要なパーツは&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;yushakobo.jp&#x2F;shop&#x2F;trrs_cable&#x2F;&quot;&gt;TRRSケーブル&lt;&#x2F;a&gt; 左右のキーボードをつなぐケーブル。&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.amazon.co.jp&#x2F;gp&#x2F;product&#x2F;B077PRD1FT&quot;&gt;USBケーブル&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;yushakobo.jp&#x2F;shop&#x2F;cherry-mx&#x2F;?attribute_pa_stem=red-2&quot;&gt;キースイッチ&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;yushakobo.jp&#x2F;shop&#x2F;tai-hao-pbt-sakuramichi&#x2F;&quot;&gt;キーキャップ&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;USBケーブルはマグネット式がおすすめされていたのでそれに倣いました。(上下を間違えると物理的に接続はできるもののデータ通信ができないので注意)&lt;&#x2F;p&gt;
+&lt;p&gt;キースイッチに関しては実際に触ってみないとわからないことが多いので静からしい赤軸にしました。次は&lt;a href=&quot;https:&#x2F;&#x2F;drop.com&#x2F;buy&#x2F;massdrop-x-invyr-holy-panda-mechanical-switches&quot;&gt;Holy Panda&lt;&#x2F;a&gt;を買ってみようと思っています。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;zu-mili-te&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#zu-mili-te&quot; aria-label=&quot;Anchor link for: zu-mili-te&quot;&gt;組み立て&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+
+&lt;figure class=&quot;&quot;&gt;
+  &lt;div class=&quot;fig-images-row&quot;&gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_1.jpeg&quot; 
+      alt=&quot;&quot;, 
+       
+      
+    &gt;
+    
+  &lt;&#x2F;div&gt;
+  &lt;figcaption&gt;基盤表面&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;基盤(PCB)の表側に目印としてテープをつけていきます。基盤自体には裏表はないので適当に決めます。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;daiodowotukeru&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#daiodowotukeru&quot; aria-label=&quot;Anchor link for: daiodowotukeru&quot;&gt;ダイオードをつける&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+
+&lt;figure class=&quot;&quot;&gt;
+  &lt;div class=&quot;fig-images-row&quot;&gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_2.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;32%,&quot;   
+      
+    &gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_3.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;32%,&quot;   
+      
+    &gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_4.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;32%,&quot;   
+      
+    &gt;
+    
+  &lt;&#x2F;div&gt;
+  &lt;figcaption&gt;ダイオードの取り付け&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;ダイオードを基盤の裏側につけていきます。非常に小さいのでピンセットで扱いました。またわかりにくいですが片側に線がひいてあり基板側の矢印と向きをあわせる必要あります。
+基盤の左右でダイオードの向きが逆になるので注意。&lt;&#x2F;p&gt;
+&lt;p&gt;取り付けるにはまず、ダイオード取り付け部分の片側にあらかじめはんだを垂らしておきます。これを予備はんだというらしいです。
+どのくらいが適量なのかがわからなかったので適当にやっています。
+写真ではこのあとに取り付けるスイッチソケット部分の予備はんだも一緒にやっています。&lt;&#x2F;p&gt;
+
+&lt;figure class=&quot;&quot;&gt;
+  &lt;div class=&quot;fig-images-row&quot;&gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_5.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;32%,&quot;   
+      
+    &gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_6.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;32%,&quot;   
+      
+    &gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_7.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;32%,&quot;   
+      
+    &gt;
+    
+  &lt;&#x2F;div&gt;
+  &lt;figcaption&gt;予備はんだづけ&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;予備はんだが終わったら左手でダイオードをピンセットで持ちながら予備はんだ部分にはんだごてをあててはんだを溶かしダイオードをつけていきます。&lt;&#x2F;p&gt;
+
+&lt;figure class=&quot;&quot;&gt;
+  &lt;div class=&quot;fig-images-row&quot;&gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_8.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;48%,&quot;   
+      
+    &gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_9.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;48%,&quot;   
+      
+    &gt;
+    
+  &lt;&#x2F;div&gt;
+  &lt;figcaption&gt;ダイオードの取り付け&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;着け終わったらもう片方もはんだづけしていきます。この作業を左右とも行います。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;kisuitutiyong-soketutowotukeru&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#kisuitutiyong-soketutowotukeru&quot; aria-label=&quot;Anchor link for: kisuitutiyong-soketutowotukeru&quot;&gt;キースイッチ用ソケットをつける&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+
+&lt;figure class=&quot;&quot;&gt;
+  &lt;div class=&quot;fig-images-row&quot;&gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_10.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;32%,&quot;   
+      
+    &gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_11.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;32%,&quot;   
+      
+    &gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_12.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;32%,&quot;   
+      
+    &gt;
+    
+  &lt;&#x2F;div&gt;
+  &lt;figcaption&gt;ソケットの取り付け&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;ダイオードをつける際に一緒につけておいた予備はんだを利用してキースイッチ用ソケットをはんだづけしていきます。写真はMX用のものです。
+作業時には気づけなかったのですがこの段階で導通確認をしておくべきでした。写真のソケットのうち3箇所はんだづけ不良のものがあります。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;trrskeburusoketuto-risetutoyong-togurusuitutiwotukeru&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#trrskeburusoketuto-risetutoyong-togurusuitutiwotukeru&quot; aria-label=&quot;Anchor link for: trrskeburusoketuto-risetutoyong-togurusuitutiwotukeru&quot;&gt;TRRSケーブルソケット、リセット用トグルスイッチをつける&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+
+&lt;figure class=&quot;&quot;&gt;
+  &lt;div class=&quot;fig-images-row&quot;&gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_13.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;48%,&quot;   
+      
+    &gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_14.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;48%,&quot;   
+      
+    &gt;
+    
+  &lt;&#x2F;div&gt;
+  &lt;figcaption&gt;ソケットとトグルスイッチの取り付け&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;TRRSケーブル用ソケットとトグルスイッチをつけていきます。左右でとりつける位置が微妙に異なります。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;oeldmoziyuruqu-rifu-kenozhun-bei&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#oeldmoziyuruqu-rifu-kenozhun-bei&quot; aria-label=&quot;Anchor link for: oeldmoziyuruqu-rifu-kenozhun-bei&quot;&gt;OELDモジュール取り付けの準備&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+
+&lt;figure class=&quot;&quot;&gt;
+  &lt;div class=&quot;fig-images-row&quot;&gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_15.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;48%,&quot;   
+      
+    &gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_16.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;48%,&quot;   
+      
+    &gt;
+    
+  &lt;&#x2F;div&gt;
+  &lt;figcaption&gt;OELFモジュールの準備&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;OELDモジュールをとりつけるために指定箇所にはんだづけをおこないジャンプさせます。またソケットをはめて裏からはんだづけします。写真のひとつだけ大きいなはんだづけ箇所はやり直しています。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;pro-microwotukeru&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#pro-microwotukeru&quot; aria-label=&quot;Anchor link for: pro-microwotukeru&quot;&gt;Pro Microをつける&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+
+&lt;figure class=&quot;&quot;&gt;
+  &lt;div class=&quot;fig-images-row&quot;&gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_17.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;32%,&quot;   
+      
+    &gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_18.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;32%,&quot;   
+      
+    &gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_19.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;32%,&quot;   
+      
+    &gt;
+    
+  &lt;&#x2F;div&gt;
+  &lt;figcaption&gt;Pro Microの取り付け&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;Pro Microを取り付けます。左右両方に必要なのでふたつあります。Pro Microのはんだづけは自信がなかったので、余分に買っておいて練習してからのぞみました。
+後からおもうとこの段階でqmkの書き込みを行い、ジャンパー線等でソケットを押してみて各キーが認識されているかのチェックをおこなっておくべきだったなと思っております。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;kisuitutinotorituke&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#kisuitutinotorituke&quot; aria-label=&quot;Anchor link for: kisuitutinotorituke&quot;&gt;キースイッチのとりつけ&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+
+&lt;figure class=&quot;&quot;&gt;
+  &lt;div class=&quot;fig-images-row&quot;&gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_20.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;24%,&quot;   
+      
+    &gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_21.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;24%,&quot;   
+      
+    &gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_22.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;24%,&quot;   
+      
+    &gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_23.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;24%,&quot;   
+      
+    &gt;
+    
+  &lt;&#x2F;div&gt;
+  &lt;figcaption&gt;キースイッチの取り付け&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;スペーサをとりつけてキースイッチをはめていきます。スイッチはめていく際にうまくはまらずに中で足がまがってしまうことがあったので注意です。
+キースイッチを&lt;a href=&quot;https:&#x2F;&#x2F;www.amazon.co.jp&#x2F;%E3%83%A1%E3%82%AB%E3%83%8B%E3%82%AB%E3%83%AB%E3%82%AD%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%89-%E3%82%AD%E3%83%BC%E3%83%88%E3%83%83%E3%83%97%E5%BC%95%E6%8A%9C%E5%B7%A5%E5%85%B7-%E3%82%AD%E3%83%BC%E3%82%AD%E3%83%A3%E3%83%83%E3%83%97%EF%BC%86%E3%82%AD%E3%83%BC%E3%82%B9%E3%82%A4%E3%83%83%E3%83%81-%E3%82%AD%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%89%E3%83%A1%E3%83%B3%E3%83%86%E3%83%8A%E3%83%B3%E3%82%B9%E7%94%A8%E5%B7%A5%E5%85%B7-%E5%BC%95%E3%81%8D%E6%8A%9C%E3%81%91%E3%82%8B%E3%82%AD%E3%83%BC&#x2F;dp&#x2F;B07SDQ2ZGN&#x2F;ref=pd_lpo_147_t_0&#x2F;&quot;&gt;ひきぬく道具&lt;&#x2F;a&gt;を準備しておけばよかったです。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;oeldmoziyurunotorituke&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#oeldmoziyurunotorituke&quot; aria-label=&quot;Anchor link for: oeldmoziyurunotorituke&quot;&gt;OELDモジュールのとりつけ&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+
+&lt;figure class=&quot;&quot;&gt;
+  &lt;div class=&quot;fig-images-row&quot;&gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_24.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;32%,&quot;   
+      
+    &gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_25.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;32%,&quot;   
+      
+    &gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_26.jpeg&quot; 
+      alt=&quot;&quot;, 
+       width=&quot;32%,&quot;   
+      
+    &gt;
+    
+  &lt;&#x2F;div&gt;
+  &lt;figcaption&gt;OELDモジュールの取り付け&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;OELDモジュールをとりつけます。(アクリルの保護シートをとりはずすのにかなり苦労しました。)&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;qmk-firmwarenoshu-kiip-mi&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#qmk-firmwarenoshu-kiip-mi&quot; aria-label=&quot;Anchor link for: qmk-firmwarenoshu-kiip-mi&quot;&gt;qmk_firmwareの書き込み&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;qmk&#x2F;qmk_firmware&quot;&gt;qmk_firmware&lt;&#x2F;a&gt;を書き込んでいきます。&lt;&#x2F;p&gt;
+&lt;p&gt;かなり詳しい&lt;a href=&quot;https:&#x2F;&#x2F;docs.qmk.fm&#x2F;#&#x2F;newbs_getting_started&quot;&gt;document&lt;&#x2F;a&gt;が用意されているのでそれにしたがってセットアップします。
+自分の環境はmacOSなので、git cloneしてきた後&lt;code&gt;brew install qmk&#x2F;qmk&#x2F;qmk&lt;&#x2F;code&gt;で必要な準備が整いました。
+キーマップを書き込むには、&lt;code&gt;cd qmk_firmware &amp;amp;&amp;amp; make lily58:default:avrdude&lt;&#x2F;code&gt;を実行します。resetまちになるので、リセットトグルスイッチをおしてやります。
+TRRSケーブルははずした状態で左右それぞれでUSBケーブルを接続して&lt;code&gt;make lily58:default:avrdude&lt;&#x2F;code&gt;を実行します。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;kimatupunokasutamaizu&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#kimatupunokasutamaizu&quot; aria-label=&quot;Anchor link for: kimatupunokasutamaizu&quot;&gt;キーマップのカスタマイズ&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;qmkを書き込みすべてのキーが動作することのを確認できたらキーマップをカスタマイズしていきます。
+&lt;code&gt;qmk_firmware&#x2F;keyboards&#x2F;lily58&#x2F;keymaps&#x2F;custom&lt;&#x2F;code&gt; directoryを作成して&lt;code&gt;lily58&#x2F;keymaps&#x2F;default&lt;&#x2F;code&gt;以下をコピーしてきます。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;z-code&quot;&gt;&lt;code&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;ls -l keymaps&#x2F;custom
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;total 8
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;-rw-r--r-- 1 ymgyt staff 1274 Aug  2 15:57 config.h
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;lrwxr-xr-x 1 ymgyt staff   48 Aug  4 09:11 keymap.c -&amp;gt; &#x2F;Users&#x2F;ymgyt&#x2F;ws&#x2F;kb&#x2F;my_qmk_keymap&#x2F;lily58&#x2F;keymap.c
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;-rw-r--r-- 1 ymgyt staff 1481 Aug  2 15:57 rules.mk
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;ymgyt&#x2F;my_qmk_keymap&#x2F;blob&#x2F;master&#x2F;lily58&#x2F;keymap.c&quot;&gt;キーマップ&lt;&#x2F;a&gt;はgit管理したかったのでsymlinkを貼りました。
+このあたりは使いながらqmkのdocを読んでいろいろ試していこうと思っています。&lt;br &#x2F;&gt;
+書き込む際は &lt;code&gt;make lily58:custom:avrdude&lt;&#x2F;code&gt;を実行します。左右それぞれにやらなくてはいけないのですこし面倒です。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;wan-cheng&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#wan-cheng&quot; aria-label=&quot;Anchor link for: wan-cheng&quot;&gt;完成&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+
+&lt;figure class=&quot;&quot;&gt;
+  &lt;div class=&quot;fig-images-row&quot;&gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;lily58pro_assemble_27.jpeg&quot; 
+      alt=&quot;&quot;, 
+       
+      
+    &gt;
+    
+  &lt;&#x2F;div&gt;
+  &lt;figcaption&gt;完成&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;キーキャップをはめてこのようになりました。
+初めての自作キーボードでしたが動くものが作れて仕事で利用できています。道具さえ揃えてしまえばはんだづけは大変でしたがなんとかなったので電子工作の入門としてちょうどいいのではないかなと思います。
+副作用としてHHKBが使えない体になってしまい、家用で2台目をつくるためにさっそく新しいキースイッチを購入してしまいました。&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>
