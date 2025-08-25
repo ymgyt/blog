@@ -3,7 +3,7 @@ title = "🗓️ なにかを習慣にしたければそれを習慣にしては
 slug = "habitparadox"
 description = "なぜその習慣化は失敗するのか"
 date = "2025-03-08"
-draft = false
+draft = true
 [taxonomies]
 tags = ["etc"]
 [extra]
