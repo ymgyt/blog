@@ -30,22 +30,14 @@ taxonomies = [{ name = "tags", feed = true, render = true }]
 
 
 [markdown]
-# Whether to do syntax highlighting
-# Theme can be customised by setting the `highlight_theme` variable to a theme supported by Zola
-highlight_code = true
-
-# The theme to use for code highlighting.
-# See below for list of allowed values.
-# material-dark
-# ayu-dark
-# nord
-highlight_theme = "css"
-
 # When set to "true", emoji aliases translated to their corresponding
 # Unicode emoji equivalent in the rendered Markdown files. (e.g.: :smile: => 😄)
 render_emoji = false
 
-extra_syntaxes_and_themes = []
+[markdown.highlighting]
+theme = "nord"
+# style = "class"
+style = "inline"
 
 # Various slugification strategies
 [slugify]
