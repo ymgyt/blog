@@ -5,7 +5,7 @@ description = "Linux Service Management Made Easy with systemd本の概要だっ
 date = "2023-10-15"
 draft = false
 [taxonomies]
-tags = ["book"]
+tags = ["book", "linux"]
 [extra]
 image = "images/emoji/green_book.png"
 +++
