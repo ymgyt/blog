@@ -570,7 +570,7 @@ enum SourceOfTruth {
 ## まとめ
 
 CQRSは概念としてしか知らなかったのでRustでの具体的な実装を知れてうれしかった。  
-Aggregateにcommandを適用して結果をEventとして表現し、これをSourceOfTruthとして永続化するという発送はシンプルでわかりやすいと思った。  
+Aggregateにcommandを適用して結果をEventとして表現し、これをSourceOfTruthとして永続化するという発想はシンプルでわかりやすいと思った。
 こうなってくると運用してみたいので、CQRSの設計に関する本も読んでみようと思った。(例えば[The Art of Immutable Architecture](https://www.immutablearchitecture.com/))
 
 
