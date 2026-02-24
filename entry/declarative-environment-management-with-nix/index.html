@@ -1,0 +1,443 @@
+<!doctype html><html lang=ja><head><meta charset=UTF-8><meta content="width=device-width,initial-scale=1" name=viewport><link href=https://blog.ymgyt.io/favicon.ico rel=icon sizes=any><link href=https://blog.ymgyt.io/icon.svg rel=icon type=image/svg+xml><link href=https://blog.ymgyt.io/apple-touch-icon.png rel=apple-touch-icon><link href=https://blog.ymgyt.io/manifest.webmanifest rel=manifest><link href=https://blog.ymgyt.io/style.css rel=stylesheet><link href=https://blog.ymgyt.io/atom.xml rel=alternate title=Atom type=application/atom+xml><script src="https://www.googletagmanager.com/gtag/js?id=G-GTB0KMLN90" async></script><script>window.dataLayer = window.dataLayer || [];
+	function gtag() {dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-GTB0KMLN90');</script><title>📦 Nixでlinuxとmacの環境を管理してみる | Happy developing</title><meta content=Nixを利用してlinuxとmacの開発環境を宣言的に管理する。 name=description><meta content=summary name=twitter:card><meta content="@YAmaguchixt " name=twitter:site><meta content="📦 Nixでlinuxとmacの環境を管理してみる" name=twitter:title><meta content=Nixを利用してlinuxとmacの開発環境を宣言的に管理する。 name=twitter:description><meta content=https://blog.ymgyt.io/images/emoji/package.png name=twitter:image><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script async id=MathJax-script src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script><body><div class=world><div class=content-container><header class=blog-header-container><div class=blog-logo><a href=https://blog.ymgyt.io>Happy developing</a></div><div class=blog-nav><nav><ul><li><a href=https://blog.ymgyt.io/entry/>Entries</a><li><a href=https://blog.ymgyt.io/tags/>Tags</a><li><a href=https://blog.ymgyt.io/about/>About</a><li><a href=https://github.com/ymgyt> <img alt=Github class=icon src=https://blog.ymgyt.io/images/icon/github.svg> </a><li><a href="https://twitter.com/YAmaguchixt "> <img alt=Twitter class=icon src=https://blog.ymgyt.io/images/icon/twitter.svg> </a></ul></nav></div></header><main class=blog-main><article><header class=entry-header><h1 class=entry-title>📦 Nixでlinuxとmacの環境を管理してみる</h1><div class=entry-meta><p class=entry-meta-item>🗓 2023-06-13<p class=entry-meta-item>🏷 <span class=tag><a href=https://blog.ymgyt.io/tags/nix/>nix</a></span></div></header><aside class=entry-toc><nav><ul class=entry-toc-toplevel-list><li><a href=https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/#somosomonixtoha>そもそもNixとは</a> <ul><li><a href=https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/#nixnoxian-zhuang-toflake>Nixの現状とflake</a></ul><li><a href=https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/#flaketoha>Flakeとは</a> <ul><li><a href=https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/#nix-xxxtonix-xxx>nix xxxとnix-xxx</a></ul><li><a href=https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/#nixnoinstall>Nixのinstall</a><li><a href=https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/#flake-nix>flake.nix</a> <ul><li><a href=https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/#nix-language>Nix Language</a><li><a href=https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/#inputstooutputs>inputsとoutputs</a></ul><li><a href=https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/#nixosconfiguration>nixosConfiguration</a> <ul><li><a href=https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/#input-method>Input method</a><li><a href=https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/#font>Font</a><li><a href=https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/#home-manager>home-manager</a></ul><li><a href=https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/#shi-yong>適用</a><li><a href=https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/#mac-darwin>Mac(darwin)</a><li><a href=https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/#ke-ti>課題</a><li><a href=https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/#can-kao>参考</a><li><a href=https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/#matome>まとめ</a></ul></nav></aside><div class=entry-content><p>本記事では<a href=https://nixos.org/ rel=external>Nix</a>を利用して、linux(nixos)とmacの開発環境を宣言的に管理していく方法について書きます。<br> 設定は一つのrepositoryで管理し、git cloneして、<code>makers apply</code>を実行するだけという状態を目指します。<br> 依存していいのは<code>nix</code>のみとします。<br> 現状設定できている内容は以下です。<ul><li>SSH(daemonの起動, authentication方法, userのauthorized keyの設置)<li>Font<li>Timezone<li>Input method<li>Desktop environment<li>User<li>Package(実行コマンド+設定file)</ul><p>作成した<a href=https://github.com/ymgyt/mynix/tree/main rel=external>repository</a><br> Nixについてまだまだわかっていないことが多いのですが、ひとまず使い始められた感じです。<h2 id=somosomonixtoha><a aria-label="Anchor link for: somosomonixtoha" class=zola-anchor href=#somosomonixtoha>そもそもNixとは</a></h2><p>現状の自分の理解ではNixとはpackage manager + build systemという認識です。 文脈によってはprojectやecosystem全体を指す場合もあります。<br> Installすると<code>nix</code> commandが使えるようになりこれ自体はpackage manager的な役割も担います。<br> また、mac, linux共通で利用できます。<br> Macでいうと<code>brew</code>の替わりに使うイメージです。必要に応じてinstall commandを実行するような使い方では<code>brew</code>でいいじゃんとなるので、installされているべきcommand一覧を定義しておくという運用になります。<br> NixOSはnixを前提としたlinux distributionです。<h3 id=nixnoxian-zhuang-toflake><a aria-label="Anchor link for: nixnoxian-zhuang-toflake" class=zola-anchor href=#nixnoxian-zhuang-toflake>Nixの現状とflake</a></h3><p>2023/06/12現在のnixにはflakeというexperimentalな機能が追加されています。<br> このexperimentalというのがなんとも悩ましく、既存のnixの問題点を解消するために追加されたもので、documentによっては今からnixを始めるならflakeを利用することを薦められていたりします。<blockquote><p>Although they are still experimental features as of 2023-05-05, they have been widely used by the Nix community and are strongly recommended.</blockquote><p>https://thiscute.world/en/posts/nixos-and-flake-basics<blockquote><p>We strongly recommend, however, that you learn to use flakes if you're already a Nix user or to begin your Nix journey with flakes rather than channels if you're just getting started with Nix.</blockquote><p>https://zero-to-nix.com/concepts/flakes<p>ということで以下ではflakeを利用することを前提としています。<h2 id=flaketoha><a aria-label="Anchor link for: flaketoha" class=zola-anchor href=#flaketoha>Flakeとは</a></h2><p>それでは、そのflakeとは何なのかという話ですが、自分はnixにおけるrustのpackage(crateではなくて)と理解しています。要は成果物やその依存の単位です。<br> 形式的には<code>.git</code>があるとそのdirectory treeがgit repositoryになるのと同じで<code>flake.nix</code>があるとそのdirectory treeがflakeになります。<br> もしgitのrepositoryで<code>flake.nix</code> fileが置いてあればそのrepositoryはflakeです。<a href=https://github.com/helix-editor/helix/blob/master/flake.nix rel=external>Helixにも置いてありました</a><h3 id=nix-xxxtonix-xxx><a aria-label="Anchor link for: nix-xxxtonix-xxx" class=zola-anchor href=#nix-xxxtonix-xxx><code>nix xxx</code>と<code>nix-xxx</code></a></h3><p>Nixのdocumentやblogをみると<code>nix-env</code>や<code>nix-shell</code>といった<code>nix-xxx</code>系のcommandと<code>nix shell</code>, <code>nix run</code>といった、subcommand likeな<code>nix xxx</code>の情報が混在しているかと思います。<br> 基本的に<code>nix xxx</code>のほうがflakeを前提としてexperimentalな機能ということみたいです。従って公式のdocはまだ<code>nix-xxx</code>系について書かれています。<br> 今がちょうどnixのecosystemの過渡期にあると思われ、公式のdocumentはexperimentalな機能がstableになってから整備されていくのではと思っております。<br> というような話が最初はわからずにとても混乱しました。<br> こちらの<a href=https://qiita.com/Sumi-Sumi/items/6de9ee7aab10bc0dbead rel=external>nixのコマンドを解説してみる</a>のまとめはとても参考になりました。<h2 id=nixnoinstall><a aria-label="Anchor link for: nixnoinstall" class=zola-anchor href=#nixnoinstall>Nixのinstall</a></h2><p>Nixのinstallなのですが、現状選択肢が2つあると思っています。<br> 1つが<a href=https://nixos.org/download.html rel=external>公式</a>で、もう1つがDeterminatesSystemsが提供している<a href=https://github.com/DeterminateSystems/nix-installer rel=external>nix-installer</a>です。<br> 公式を選ばない理由があるのかと思いますが、DeterminateSystemsのnix-installerを選びたくなる理由は<ul><li>Uninstall機能を提供している<li>Defaultでflakeが有効<li>Rust製</ul><p>裏を返すと公式にはuninstall機能がありません。ただし<a href=https://github.com/NixOS/nix/blob/master/doc/manual/src/installation/uninstall.md#macos rel=external>doc</a>には手順の説明があります。<br> またflakeはexperimentalなのでなんらかの方法で有効にする必要があります。(<code>~/.config/nix/nix.conf</code>を作成する)<br> 自分は両方試してどちらの方法でも問題なく使えています。<br> Uninstall機能までついているほうが他人やチームに薦めやすいと思います。<h2 id=flake-nix><a aria-label="Anchor link for: flake-nix" class=zola-anchor href=#flake-nix><code>flake.nix</code></a></h2><p>ここまで抽象的な話だったので、いよいよ具体的に設定を見ていきます。<br> まずprojectのrootに置く<code>flake.nix</code> fileです。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=nix><span class=giallo-l><span style=color:#eceff4>{</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  description</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>Nix configuration of ymgyt</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>  inputs</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    nixpkgs</span><span>.</span><span style=color:#8fbcbb>url</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>github:NixOS/nixpkgs/nixos-unstable</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>    home-manager</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      url</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>github:nix-community/home-manager/release-23.05</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      inputs</span><span>.</span><span style=color:#8fbcbb>nixpkgs</span><span>.</span><span style=color:#8fbcbb>follows</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>nixpkgs</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>  outputs</span><span style=color:#81a1c1> =</span></span>
+<span class=giallo-l><span style=color:#eceff4>    {</span><span> nixpkgs</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    ,</span><span> home-manager</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    , ...</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }: {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      nixosConfigurations</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>        xps15</span><span style=color:#81a1c1> =</span><span> nixpkgs</span><span style=color:#81a1c1>.</span><span>lib</span><span style=color:#81a1c1>.</span><span>nixosSystem</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          system</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>x86_64-linux</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>          modules</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [</span></span>
+<span class=giallo-l><span style=color:#a3be8c>            ./hosts/xps15</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            home-manager</span><span style=color:#81a1c1>.</span><span>nixosModules</span><span style=color:#81a1c1>.</span><span>home-manager</span></span>
+<span class=giallo-l><span style=color:#eceff4>            {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>              home-manager</span><span>.</span><span style=color:#8fbcbb>useGlobalPkgs</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>              home-manager</span><span>.</span><span style=color:#8fbcbb>useUserPackages</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>              home-manager</span><span>.</span><span style=color:#8fbcbb>users</span><span>.</span><span style=color:#8fbcbb>ymgyt</span><span style=color:#81a1c1> =</span><span style=color:#88c0d0> import</span><span style=color:#a3be8c> ./home/linux</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>            }</span></span>
+<span class=giallo-l><span style=color:#eceff4>          ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>        }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>      }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span></span></code></pre><p>上記がnixosの設定を管理するflakeです。<br> まずflake含め、nixの設定は<a href=https://nixos.org/manual/nix/stable/language/index.html rel=external>nix language</a>で書きます。<h3 id=nix-language><a aria-label="Anchor link for: nix-language" class=zola-anchor href=#nix-language>Nix Language</a></h3><p>Nix languageは<blockquote><p>domain-specific It only exists for the Nix package manager: to describe packages and configurations as well as their variants and compositions. It is not intended for general purpose use.</blockquote><p>https://nixos.org/manual/nix/stable/language/index.html<p>とあるように、nixの設定を管理するためのDSLです。以下では本記事を読むのに必要な限りでnix languageについて説明します。<p>まず、<code>{ ... }</code>はattribute setで、jsonのobjectのようなものです。nixはfileを評価すると一つの値を返す必要があります。<code>flake.nix</code>は<code>{ ... }</code>で囲まれているのでattribute setを返しています。<br> 次に<code>:</code>がでてきたらそれは関数で左側が引数、右側が関数のbodyです。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=nix><span class=giallo-l><span style=color:#eceff4>{</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  outputs</span><span style=color:#81a1c1> =</span></span>
+<span class=giallo-l><span style=color:#eceff4>    {</span><span> nixpkgs</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    ,</span><span> home-manager</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    , ...</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }: {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      nixosConfigurations</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span><span style=color:#616e88> /* ... */</span><span style=color:#eceff4> }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span></span></code></pre><p>この部分はoutputsというkeyにnixpkgs,とhome-managerを引数として、nixosConfigurationsをkeyにしたattribute setを返す関数をsetしていると読めます。<p>また<blockquote><p>lazy Expressions are only evaluated when their value is needed.</blockquote><p>https://nixos.org/manual/nix/stable/language/index.html<p>とあるように、値が参照されたときに初めて評価が走るようです、この点は後で重そうな処理いろいろ追加しても実際に実行する処理だけしか走らないことに影響します。<br> <del>あとは関数型なのでfor loopがでてきません</del><h3 id=inputstooutputs><a aria-label="Anchor link for: inputstooutputs" class=zola-anchor href=#inputstooutputs>inputsとoutputs</a></h3><pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=nix><span class=giallo-l><span style=color:#eceff4>{</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  inputs</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    nixpkgs</span><span>.</span><span style=color:#8fbcbb>url</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>github:NixOS/nixpkgs/nixos-unstable</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>    home-manager</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      url</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>github:nix-community/home-manager/release-23.05</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      inputs</span><span>.</span><span style=color:#8fbcbb>nixpkgs</span><span>.</span><span style=color:#8fbcbb>follows</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>nixpkgs</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>  outputs</span><span style=color:#81a1c1> =</span></span>
+<span class=giallo-l><span style=color:#eceff4>    {</span><span> nixpkgs</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    ,</span><span> home-manager</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    , ...</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }: {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      nixosConfigurations</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span><span style=color:#616e88> /* ... */</span><span style=color:#eceff4> }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span></span></code></pre><p>あらためて<code>flake.nix</code>をみてみます。まず<code>inputs</code>はこのflake(project)の依存先を宣言しています。<br> <code>nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";</code>とあるので、githubのnixpkgs repositoryに依存しています。<br> この<a href=https://github.com/NixOS/nixpkgs rel=external>nixpkgs repositor</a>もflakeで、nix package managerが管理しているpackageはここですべて管理されているようです。<br> packageの探し方は<a href=https://search.nixos.org/packages rel=external>公式</a>か、<code>nix search nixpkgs xxx</code>です。公式をみると80,000 package以上あると書いてあります。(cargo-nextestのようなcargoのsubcommandだけで100以上ありました)<br> この<code>flake.nix</code>を参照して成果物を作成すると、<code>flake.lock</code>が作成されます。これはプログラミング言語のlock fileと同様に宣言された依存が実際に解決された際のrevision等を記録するものです。<br> 実際、に<code>flake.lock</code>には以下のような情報が記載されていました。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>"nixpkgs": {</span></span>
+<span class=giallo-l><span>  "locked": {</span></span>
+<span class=giallo-l><span>    "lastModified": 1686020360,</span></span>
+<span class=giallo-l><span>    "narHash": "sha256-Wee7lIlZ6DIZHHLiNxU5KdYZQl0iprENXa/czzI6Cj4=",</span></span>
+<span class=giallo-l><span>    "owner": "NixOS",</span></span>
+<span class=giallo-l><span>    "repo": "nixpkgs",</span></span>
+<span class=giallo-l><span>    "rev": "4729ffac6fd12e26e5a8de002781ffc49b0e94b7",</span></span>
+<span class=giallo-l><span>    "type": "github"</span></span>
+<span class=giallo-l><span>  },</span></span>
+<span class=giallo-l><span>  "original": {</span></span>
+<span class=giallo-l><span>    "owner": "NixOS",</span></span>
+<span class=giallo-l><span>    "ref": "nixos-unstable",</span></span>
+<span class=giallo-l><span>    "repo": "nixpkgs",</span></span>
+<span class=giallo-l><span>    "type": "github"</span></span>
+<span class=giallo-l><span>  }</span></span>
+<span class=giallo-l><span>},</span></span></code></pre><p>依存先のflakeにも<code>flake.lock</code>があるので、結果的にbuild時に実際に依存しているものが一意に定まります。<br> これがnixが謳っているreproducibleな点を実現していると考えています。<br> なんというか、rustの場合、projectのbuild対象はlibraryか実行するbinaryかだと思いますが、nixはそれらをなんらかのbuildするものに拡張したような仕組みなのかなと思っています。(つまりprojectのbuildをプログラミング言語に依らずにnixで管理できるということ)<p>ここでなんらかのbuildできるものと言いましたが、具体的には何という話になります。<br> 今回は<code>nixosConfiguration</code>なので、nixosの設定です。<br> これ以外になにが設定できるかは<a href=https://nixos.wiki/wiki/Flakes rel=external>wiki</a>に載っていました。<h2 id=nixosconfiguration><a aria-label="Anchor link for: nixosconfiguration" class=zola-anchor href=#nixosconfiguration><code>nixosConfiguration</code></a></h2><p>次にlinux(nixos)の設定箇所について見ていきます。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=nix><span class=giallo-l><span style=color:#eceff4>{</span></span>
+<span class=giallo-l><span style=color:#616e88>  # ...</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>  outputs</span><span style=color:#81a1c1> =</span></span>
+<span class=giallo-l><span style=color:#eceff4>    {</span><span> nixpkgs</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    ,</span><span> darwin</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    ,</span><span> home-manager</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    , ...</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }: {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      nixosConfigurations</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>        xps15</span><span style=color:#81a1c1> =</span><span> nixpkgs</span><span style=color:#81a1c1>.</span><span>lib</span><span style=color:#81a1c1>.</span><span>nixosSystem</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          system</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>x86_64-linux</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>          modules</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [</span></span>
+<span class=giallo-l><span style=color:#a3be8c>            ./hosts/xps15</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            home-manager</span><span style=color:#81a1c1>.</span><span>nixosModules</span><span style=color:#81a1c1>.</span><span>home-manager</span></span>
+<span class=giallo-l><span style=color:#eceff4>            {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>              home-manager</span><span>.</span><span style=color:#8fbcbb>useGlobalPkgs</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>              home-manager</span><span>.</span><span style=color:#8fbcbb>useUserPackages</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>              home-manager</span><span>.</span><span style=color:#8fbcbb>users</span><span>.</span><span style=color:#8fbcbb>ymgyt</span><span style=color:#81a1c1> =</span><span style=color:#88c0d0> import</span><span style=color:#a3be8c> ./home/linux</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>            }</span></span>
+<span class=giallo-l><span style=color:#eceff4>          ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>        }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>      }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span></span></code></pre><p><code>xps15</code>というのは設定対象のhostの名前で任意です。<code>system</code>にはCPUとOSを指定します。(Macの場合は<code>system = "aarch64-darwin"</code>等)<br> 次の<code>modules = [ ... ]</code>のところが具体的な設定項目です。<code>home-manager</code>は後ほど触れるのでまずは<code>./hosts/xps15</code>の箇所から見ていきます。<br> 設定のDSLとあって、nix languageではfile path型はfirst classです。file pathでdirectoryを指定した場合そのdirectory配下の<code>default.nix</code>が評価されます。<br> まずここでrepositoryのdirectory構造を確認します。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>.</span></span>
+<span class=giallo-l><span>├── flake.lock</span></span>
+<span class=giallo-l><span>├── flake.nix</span></span>
+<span class=giallo-l><span>├── home</span></span>
+<span class=giallo-l><span>├── hosts</span></span>
+<span class=giallo-l><span>│  ├── fraim</span></span>
+<span class=giallo-l><span>│  │  └── default.nix</span></span>
+<span class=giallo-l><span>│  ├── prox86</span></span>
+<span class=giallo-l><span>│  │  └── default.nix</span></span>
+<span class=giallo-l><span>│  └── xps15</span></span>
+<span class=giallo-l><span>│     ├── default.nix</span></span>
+<span class=giallo-l><span>│     └── hardware-configuration.nix</span></span>
+<span class=giallo-l><span>├── Makefile.toml</span></span>
+<span class=giallo-l><span>├── modules</span></span>
+<span class=giallo-l><span>│  ├── darwin</span></span>
+<span class=giallo-l><span>│  │  └── default.nix</span></span>
+<span class=giallo-l><span>│  ├── font.nix</span></span>
+<span class=giallo-l><span>│  ├── nixos</span></span>
+<span class=giallo-l><span>│  │  ├── default.nix</span></span>
+<span class=giallo-l><span>│  │  └── font.nix</span></span>
+<span class=giallo-l><span>│  └── ssh.nix</span></span>
+<span class=giallo-l><span>├── README.md</span></span></code></pre><p><code>home</code>配下は割愛しています。今回の参照先は<code>hosts/xps15</code>です。基本的にはhostごとに<code>hosts</code>配下にdirectoryを切っています。<br> これはnixosConfigurationの規約等ではないです。<br> hostごとにdirectoryを切っているのは、hostごとの固有の設定はここで吸収するからです。<br> <code>hosts/xps15/default.nix</code>は以下のようになっています。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=nix><span class=giallo-l><span style=color:#eceff4>{</span><span style=color:#81a1c1> ...</span><span style=color:#eceff4> }: {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  imports</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [</span></span>
+<span class=giallo-l><span style=color:#a3be8c>    ../../modules/nixos</span></span>
+<span class=giallo-l><span style=color:#a3be8c>    ./hardware-configuration.nix</span></span>
+<span class=giallo-l><span style=color:#eceff4>  ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>  users</span><span>.</span><span style=color:#8fbcbb>users</span><span>.</span><span style=color:#8fbcbb>ymgyt</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    isNormalUser</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    description</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>ymgyt</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    extraGroups</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [ "</span><span style=color:#a3be8c>networkmanager</span><span style=color:#eceff4>" "</span><span style=color:#a3be8c>wheel</span><span style=color:#eceff4>" ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    openssh</span><span>.</span><span style=color:#8fbcbb>authorizedKeys</span><span>.</span><span style=color:#8fbcbb>keys</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [</span></span>
+<span class=giallo-l><span style=color:#eceff4>      "</span><span style=color:#a3be8c>ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB8gnwsBvzfnFArlA8+tWWCJ64MjvzwoiTidWEgT3Mbf ymgyt</span><span style=color:#eceff4>"</span></span>
+<span class=giallo-l><span style=color:#eceff4>    ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>  networking</span><span>.</span><span style=color:#8fbcbb>hostName</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>xps15</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span><span style=color:#616e88> # Define your hostname.</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span></span></code></pre><p>まず全体としては<code>{ ... }: {}</code>となっているので関数であることがわかります。<code>...</code>は任意のfieldにマッチします。<br> ここで、<code>users.users.ymgyt = { /* ... */ }</code>を返しているので、どうやらuserを設定していそうですが、型としてはどんな情報を返せばよいのでしょうか。<br> このあたりは自分もわかっていないところなのですが、<code>nixpkgs.lib.nixosSystem</code>の引数は<a href=https://www.reddit.com/r/NixOS/comments/13oat7j/what_does_the_function_nixpkgslibnixossystem_do/ rel=external>こちら</a>で定義されているみたいです。<br> 結論としては、<a href="https://search.nixos.org/options?channel=23.05&from=0&size=50&sort=relevance&type=packages&query=users.users" rel=external>search.nixos.org</a>では、packageだけでなく、NixOsOptionsも検索でき、そこに<code>users.users</code>をいれると設定できる内容が確認できます。<br> 逆にいうとここで検索できる項目はすべて設定できる項目です。<br> <a href=https://nixos.org/manual/nixos/stable/index.html#ch-configuration rel=external>Manual</a>にはフレンドリーな説明が載っています。<br> 今回は設定していませんが、<a href=https://nixos.org/manual/nixos/stable/index.html#sec-kubernetes rel=external>kubernetesの設定</a>もあり、以下のように設定するとkubernetesのmasterなりworkerなりになるそうです。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>services.kubernetes = {</span></span>
+<span class=giallo-l><span>  apiserver.enable = true;</span></span>
+<span class=giallo-l><span>  controllerManager.enable = true;</span></span>
+<span class=giallo-l><span>  scheduler.enable = true;</span></span>
+<span class=giallo-l><span>  addonManager.enable = true;</span></span>
+<span class=giallo-l><span>  proxy.enable = true;</span></span>
+<span class=giallo-l><span>  flannel.enable = true;</span></span>
+<span class=giallo-l><span>};</span></span></code></pre><p>ここではhost固有の設定を行っているので基本的にはuserの設定とhostnameを設定しています。<br> ただし、このfileにすべてを設定するともう一台、nixosのhostが増えた際に重複する箇所がでてくるかと思います。<br> なのでhostに依存しない設定は別途、<code>modules/nixos</code>に定義しています。<br> またhost固有のhardwareに関連する設定は<code>/hosts/xps15/hardware-configuration.nix</code>に定義しています。<code>hardware-configuration.nix</code>はnixosのinstall時に自動生成されたものです。<br> 概ね以下のような内容になっていました。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=nix><span class=giallo-l><span style=color:#616e88># Do not modify this file!  It was generated by ‘nixos-generate-config’</span></span>
+<span class=giallo-l><span style=color:#616e88># and may be overwritten by future invocations.  Please make changes</span></span>
+<span class=giallo-l><span style=color:#616e88># to /etc/nixos/configuration.nix instead.</span></span>
+<span class=giallo-l><span style=color:#eceff4>{</span><span> config</span><span style=color:#81a1c1>,</span><span> lib</span><span style=color:#81a1c1>,</span><span> pkgs</span><span style=color:#81a1c1>,</span><span> modulesPath</span><span style=color:#81a1c1>, ...</span><span style=color:#eceff4> }:</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#eceff4>{</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  imports</span><span style=color:#81a1c1> =</span></span>
+<span class=giallo-l><span style=color:#eceff4>    [</span></span>
+<span class=giallo-l><span style=color:#eceff4>      (</span><span>modulesPath</span><span style=color:#81a1c1> +</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>/installer/scan/not-detected.nix</span><span style=color:#eceff4>")</span></span>
+<span class=giallo-l><span style=color:#eceff4>    ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>  boot</span><span>.</span><span style=color:#8fbcbb>initrd</span><span>.</span><span style=color:#8fbcbb>availableKernelModules</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [ "</span><span style=color:#a3be8c>xhci_pci</span><span style=color:#eceff4>" "</span><span style=color:#a3be8c>thunderbolt</span><span style=color:#eceff4>" "</span><span style=color:#a3be8c>vmd</span><span style=color:#eceff4>" "</span><span style=color:#a3be8c>nvme</span><span style=color:#eceff4>" "</span><span style=color:#a3be8c>usb_storage</span><span style=color:#eceff4>" "</span><span style=color:#a3be8c>sd_mod</span><span style=color:#eceff4>" "</span><span style=color:#a3be8c>rtsx_pci_sdmmc</span><span style=color:#eceff4>" ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  boot</span><span>.</span><span style=color:#8fbcbb>initrd</span><span>.</span><span style=color:#8fbcbb>kernelModules</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [ ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  boot</span><span>.</span><span style=color:#8fbcbb>kernelModules</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [ "</span><span style=color:#a3be8c>kvm-intel</span><span style=color:#eceff4>" ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  boot</span><span>.</span><span style=color:#8fbcbb>extraModulePackages</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [ ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>  fileSystems</span><span>.</span><span style=color:#eceff4>"</span><span style=color:#a3be8c>/</span><span style=color:#eceff4>"</span><span style=color:#81a1c1> =</span></span>
+<span class=giallo-l><span style=color:#eceff4>    {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      device</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>/dev/disk/by-uuid/94af5bc6-cdac-489f-8212-fe089c3e155f</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      fsType</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>ext4</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>  fileSystems</span><span>.</span><span style=color:#eceff4>"</span><span style=color:#a3be8c>/boot/efi</span><span style=color:#eceff4>"</span><span style=color:#81a1c1> =</span></span>
+<span class=giallo-l><span style=color:#eceff4>    {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      device</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>/dev/disk/by-uuid/0C11-5D62</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      fsType</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>vfat</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>  swapDevices</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [ ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#616e88>  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking</span></span>
+<span class=giallo-l><span style=color:#616e88>  # (the default) this is the recommended approach. When using systemd-networkd it's</span></span>
+<span class=giallo-l><span style=color:#616e88>  # still possible to use this option, but it's recommended to use it in conjunction</span></span>
+<span class=giallo-l><span style=color:#616e88>  # with explicit per-interface declarations with `networking.interfaces.&lt;interface>.useDHCP`.</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  networking</span><span>.</span><span style=color:#8fbcbb>useDHCP</span><span style=color:#81a1c1> =</span><span> lib</span><span style=color:#81a1c1>.</span><span>mkDefault</span><span style=color:#81a1c1> true;</span></span>
+<span class=giallo-l><span style=color:#616e88>  # networking.interfaces.wlp0s20f3.useDHCP = lib.mkDefault true;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>  nixpkgs</span><span>.</span><span style=color:#8fbcbb>hostPlatform</span><span style=color:#81a1c1> =</span><span> lib</span><span style=color:#81a1c1>.</span><span>mkDefault</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>x86_64-linux</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  powerManagement</span><span>.</span><span style=color:#8fbcbb>cpuFreqGovernor</span><span style=color:#81a1c1> =</span><span> lib</span><span style=color:#81a1c1>.</span><span>mkDefault</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>powersave</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  hardware</span><span>.</span><span style=color:#8fbcbb>cpu</span><span>.</span><span style=color:#8fbcbb>intel</span><span>.</span><span style=color:#8fbcbb>updateMicrocode</span><span style=color:#81a1c1> =</span><span> lib</span><span style=color:#81a1c1>.</span><span>mkDefault config</span><span style=color:#81a1c1>.</span><span>hardware</span><span style=color:#81a1c1>.</span><span>enableRedistributableFirmware</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#616e88>  # high-resolution display</span></span>
+<span class=giallo-l><span style=color:#616e88>  # disable for error</span></span>
+<span class=giallo-l><span style=color:#616e88>  # hardware.video.hidpi.enable = lib.mkDefault true;</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span></span></code></pre><p>Nixos共通の<code>modules/nixos</code>は長いのでここでは、Input methodとfontの設定について書きます。<h3 id=input-method><a aria-label="Anchor link for: input-method" class=zola-anchor href=#input-method>Input method</a></h3><pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=nix><span class=giallo-l><span style=color:#eceff4>{</span><span> config</span><span style=color:#81a1c1>,</span><span> pkgs</span><span style=color:#81a1c1>, ...</span><span style=color:#eceff4> }: {</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>  imports</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [</span></span>
+<span class=giallo-l><span style=color:#a3be8c>    ../ssh.nix</span></span>
+<span class=giallo-l><span style=color:#a3be8c>    ../font.nix</span></span>
+<span class=giallo-l><span style=color:#a3be8c>    ./font.nix</span></span>
+<span class=giallo-l><span style=color:#eceff4>  ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#616e88>  # https://nixos.org/manual/nixos/unstable/index.html#module-services-input-methods-fcitx</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  i18n</span><span>.</span><span style=color:#8fbcbb>inputMethod</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    enabled</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>fcitx5</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    fcitx5</span><span>.</span><span style=color:#8fbcbb>addons</span><span style=color:#81a1c1> = with</span><span> pkgs;</span><span style=color:#eceff4> [</span><span> fcitx5-mozc</span><span style=color:#eceff4> ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span></span></code></pre><p>Input methodにfcitx5 + mozcを利用する設定はこれだけです。<br> 他にどんな設定が可能かは<a href=https://nixos.org/manual/nixos/stable/index.html#module-services-input-methods-fcitx rel=external>Manual</a>に記載されています。<br> Linux初心者に非常にやさしいです。<h3 id=font><a aria-label="Anchor link for: font" class=zola-anchor href=#font>Font</a></h3><p>個人的にfontをmac,linux共通で宣言的に管理できるのはうれしいです。<p>まずinstallするfontを以下のように定義しました。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=nix><span class=giallo-l><span style=color:#616e88># Configure common options in nixos and darwin</span></span>
+<span class=giallo-l><span style=color:#eceff4>{</span><span> pkgs</span><span style=color:#81a1c1>, ...</span><span style=color:#eceff4> }: {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  fonts</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    fontDir</span><span>.</span><span style=color:#8fbcbb>enable</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>    fonts</span><span style=color:#81a1c1> = with</span><span> pkgs;</span><span style=color:#eceff4> [</span></span>
+<span class=giallo-l><span>      noto-fonts</span></span>
+<span class=giallo-l><span>      noto-fonts-cjk</span></span>
+<span class=giallo-l><span>      noto-fonts-emoji</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#616e88>      # nerdfotns</span></span>
+<span class=giallo-l><span style=color:#616e88>      # https://www.nerdfonts.com/font-downloads</span></span>
+<span class=giallo-l><span style=color:#616e88>      # items are inferred from the actual downloaded file name</span></span>
+<span class=giallo-l><span style=color:#eceff4>      (</span><span>nerdfonts</span><span style=color:#81a1c1>.</span><span>override</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>        fonts</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [</span></span>
+<span class=giallo-l><span style=color:#eceff4>          "</span><span style=color:#a3be8c>JetBrainsMono</span><span style=color:#eceff4>"</span></span>
+<span class=giallo-l><span style=color:#eceff4>        ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>      })</span></span>
+<span class=giallo-l><span style=color:#eceff4>    ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span></span></code></pre><p>利用できるfontは同様に<a href=https://search.nixos.org/packages rel=external>search.nixos.org</a>から検索できます。<br> ここで<code>with</code>がでてきたので、補足すると<code>with pkgs</code>とすると、<code>pkgs</code>のfield名に直接アクセスできます。したがって上記は以下と同じです。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>fonts = [ </span></span>
+<span class=giallo-l><span>  pkgs.noto-fonts</span></span>
+<span class=giallo-l><span>  pkgs.fonts-cjk</span></span>
+<span class=giallo-l><span>  pkgs.noto-fonts-emoji</span></span>
+<span class=giallo-l><span>  # ...</span></span>
+<span class=giallo-l><span>];</span></span></code></pre><p>次にnixosの場合はdefault fontを指定できるので指定しています。<br> darwin(mac)の場合はこの指定ができませんでした。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=nix><span class=giallo-l><span style=color:#616e88># Configure nixos specific options</span></span>
+<span class=giallo-l><span style=color:#eceff4>{</span><span> pkgs</span><span style=color:#81a1c1>, ...</span><span style=color:#eceff4> }: {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  fonts</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    enableDefaultFonts</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#616e88>    # Make sure font match with alacritty font settings</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    fontconfig</span><span>.</span><span style=color:#8fbcbb>defaultFonts</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      serif</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [ "</span><span style=color:#a3be8c>Noto Serif</span><span style=color:#eceff4>" "</span><span style=color:#a3be8c>Noto Color Emoji</span><span style=color:#eceff4>" ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      sansSerif</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [ "</span><span style=color:#a3be8c>Noto Sans CJK JP</span><span style=color:#eceff4>" "</span><span style=color:#a3be8c>Noto Sans</span><span style=color:#eceff4>" "</span><span style=color:#a3be8c>Noto Color Emoji</span><span style=color:#eceff4>" ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      monospace</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [ "</span><span style=color:#a3be8c>Noto Sans Mono</span><span style=color:#eceff4>" "</span><span style=color:#a3be8c>Noto Color Emoji</span><span style=color:#eceff4>" ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      emoji</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [ "</span><span style=color:#a3be8c>Noto Color Emoji</span><span style=color:#eceff4>" ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span></span></code></pre><p>コメントに<code># Make sure font match with alacritty font settings</code>とありますように、ここの指定はalacrittyのfont指定と一致していてほしいです。<br> なので本来なら引数等で渡したいところなのですが、うまいこと渡せる方法を模索中です。(それできてないの致命的じゃんと言われるとその通りです。)<p>ざっくり上記のような要領で、host固有の設定 + os共通の設定をうまくdirectory構造で表現して適用することができます。<br> 次にterminalやshell, 各種コマンドのinstall設定についてみていきます。<h3 id=home-manager><a aria-label="Anchor link for: home-manager" class=zola-anchor href=#home-manager>home-manager</a></h3><p>再び、<code>flake.nix</code>の該当部分です。 <code>.hosts/xps15</code>をみてきたので、次はhome-managerの箇所を見ていきます。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=nix><span class=giallo-l><span>  nixosConfigurations</span><span style=background-color:#bf616a> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    xps15</span><span style=color:#81a1c1> =</span><span> nixpkgs</span><span style=color:#81a1c1>.</span><span>lib</span><span style=color:#81a1c1>.</span><span>nixosSystem</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      system</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>x86_64-linux</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>      modules</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [</span></span>
+<span class=giallo-l><span style=color:#a3be8c>        ./hosts/xps15</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        home-manager</span><span style=color:#81a1c1>.</span><span>nixosModules</span><span style=color:#81a1c1>.</span><span>home-manager</span></span>
+<span class=giallo-l><span style=color:#eceff4>        {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          home-manager</span><span>.</span><span style=color:#8fbcbb>useGlobalPkgs</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          home-manager</span><span>.</span><span style=color:#8fbcbb>useUserPackages</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          home-manager</span><span>.</span><span style=color:#8fbcbb>users</span><span>.</span><span style=color:#8fbcbb>ymgyt</span><span style=color:#81a1c1> =</span><span style=color:#88c0d0> import</span><span style=color:#a3be8c> ./home/linux</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>        }</span></span>
+<span class=giallo-l><span style=color:#eceff4>      ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span><span style=background-color:#bf616a>;</span></span></code></pre><p>home-managerは個別のuserごとのhome配下を設定するmoduleです。<br> 重要なのは<code>home-manager.users.ymgyt = import ./home/linux;</code> の箇所でこの処理で、<code>ymgyt</code> user(さきほど宣言したuser)のhome配下の設定を行っています。<br> home-managerではどんな項目が設定できるかは<a href=https://nix-community.github.io/home-manager/options.html rel=external>options</a>に記載されています。<br> まずimport先の<code>/home/linux/default.nix</code>ですが<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=nix><span class=giallo-l><span style=color:#eceff4>{</span><span> pkgs</span></span>
+<span class=giallo-l><span style=color:#81a1c1>, ...</span></span>
+<span class=giallo-l><span style=color:#eceff4>}: {</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>  imports</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [</span></span>
+<span class=giallo-l><span style=color:#a3be8c>    ../base</span></span>
+<span class=giallo-l><span style=color:#eceff4>  ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>  home</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    username</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>ymgyt</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    homeDirectory</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>/home/ymgyt</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>    stateVersion</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>23.05</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>  programs</span><span>.</span><span style=color:#8fbcbb>home-manager</span><span>.</span><span style=color:#8fbcbb>enable</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span></span></code></pre><p>となっており、userのhome directoryを作成したりしています。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>.</span></span>
+<span class=giallo-l><span>├── flake.lock</span></span>
+<span class=giallo-l><span>├── flake.nix</span></span>
+<span class=giallo-l><span>├── home</span></span>
+<span class=giallo-l><span>│  ├── base</span></span>
+<span class=giallo-l><span>│  │  ├── default.nix</span></span>
+<span class=giallo-l><span>│  │  ├── editor</span></span>
+<span class=giallo-l><span>│  │  │  ├── default.nix</span></span>
+<span class=giallo-l><span>│  │  │  └── helix</span></span>
+<span class=giallo-l><span>│  │  │     └── default.nix</span></span>
+<span class=giallo-l><span>│  │  ├── programs</span></span>
+<span class=giallo-l><span>│  │  │  ├── cloud</span></span>
+<span class=giallo-l><span>│  │  │  │  ├── aws.nix</span></span>
+<span class=giallo-l><span>│  │  │  │  └── default.nix</span></span>
+<span class=giallo-l><span>│  │  │  ├── default.nix</span></span>
+<span class=giallo-l><span>│  │  │  ├── filesystem.nix</span></span>
+<span class=giallo-l><span>│  │  │  ├── git.nix</span></span>
+<span class=giallo-l><span>│  │  │  ├── kubernetes.nix</span></span>
+<span class=giallo-l><span>│  │  │  └── languages</span></span>
+<span class=giallo-l><span>│  │  │     ├── default.nix</span></span>
+<span class=giallo-l><span>│  │  │     ├── go.nix</span></span>
+<span class=giallo-l><span>│  │  │     ├── nix.nix</span></span>
+<span class=giallo-l><span>│  │  │     └── rust.nix</span></span>
+<span class=giallo-l><span>│  │  ├── shell</span></span>
+<span class=giallo-l><span>│  │  │  ├── default.nix</span></span>
+<span class=giallo-l><span>│  │  │  ├── nushell</span></span>
+<span class=giallo-l><span>│  │  │  │  ├── config.nu</span></span>
+<span class=giallo-l><span>│  │  │  │  ├── default.nix</span></span>
+<span class=giallo-l><span>│  │  │  │  ├── env.nu</span></span>
+<span class=giallo-l><span>│  │  │  │  └── starship.toml</span></span>
+<span class=giallo-l><span>│  │  │  └── zsh</span></span>
+<span class=giallo-l><span>│  │  │     └── default.nix</span></span>
+<span class=giallo-l><span>│  │  └── terminal</span></span>
+<span class=giallo-l><span>│  │     ├── alacritty</span></span>
+<span class=giallo-l><span>│  │     │  ├── alacritty.yml</span></span>
+<span class=giallo-l><span>│  │     │  └── default.nix</span></span>
+<span class=giallo-l><span>│  │     ├── default.nix</span></span>
+<span class=giallo-l><span>│  │     └── zellij</span></span>
+<span class=giallo-l><span>│  │        ├── config.kdl</span></span>
+<span class=giallo-l><span>│  │        └── default.nix</span></span>
+<span class=giallo-l><span>│  ├── darwin</span></span>
+<span class=giallo-l><span>│  │  └── default.nix</span></span>
+<span class=giallo-l><span>│  └── linux</span></span>
+<span class=giallo-l><span>│     └── default.nix</span></span>
+<span class=giallo-l><span>├── hosts</span></span>
+<span class=giallo-l><span>├── Makefile.toml</span></span>
+<span class=giallo-l><span>├── modules</span></span></code></pre><p>基本的にはlinux, macで共通の設定を適用しています。<br> これを全部みていくと長くなってしまうので要点だけ記載します。<p>まずpackageのinstallですが以下のように書くとpackageがinstallされた環境ができあがります。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=nix><span class=giallo-l><span style=color:#eceff4>{</span><span> pkgs</span><span style=color:#81a1c1>, ...</span><span style=color:#eceff4> }: {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  home</span><span>.</span><span style=color:#8fbcbb>packages</span><span style=color:#81a1c1> = with</span><span> pkgs;</span><span style=color:#eceff4> [</span></span>
+<span class=giallo-l><span>    rustup</span></span>
+<span class=giallo-l><span>    cargo-criterion</span></span>
+<span class=giallo-l><span>    cargo-deps</span></span>
+<span class=giallo-l><span>    cargo-expand</span></span>
+<span class=giallo-l><span>    cargo-insta</span></span>
+<span class=giallo-l><span>    cargo-make</span></span>
+<span class=giallo-l><span>    cargo-nextest</span></span>
+<span class=giallo-l><span>    cargo-udeps</span></span>
+<span class=giallo-l><span>    cargo-sort</span></span>
+<span class=giallo-l><span>    cargo-vet</span></span>
+<span class=giallo-l><span style=color:#eceff4>  ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span></span></code></pre><p>また、packageではなく、home-managerで個別の設定があるものがあります。例えばnushellには以下のようなoptionがあります。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=nix><span class=giallo-l><span style=color:#eceff4>{</span><span style=color:#81a1c1> ...</span><span style=color:#eceff4> }: {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  programs</span><span>.</span><span style=color:#8fbcbb>nushell</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    enable</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    configFile</span><span>.</span><span style=color:#8fbcbb>source</span><span style=color:#81a1c1> =</span><span style=color:#a3be8c> ./config.nu</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    envFile</span><span>.</span><span style=color:#8fbcbb>source</span><span style=color:#81a1c1> =</span><span style=color:#a3be8c> ./env.nu</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>  programs</span><span>.</span><span style=color:#8fbcbb>starship</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    enable</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    enableNushellIntegration</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#616e88>  # generate by `starship preset nerd-font-symbols -o ./starship.toml`</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  xdg</span><span>.</span><span style=color:#8fbcbb>configFile</span><span>.</span><span style=color:#eceff4>"</span><span style=color:#a3be8c>starship.toml</span><span style=color:#eceff4>"</span><span>.</span><span style=color:#8fbcbb>source</span><span style=color:#81a1c1> =</span><span style=color:#a3be8c> ./starship.toml</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span></span></code></pre><p><code>programs.starship.enableNushellIntegration = true</code>を指定すると、nushellの起動時に読み込まれる<code>env.nu</code>に<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>let starship_cache = "/home/ymgyt/.cache/starship"</span></span>
+<span class=giallo-l><span>if not ($starship_cache | path exists) {</span></span>
+<span class=giallo-l><span>  mkdir $starship_cache</span></span>
+<span class=giallo-l><span>}</span></span>
+<span class=giallo-l><span>/etc/profiles/per-user/ymgyt/bin/starship init nu | save --force /home/ymgyt/.cache/starship/init.nu</span></span></code></pre><p>のようなstarship用の初期化処理が挿入された状態でfileが生成されます。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=nix><span class=giallo-l><span style=color:#eceff4>{</span><span> pkgs</span></span>
+<span class=giallo-l><span style=color:#81a1c1>, ...</span></span>
+<span class=giallo-l><span style=color:#eceff4>}: {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  programs</span><span>.</span><span style=color:#8fbcbb>git</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    enable</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    userName</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>ymgyt</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>    includes</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [</span></span>
+<span class=giallo-l><span style=color:#eceff4>      {</span><span style=color:#8fbcbb> path</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>~/.gitlocalconfig</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span><span style=color:#eceff4> }</span></span>
+<span class=giallo-l><span style=color:#eceff4>    ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>    aliases</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      a</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>add</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      b</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>branch -vv</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      d</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>diff</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      s</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>status</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      l</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>log</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>      co</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>checkout</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      cm</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>commit</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>  home</span><span>.</span><span style=color:#8fbcbb>packages</span><span style=color:#81a1c1> = with</span><span> pkgs;</span><span style=color:#eceff4> [</span></span>
+<span class=giallo-l><span>    git-trim</span></span>
+<span class=giallo-l><span style=color:#eceff4>  ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span></span></code></pre><p>gitのconfigも定義できるので、最初にpushしようとしたら、nameとemailを設定してねというようなwarningがでなくて済みます。<br> home-managerのoption経由で設定するか、設定fileをそのまま管理するかは選べます。<br> nix上で変数を操作したりする場合にはhome-manager経由での設定が良いのかもと思っていたりします。<h2 id=shi-yong><a aria-label="Anchor link for: shi-yong" class=zola-anchor href=#shi-yong>適用</a></h2><p>これまで設定の概要をみてきましたので、次にこの設定を適用します。<br> taskは以下のように定義しています。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=toml><span class=giallo-l><span style=color:#eceff4>[</span><span>env</span><span style=color:#eceff4>]</span></span>
+<span class=giallo-l><span>HOST</span><span style=color:#eceff4> = {</span><span> script</span><span style=color:#eceff4> = ["</span><span style=color:#a3be8c>hostname</span><span style=color:#eceff4>"] }</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#eceff4>[</span><span>tasks.apply</span><span style=color:#eceff4>]</span></span>
+<span class=giallo-l><span>linux_alias</span><span style=color:#eceff4> = "</span><span style=color:#a3be8c>nixos:apply</span><span style=color:#eceff4>"</span></span>
+<span class=giallo-l><span>mac_alias</span><span style=color:#eceff4> = "</span><span style=color:#a3be8c>darwin:apply</span><span style=color:#eceff4>"</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#eceff4>[</span><span>tasks."xps15:apply"</span><span style=color:#eceff4>]</span></span>
+<span class=giallo-l><span>description</span><span style=color:#eceff4> = "</span><span style=color:#a3be8c>Run nixos-rebuild switch</span><span style=color:#eceff4>"</span></span>
+<span class=giallo-l><span>extend</span><span style=color:#eceff4> = "</span><span style=color:#a3be8c>nixos:apply</span><span style=color:#eceff4>"</span></span>
+<span class=giallo-l><span>env</span><span style=color:#eceff4> = {</span><span> HOST</span><span style=color:#eceff4> = "</span><span style=color:#a3be8c>xps15</span><span style=color:#eceff4>" }</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#eceff4>[</span><span>tasks."nixos:apply"</span><span style=color:#eceff4>]</span></span>
+<span class=giallo-l><span>script</span><span style=color:#eceff4> = '''</span></span>
+<span class=giallo-l><span style=color:#a3be8c>sudo nixos-rebuild switch --flake ".#${HOST}" --show-trace</span></span>
+<span class=giallo-l><span style=color:#eceff4>'''</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#eceff4>[</span><span>tasks."prox86:apply"</span><span style=color:#eceff4>]</span></span>
+<span class=giallo-l><span>extend</span><span style=color:#eceff4> = "</span><span style=color:#a3be8c>darwin:apply</span><span style=color:#eceff4>"</span></span>
+<span class=giallo-l><span>env</span><span style=color:#eceff4> = {</span><span> HOST</span><span style=color:#eceff4> = "</span><span style=color:#a3be8c>prox86</span><span style=color:#eceff4>" }</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#eceff4>[</span><span>tasks."fraim:apply"</span><span style=color:#eceff4>]</span></span>
+<span class=giallo-l><span>extend</span><span style=color:#eceff4> = "</span><span style=color:#a3be8c>darwin:apply</span><span style=color:#eceff4>"</span></span>
+<span class=giallo-l><span>env</span><span style=color:#eceff4> = {</span><span> HOST</span><span style=color:#eceff4> = "</span><span style=color:#a3be8c>fraim</span><span style=color:#eceff4>" }</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#eceff4>[</span><span>tasks."darwin:apply"</span><span style=color:#eceff4>]</span></span>
+<span class=giallo-l><span>script</span><span style=color:#eceff4> = '''</span></span>
+<span class=giallo-l><span style=color:#a3be8c>nix build .#darwinConfigurations.${HOST}.system --extra-experimental-features 'nix-command flakes' --debug</span></span>
+<span class=giallo-l><span style=color:#a3be8c>sudo ./result/sw/bin/darwin-rebuild switch --flake ".#${HOST}"</span></span>
+<span class=giallo-l><span style=color:#eceff4>'''</span></span></code></pre><p>task runnerにはcargo-maker(makers)を利用しています。<br> 最終的に実行するcommandは<code>sudo nixos-rebuild switch --flake .#xps15</code> となります。この<code>--flake</code>の指定ですが、projectのcurrent directoryに<code>flake.nix</code>がある想定なので、<code>.</code>を<code>#</code>以降はoutputを指定します。<br> <code>nixos-rebuild switch</code>はoutputのnixosConfigurationsを対象にするのが前提となるので結果的にhost名を渡します。<br> これを適用するとgenerationなるものが作成されます。これはPC起動時のBIOSからも選択可能なので、設定の切り戻し等が行なえます。<p>設定管理しているのに、<code>cargo-make(makers)</code>に依存していいのかと思われるかもしれませんが初回だけ以下のようにするとnixがgitやcargo-makeを使える環境を用意してくれます。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>nix run nixpkgs#git -- clone https://github.com/ymgyt/mynix.git</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>nix shell nixpkgs#cargo-make -c makers `apply`</span></span></code></pre><h2 id=mac-darwin><a aria-label="Anchor link for: mac-darwin" class=zola-anchor href=#mac-darwin>Mac(darwin)</a></h2><p>今まではnixosの設定をみてきましたが、darwinも基本的には同じです。違うのはnixosConfigurationではなく、<a href=https://daiderd.com/nix-darwin/manual/index.html rel=external>nix-darwin</a>のmanualを参照する点です。<br> さきほどまで省略していたdarwin関連の<code>flake.nix</code>です。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=nix><span class=giallo-l><span style=color:#eceff4>{</span></span>
+<span class=giallo-l><span style=color:#616e88>  # ...</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  outputs</span><span style=color:#81a1c1> =</span></span>
+<span class=giallo-l><span style=color:#eceff4>    {</span><span> nixpkgs</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    ,</span><span> darwin</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    ,</span><span> home-manager</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    , ...</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }: {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      darwinConfigurations</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>        prox86</span><span style=color:#81a1c1> =</span><span> darwin</span><span style=color:#81a1c1>.</span><span>lib</span><span style=color:#81a1c1>.</span><span>darwinSystem</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          system</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>x86_64-darwin</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>          modules</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [</span></span>
+<span class=giallo-l><span style=color:#a3be8c>            ./hosts/prox86</span></span>
+<span class=giallo-l><span>            home-manager</span><span style=color:#81a1c1>.</span><span>darwinModules</span><span style=color:#81a1c1>.</span><span>home-manager</span></span>
+<span class=giallo-l><span style=color:#eceff4>            {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>              home-manager</span><span>.</span><span style=color:#8fbcbb>useGlobalPkgs</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>              home-manager</span><span>.</span><span style=color:#8fbcbb>useUserPackages</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>              home-manager</span><span>.</span><span style=color:#8fbcbb>users</span><span>.</span><span style=color:#8fbcbb>me</span><span style=color:#81a1c1> =</span><span style=color:#88c0d0> import</span><span style=color:#a3be8c> ./home/darwin</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>            }</span></span>
+<span class=giallo-l><span style=color:#eceff4>          ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>        }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>        fraim</span><span style=color:#81a1c1> =</span><span> darwin</span><span style=color:#81a1c1>.</span><span>lib</span><span style=color:#81a1c1>.</span><span>darwinSystem</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          system</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>aarch64-darwin</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>          modules</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [</span></span>
+<span class=giallo-l><span style=color:#a3be8c>            ./hosts/fraim</span></span>
+<span class=giallo-l><span>            home-manager</span><span style=color:#81a1c1>.</span><span>darwinModules</span><span style=color:#81a1c1>.</span><span>home-manager</span></span>
+<span class=giallo-l><span style=color:#eceff4>            {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>              home-manager</span><span>.</span><span style=color:#8fbcbb>useGlobalPkgs</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>              home-manager</span><span>.</span><span style=color:#8fbcbb>useUserPackages</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>              home-manager</span><span>.</span><span style=color:#8fbcbb>users</span><span>.</span><span style=color:#8fbcbb>ymgyt</span><span style=color:#81a1c1> =</span><span style=color:#88c0d0> import</span><span style=color:#a3be8c> ./home/darwin</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>            }</span></span>
+<span class=giallo-l><span style=color:#eceff4>          ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>        }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>      }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span></span></code></pre><p>現状は、intel(<code>x86_64-darwin</code>)とm1(<code>aarch64-darwin</code>)のhostを管理しているので設定が2つあります。<br> ただ構成の粒度はnixosとかわらないと思います。macでもfont設定やpackageのinstallがまったく同じ設定で行えています。<br> また、nix-darwinを利用せずにmacではhome-managerのみでhome directory配下の管理に留めるという選択肢もありかと思います。<h2 id=ke-ti><a aria-label="Anchor link for: ke-ti" class=zola-anchor href=#ke-ti>課題</a></h2><p>まだ対応できていない箇所としては以下の点を認識しています。<ul><li>Secret管理 <ul><li>実際問題としてなんだかんだlocalにsecretはあるのでこれをどうするか(Yubikeyでなくせる..?)<li><a href=https://nixos.wiki/wiki/Agenix rel=external>Agenix</a>という機構があるらしい<li>個人的にはvaultとうまく連携したいが外部APIでてきたらもうpureではなくなってしまう気もする</ul><li>Overlay <ul><li>Overlayやoverrideといった仕組みの使い所がわかっていない</ul><li>そもそものNixの仕組み <ul><li>Derivationsやstdenv等わかっていない<li><a href=https://nixos.org/guides/nix-pills/pr01.html rel=external>Nix Pills</a>やってみようとは思っている</ul></ul><h2 id=can-kao><a aria-label="Anchor link for: can-kao" class=zola-anchor href=#can-kao>参考</a></h2><p>以下に自分が参考にさせていただいたdocやblogを載せておきます。<br> 公式はもちろんなので載せていないです。<table><thead><tr><th>Link<th>Description<tbody><tr><td><a href=https://zero-to-nix.com/ rel=external>Zero to Nix</a><td>nix-installerを提供しているDeterminate Systemsが提供しているtutorial<br>とりあえず触ってみることができる<br>各種conseptの解説もありがたい<tr><td><a href=https://thiscute.world/en/posts/nixos-and-flake-basics/ rel=external>NixOS & Nix Flakes - A Guide for Beginners</a><td>一番オススメできるblog記事。<br>この記事のおかげでnixを始めることができた<tr><td><a href=https://serokell.io/blog/practical-nix-flakes rel=external>Practical Nix Flakes</a><td>Step by stepでflakeを解説してくれてわかりやすい。<tr><td><a href=https://serokell.io/blog/what-is-nix rel=external>What is Nix and Why You Should Use it</a><td>Nixの背景や概要の説明がありがたい<tr><td><a href=https://xeiaso.net/blog/series/nix-flakes rel=external>Series: nix-flakes</a><td>全7回のnix-flakesのblog記事<tr><td><a href=https://shopify.engineering/what-is-nix rel=external>What Is Nix</a><td>2020年だけど、Shopifyの記事<tr><td><a href=https://ianthehenry.com/posts/how-to-learn-nix/ rel=external>How to Learn Nix</a><td>全47回のnix学習記録。自分の物の調べ方は甘いんだなと思わされる。<tr><td><a href=https://www.tweag.io/blog/2020-05-25-flakes/ rel=external>NIX FLAKES, PART 1: AN INTORODUCTION AND TUTORIAL</a><td>flakeの実装を主導したteamによる記事<tr><td><a href=https://www.bekk.christmas/post/2021/16/dotfiles-with-nix-and-home-manager rel=external>Declarative management of dotfiles with Nix and Home manager</a><td>Home managerの解説記事<tr><td><a href=https://lantian.pub/en/article/modify-website/nixos-why.lantian/ rel=external>NixOS Series 1: Why I fell in love</a><td>全4回の連載、nixが必要だった背景やユースケースが参考になる<tr><td><a href=https://functor.tokyo/blog/2018-10-01-japanese-on-nixos rel=external>Japanese on NixOS</a><td>Nixで日本語環境どう作るかについてとても参考なった<tr><td><a href=https://jorel.dev/NixOS4Noobs/intro.html rel=external>NixOS4Noobs</a><td>FlakeではなくNixOSの解説<tr><td><a href=https://www.reddit.com/r/NixOS/comments/v2xpjm/big_list_of_flakes_tutorials/ rel=external>Big list of Flakes tutorials</a><td>RedditのFlake関連のblog等のまとめ</table><p>中でも<a href=https://twitter.com/ryan4yin rel=external>ryan4yinさん</a>の<a href=https://thiscute.world/en/posts/nixos-and-flake-basics/ rel=external>NixOS & Nix Flakes - A Guide for Beginners</a>がとても参考になりました。<br> 現在も更新が続いており、<a href=https://github.com/ryan4yin/nix-config rel=external>repository</a>もコメントが沢山書かれており、おすすめです。<h2 id=matome><a aria-label="Anchor link for: matome" class=zola-anchor href=#matome>まとめ</a></h2><p>非常に簡単にですがnixに入門しました。<br> Nixすごいなと思います。システムの構成管理という副作用の塊のような領域で、pureを目指すという発想がなかったです。<p>最後に自問自答したQ＆A<ul><li><p>Ansibleでよくないか</p> <ul><li>まずpythonの環境作る必要がある。でもtemplateは欲しくなる。</ul><li><p>dotfile管理でやりたいことの大部分できそう</p> <ul><li>terminal/shellまわりの操作感を管理する点に関してはそう思う。<li>nixの仕組みで5年,10年持つのかと言われるとわからないので結局シンプルな仕組みしか残らないのかもしれないとも思う。<li>やりたいことの順番としてはNixosというdistributionを使いたい -> macの設定も管理できるらしい -> ならnixで一元管理してみようという流れだったので、nixosは使いたい。</ul><li><p>トレードオフはどんな点にありそうか</p> <ul><li>storageすごい使いそう。(<code>nix store gc</code>コマンドとかある)<li>宣言的(=ブラックボックス)なので処理が知りたいならソース読む必要がある。(でもc++)</ul></ul></div></article></main><footer class=blog-footer><p>© 2026 <a href=https://blog.ymgyt.io> ymgyt </a> | Made with <a href=https://www.getzola.org rel=noopener target=_blank>Zola</a> | <a href=https://github.com/ymgyt/blog>Repository</a> | <a href=https://blog.ymgyt.io/atom.xml target=_blank title=rss> <svg viewbox="0 0 24 24" class=icon fill=none height=24 stroke=currentColor stroke-linecap=round stroke-linejoin=round stroke-width=2 width=24 xmlns=http://www.w3.org/2000/svg><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx=5 cy=19 r=1></circle></svg> </a></footer></div></div>

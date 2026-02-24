@@ -1,0 +1,848 @@
+<!doctype html><html lang=ja><head><meta charset=UTF-8><meta content="width=device-width,initial-scale=1" name=viewport><link href=https://blog.ymgyt.io/favicon.ico rel=icon sizes=any><link href=https://blog.ymgyt.io/icon.svg rel=icon type=image/svg+xml><link href=https://blog.ymgyt.io/apple-touch-icon.png rel=apple-touch-icon><link href=https://blog.ymgyt.io/manifest.webmanifest rel=manifest><link href=https://blog.ymgyt.io/style.css rel=stylesheet><link href=https://blog.ymgyt.io/atom.xml rel=alternate title=Atom type=application/atom+xml><script src="https://www.googletagmanager.com/gtag/js?id=G-GTB0KMLN90" async></script><script>window.dataLayer = window.dataLayer || [];
+	function gtag() {dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-GTB0KMLN90');</script><title>📕 入門WebAssemblyを読んでWASMをはじめた | Happy developing</title><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script async id=MathJax-script src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script><body><div class=world><div class=content-container><header class=blog-header-container><div class=blog-logo><a href=https://blog.ymgyt.io>Happy developing</a></div><div class=blog-nav><nav><ul><li><a href=https://blog.ymgyt.io/entry/>Entries</a><li><a href=https://blog.ymgyt.io/tags/>Tags</a><li><a href=https://blog.ymgyt.io/about/>About</a><li><a href=https://github.com/ymgyt> <img alt=Github class=icon src=https://blog.ymgyt.io/images/icon/github.svg> </a><li><a href="https://twitter.com/YAmaguchixt "> <img alt=Twitter class=icon src=https://blog.ymgyt.io/images/icon/twitter.svg> </a></ul></nav></div></header><main class=blog-main><article><header class=entry-header><h1 class=entry-title>📕 入門WebAssemblyを読んでWASMをはじめた</h1><div class=entry-meta><p class=entry-meta-item>🗓 2022-07-06<p class=entry-meta-item>🏷 <span class=tag><a href=https://blog.ymgyt.io/tags/book/>book</a></span></div></header><aside class=entry-toc><nav><ul class=entry-toc-toplevel-list><li><a href=https://blog.ymgyt.io/entry/the_art_of_webassembly_jp/#du-ndaben>読んだ本</a><li><a href=https://blog.ymgyt.io/entry/the_art_of_webassembly_jp/#kitukake>きっかけ</a><li><a href=https://blog.ymgyt.io/entry/the_art_of_webassembly_jp/#matome>まとめ</a><li><a href=https://blog.ymgyt.io/entry/the_art_of_webassembly_jp/#somosomowasmtoha>そもそもWASMとは</a><li><a href=https://blog.ymgyt.io/entry/the_art_of_webassembly_jp/#wattoha>WATとは</a><li><a href=https://blog.ymgyt.io/entry/the_art_of_webassembly_jp/#zhun-bei>準備</a><li><a href=https://blog.ymgyt.io/entry/the_art_of_webassembly_jp/#watnomentarumoderu>WATのメンタルモデル</a><li><a href=https://blog.ymgyt.io/entry/the_art_of_webassembly_jp/#nodekaranodong-kasifang>Nodeからの動かし方</a><li><a href=https://blog.ymgyt.io/entry/the_art_of_webassembly_jp/#browserkaranodong-kasifang>Browserからの動かし方</a><li><a href=https://blog.ymgyt.io/entry/the_art_of_webassembly_jp/#hello-world>Hello World</a><li><a href=https://blog.ymgyt.io/entry/the_art_of_webassembly_jp/#is-prime>is_prime</a><li><a href=https://blog.ymgyt.io/entry/the_art_of_webassembly_jp/#domcao-zuo>DOM操作</a><li><a href=https://blog.ymgyt.io/entry/the_art_of_webassembly_jp/#hurerarenakatutakoto>ふれられなかったこと</a></ul></nav></aside><div class=entry-content><h2 id=du-ndaben><a aria-label="Anchor link for: du-ndaben" class=zola-anchor href=#du-ndaben>読んだ本</a></h2><figure><div class=fig-images-row><img , alt src=images/the_art_of_webassembly_book.png></div><figcaption>Rick Battagline 著</figcaption></figure><p><a href=https://www.shoeisha.co.jp/book/detail/9784798173597 rel=external>入門WebAssembly</a><br> <a href=https://nostarch.com/art-webassembly rel=external>The Art Of WebAssembly</a>の翻訳書です。<p>本書を読みながらサンプルコードを写経したので感想を書いていきます。<br> <a href=https://wasmbook.com/ rel=external>著者のWebサイト</a>には他にもWebAssemblyについてのトピックがあります。<br> サンプルコードは<a href=https://github.com/battlelinegames/ArtOfWasm rel=external>GitHub</a>から見れます。<br> canvasに3000個のobjectの衝突判定をrenderingするサンプルを動かすところまでやりました。<br> https://wasmbook.com/collide.html<figure><div class=fig-images-row><img , alt src=images/wasm_object_collision.gif></div><figcaption>collide.html</figcaption></figure><h2 id=kitukake><a aria-label="Anchor link for: kitukake" class=zola-anchor href=#kitukake>きっかけ</a></h2><p>RustでWASMのecosystemにふれていく前に素のWASMについてなんとなくでも理解したいと思っていました。(ある程度生成されたグルーコード読めないと落ち着かない)<br> 本書ではWATを書いてWASMに変換して動かしながらWASMの仕様を追っていくので、WASMだけを学べると思って読んでみました。<h2 id=matome><a aria-label="Anchor link for: matome" class=zola-anchor href=#matome>まとめ</a></h2><ul><li>特にフレームワークを用いずにWATを書いてWASMに変換して、node/browserから動かせるようになりました<li>WASMがスタックマシンとして動作していることがわかりました<li>現状のWASM(1.0)とJavascriptの役割分担がわかりました<li>パフォーマンスのチューニングや、デバッグ方法についても書いてあります</ul><h2 id=somosomowasmtoha><a aria-label="Anchor link for: somosomowasmtoha" class=zola-anchor href=#somosomowasmtoha>そもそもWASMとは</a></h2><p>そもそもWebAssembly(WASM)とはなにかという話なのですが、以下のように定義されています。<p>WebAssemblyとは、スタックマシン用の仮想命令セットアーキテクチャ(Virtual ISA)。<blockquote><p>WebAssembly (abbreviated Wasm) is a binary instruction format for a stack-based virtual machine. Wasm is designed as a portable compilation target for programming languages, enabling deployment on the web for client and server applications.</blockquote><p>https://webassembly.org/<p>スタックマシン用というのは、CPU命令にレジスターがでてこないという意味で、常に暗黙的に存在するグローバルなスタックを操作することでデータを処理していきます。<p>また、現時点のMVP(Minimum Viable Product) 1.0では、JavaScript(React,Vue)を置き換えるようなことはできないし、意図されてもいないそうです。<br> このあたりもこれから見ていくのですが、WASMからDOMを操作できないのでjsを置き換えるというのはできなそうです。<h2 id=wattoha><a aria-label="Anchor link for: wattoha" class=zola-anchor href=#wattoha>WATとは</a></h2><p>WebAssembly Text(WAT)は、WASMのアセンブリ言語(のようなもの)です。<br> WASM,WAT間で相互に変換できます。<h2 id=zhun-bei><a aria-label="Anchor link for: zhun-bei" class=zola-anchor href=#zhun-bei>準備</a></h2><p>以下を準備します。<ul><li>WASMの実行環境としてnode<li>WATをWASMに変換するcli(<code>wat2wasm</code>)</ul><pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=shellscript><span class=giallo-l><span style=color:#88c0d0>❯</span><span style=color:#a3be8c> node -v</span></span>
+<span class=giallo-l><span style=color:#88c0d0>v16.13.2</span></span></code></pre><p>nodeはv16を利用しました、本書では<code>12.14.0</code>が前提となっています。<br> 余談ですが、nodeのversion管理はnvmからRust製の<a href=https://github.com/Schniz/fnm rel=external>fnm</a>に切り替えました。<br> nodeをinstallするとしたら以下のような感じです。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=shellscript><span class=giallo-l><span style=color:#88c0d0>❯</span><span style=color:#a3be8c> cargo install fnm</span></span>
+<span class=giallo-l><span style=color:#88c0d0>❯</span><span style=color:#a3be8c> fnm install v16.13.2</span></span>
+<span class=giallo-l><span style=color:#88c0d0>❯</span><span style=color:#a3be8c> fnm default v16.13.2</span></span>
+<span class=giallo-l><span style=color:#88c0d0>❯</span><span style=color:#a3be8c> eval</span><span style=color:#eceff4> "$(</span><span style=color:#88c0d0>fnm</span><span style=color:#a3be8c> env</span><span style=color:#eceff4>)"</span></span></code></pre><p>次にWATをWASMに変換するための<code>wat2wasm</code>をinstallします。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=shellscript><span class=giallo-l><span style=color:#88c0d0>❯</span><span style=color:#a3be8c> npm install -g wat-wasm</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#88c0d0>❯</span><span style=color:#a3be8c> cat</span><span style=color:#81a1c1> ></span><span style=color:#a3be8c> file.wat</span><span style=color:#81a1c1>  &lt;&lt;</span><span style=color:#eceff4>EOF</span></span>
+<span class=giallo-l><span style=color:#a3be8c>(module)</span></span>
+<span class=giallo-l><span style=color:#eceff4>EOF</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#88c0d0>❯</span><span style=color:#a3be8c> wat2wasm file.wat</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#a3be8c>========================================================</span></span>
+<span class=giallo-l><span style=color:#88c0d0>  WAT2WASM</span></span>
+<span class=giallo-l><span style=color:#a3be8c>========================================================</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#88c0d0>  Need</span><span style=color:#a3be8c> help?</span></span>
+<span class=giallo-l><span style=color:#88c0d0>  Contact</span><span style=color:#a3be8c> Rick Battagline</span></span>
+<span class=giallo-l><span style=color:#88c0d0>  Twitter:</span><span style=color:#a3be8c> @battagline</span></span>
+<span class=giallo-l><span style=color:#88c0d0>  https://wasmbook.com</span></span>
+<span class=giallo-l><span style=color:#88c0d0>  v1.0.43</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#88c0d0>no</span><span style=color:#a3be8c> memory</span></span>
+<span class=giallo-l><span style=color:#88c0d0>Writing</span><span style=color:#a3be8c> to file.wasm</span></span>
+<span class=giallo-l><span style=color:#88c0d0>WASM</span><span style=color:#a3be8c> File Saved!</span></span></code></pre><p>これでカレントディレクトリに<code>file.wasm</code>が生成されるので中身を見てみます。<br> toolはなんでもよいのですが自分は<code>hexyl</code>を利用しています。(<code>cargo install hexyl</code>)<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=shellscript><span class=giallo-l><span style=color:#88c0d0>❯</span><span style=color:#a3be8c> hexyl file.wasm</span></span>
+<span class=giallo-l><span style=color:#88c0d0>┌────────┬─────────────────────────┬─────────────────────────┬────────┬────────┐</span></span>
+<span class=giallo-l><span style=color:#88c0d0>│00000000│</span><span style=color:#b48ead> 00 61 73</span><span style=color:#a3be8c> 6d</span><span style=color:#b48ead> 01 00 00 00</span><span style=color:#a3be8c> ┊                         │0asm•000┊        │</span></span>
+<span class=giallo-l><span style=color:#88c0d0>└────────┴─────────────────────────┴─────────────────────────┴────────┴────────┘</span></span>
+<span class=giallo-l></span></code></pre><p><a href=https://webassembly.github.io/spec/core/binary/modules.html#binary-module rel=external>WASMのBinary Formatに関する仕様</a>でmoduleは以下のように定義されています。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>magic   ::= 0x00 0x61 0x73 0x6D</span></span>
+<span class=giallo-l><span>version ::= 0x01 0x00 0x00 0x00</span></span>
+<span class=giallo-l><span>module  ::= magic</span></span>
+<span class=giallo-l><span>            version</span></span>
+<span class=giallo-l><span>            (省略)</span></span></code></pre><p>ということで、先頭が<code>0asm</code>のMAGIC NUMBERで次の4byteがBinary Formatのversion 1になっています。(61=a, 73=s, 6d=m)<br> <a href=https://webassembly.github.io/spec/core/binary/values.html#integers rel=external>WASMはリトルエンディアン</a>なので、01が先頭にきていますね。<br> WATをWASMに変換できていることが確認できれば準備完了です。<h2 id=watnomentarumoderu><a aria-label="Anchor link for: watnomentarumoderu" class=zola-anchor href=#watnomentarumoderu>WATのメンタルモデル</a></h2><p>さっそくHello Worldに入りたいところなのですが、WASMにはString型のデータ構造がなかったり、組み込み環境(実行環境)とのimport/exportが最初はわかりづらかったりしたので、WATの書き方から見ていきます。<p>WATでは暗黙的なグローパルのスタックを操作することで演算や関数とのやり取りを行います。<br> 例えば定数の10と20を加算するには<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>i32.const 10 ;; [ 10 ]</span></span>
+<span class=giallo-l><span>i32.const 20 ;; [ 10 20 ]</span></span>
+<span class=giallo-l><span>i32.add      ;; [ 30 ]</span></span></code></pre><p>のように書きます。各業の命令が実行されたあとのスタックの状態をコメントで書いてあります。<br> レジスターを指定する命令がないのがスタックマシーン用ということなんだろうと思います。<br> WATではもうひとつ、S expression(S式)という書き方がサポートされており、上記の加算は以下のようにも書けます。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>(i32.add (i32.const 10) (i32.const 20))</span></span></code></pre><p>S式と通常の記法は混在させることができます。<br> また、WASMの実行単位であるmoduleもひとつのS式として表現されます。<h2 id=nodekaranodong-kasifang><a aria-label="Anchor link for: nodekaranodong-kasifang" class=zola-anchor href=#nodekaranodong-kasifang>Nodeからの動かし方</a></h2><p>WATの書き方がなんとなくわかったのでnodeから動かしてみます。<br> <code>node add.js 10 20</code>のように引数で与えられた数をWASMで加算して結果を表示する処理を作っていきます。<br> <a href=https://webassembly.github.io/spec/core/text/conventions.html#conventions rel=external>WATの推奨拡張子は<code>wat</code>らしいです</a><p><code>addInt.wat</code><pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>(module</span></span>
+<span class=giallo-l><span>    (func (export "addInt")                   ;; 1</span></span>
+<span class=giallo-l><span>    (param $value_1 i32) (param $value_2 i32) ;; 2</span></span>
+<span class=giallo-l><span>    (result i32)                              ;; 3</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>    local.get $value_1</span></span>
+<span class=giallo-l><span>    local.get $value_2</span></span>
+<span class=giallo-l><span>    i32.add                                   ;; 4</span></span>
+<span class=giallo-l><span>    )</span></span>
+<span class=giallo-l><span>)</span></span></code></pre><p>まず、加算を行うWASM moduleを作成します。<br> <code>(module)</code>はお決まりで必ず書きます。moduleはWASMにおける、<a href=https://webassembly.github.io/spec/core/syntax/modules.html#modules rel=external>deploy,loading,compileの単位</a>です。 次にWASMでは関数単位で機能を定義していくので、jsから呼び出す関数を定義します。<ol><li>js側からこの関数を<code>addInt</code>として呼べるようになります。exportを変なところに定義するなと思うかもしれませんが、これは<a href=https://webassembly.github.io/spec/core/text/modules.html#text-func-abbrev rel=external>syntactic sugar</a>のようです<li>関数は二つのi32型の引数をとることを宣言しています。<li>関数はi32型の結果を戻り値として返すことを宣言しています。<li><code>$value_1</code>と<code>$value_2</code>の加算結果をstackに残しておくことで結果を返します。</ol><p><code>wat2wasm addInt.wat</code>で``addInt.wasm`が生成できれば完了です。<br> 次にこのWASMを呼び出すjsを書きます。<p><code>addInt.js</code><pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=javascript><span class=giallo-l><span style=color:#81a1c1>const</span><span> fs</span><span style=color:#81a1c1> =</span><span style=color:#88c0d0> require</span><span>(</span><span style=color:#eceff4>'</span><span style=color:#a3be8c>fs</span><span style=color:#eceff4>'</span><span>)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#81a1c1>const</span><span> bytes</span><span style=color:#81a1c1> =</span><span> fs</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>readFileSync</span><span>(__dirname</span><span style=color:#81a1c1> +</span><span style=color:#eceff4> '</span><span style=color:#a3be8c>/addInt.wasm</span><span style=color:#eceff4>'</span><span>)</span><span style=color:#81a1c1>;</span><span style=color:#616e88>           // 1</span></span>
+<span class=giallo-l><span style=color:#81a1c1>const</span><span> value_1</span><span style=color:#81a1c1> =</span><span style=color:#88c0d0> parseInt</span><span>(process</span><span style=color:#eceff4>.</span><span>argv[</span><span style=color:#b48ead>2</span><span>])</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>const</span><span> value_2</span><span style=color:#81a1c1> =</span><span style=color:#88c0d0> parseInt</span><span>(process</span><span style=color:#eceff4>.</span><span>argv[</span><span style=color:#b48ead>3</span><span>])</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>(</span><span style=color:#81a1c1>async</span><span style=color:#eceff4> ()</span><span style=color:#81a1c1> =></span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#81a1c1>  const</span><span> obj</span><span style=color:#81a1c1> = await</span><span> WebAssembly</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>instantiate</span><span>(</span><span style=color:#81a1c1>new</span><span style=color:#88c0d0> Uint8Array</span><span>(bytes))</span><span style=color:#81a1c1>;</span><span style=color:#616e88>  // 2</span></span>
+<span class=giallo-l><span style=color:#81a1c1>  let</span><span> add_value</span><span style=color:#81a1c1> =</span><span> obj</span><span style=color:#eceff4>.</span><span>instance</span><span style=color:#eceff4>.</span><span>exports</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>addInt</span><span>(value_1</span><span style=color:#eceff4>,</span><span> value_2)</span><span style=color:#81a1c1>;</span><span style=color:#616e88>     // 3</span></span>
+<span class=giallo-l><span>  console</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>log</span><span>(</span><span style=color:#eceff4>`</span><span style=color:#81a1c1>${</span><span>value_1</span><span style=color:#81a1c1>}</span><span style=color:#a3be8c> + </span><span style=color:#81a1c1>${</span><span>value_2</span><span style=color:#81a1c1>}</span><span style=color:#a3be8c> = </span><span style=color:#81a1c1>${</span><span>add_value</span><span style=color:#81a1c1>}</span><span style=color:#eceff4>`</span><span>)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span><span>)()</span><span style=color:#81a1c1>;</span></span></code></pre><ol><li>WASMをfileから読み込みます。browserの場合はここがfetch(ネットワーク越し)になります。<li>WASMをinstance化します。メンタルモデル的にはここで、読み込んだwasmのmoduleの初期化処理が走ります。<li>WASMからexportした関数は<code>instance.exports</code>に格納されているので呼び出します。</ol><pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=shellscript><span class=giallo-l><span style=color:#88c0d0>❯</span><span style=color:#a3be8c> node addInt.js</span><span style=color:#b48ead> 1 2</span></span>
+<span class=giallo-l><span style=color:#88c0d0>1</span><span style=color:#a3be8c> +</span><span style=color:#b48ead> 2</span><span style=color:#a3be8c> =</span><span style=color:#b48ead> 3</span></span></code></pre><p>jsからWASMを呼び出すことができました🎉<br> このようにWASM側でexportした関数をjs側から呼び出すことで利用します。<h2 id=browserkaranodong-kasifang><a aria-label="Anchor link for: browserkaranodong-kasifang" class=zola-anchor href=#browserkaranodong-kasifang>Browserからの動かし方</a></h2><p>次にWASMをbrowserから実行してみます。<br> WASMのbinaryを取得してinstantiateしたのちに、exportされた関数を呼び出すという基本的な流れは同じです。<p>まず、browserにWASMとhtmlをserveしたいので、http serverを建てられるようにします。(localのfileをserveできればなんでもよいです)<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=shellscript><span class=giallo-l><span style=color:#88c0d0>❯</span><span style=color:#a3be8c> npm install --save-dev connect serve-static</span></span></code></pre><p>次に以下の内容の<code>index.html</code>を作ります。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=html><span class=giallo-l><span style=color:#81a1c1>&lt;!DOCTYPE</span><span style=color:#8fbcbb> html</span><span style=color:#81a1c1>></span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;html</span><span style=color:#8fbcbb> lang</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>en</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>></span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;head></span></span>
+<span class=giallo-l><span style=color:#81a1c1>    &lt;meta</span><span style=color:#8fbcbb> charset</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>UTF-8</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>></span></span>
+<span class=giallo-l><span style=color:#81a1c1>    &lt;meta</span><span style=color:#8fbcbb> name</span><span style=color:#eceff4>=</span><span style=color:#a3be8c>”viewport”</span><span style=color:#8fbcbb> content</span><span style=color:#eceff4>=</span><span style=color:#a3be8c>”width</span><span style=background-color:#bf616a>=</span><span style=color:#a3be8c>device-width,initial-scale</span><span style=background-color:#bf616a>=</span><span style=color:#a3be8c>1″</span><span style=color:#81a1c1>></span></span>
+<span class=giallo-l><span style=color:#81a1c1>    &lt;title></span><span>Add Int</span><span style=color:#81a1c1>&lt;/title></span></span>
+<span class=giallo-l><span style=color:#81a1c1>    &lt;script></span></span>
+<span class=giallo-l><span style=color:#81a1c1>        let</span><span> output</span><span style=color:#81a1c1> = null;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>        let</span><span> addIntWasm</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#616e88>        // 1</span></span>
+<span class=giallo-l><span style=color:#81a1c1>        let</span><span style=color:#88c0d0> logAddInt</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> (</span><span>a</span><span style=color:#eceff4>,</span><span> b</span><span style=color:#eceff4>,</span><span> sum</span><span style=color:#eceff4>)</span><span style=color:#81a1c1> =></span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#81a1c1>            if</span><span> (output</span><span style=color:#81a1c1> == null</span><span>)</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span>                console</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>log</span><span>(</span><span style=color:#eceff4>"</span><span style=color:#a3be8c>page load not complete</span><span style=color:#eceff4>"</span><span>)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>                return;</span></span>
+<span class=giallo-l><span style=color:#eceff4>            }</span></span>
+<span class=giallo-l><span>            output</span><span style=color:#eceff4>.</span><span>innerHTML</span><span style=color:#81a1c1> +=</span><span style=color:#eceff4> `</span><span style=color:#81a1c1>${</span><span>a</span><span style=color:#81a1c1>}</span><span style=color:#a3be8c> + </span><span style=color:#81a1c1>${</span><span>b</span><span style=color:#81a1c1>}</span><span style=color:#a3be8c> = </span><span style=color:#81a1c1>${</span><span>sum</span><span style=color:#81a1c1>}</span><span style=color:#a3be8c>&lt;br></span><span style=color:#eceff4>`</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>        }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#616e88>        // 2</span></span>
+<span class=giallo-l><span style=color:#81a1c1>        let</span><span> importObject</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#88c0d0>            env</span><span style=color:#eceff4>: {</span></span>
+<span class=giallo-l><span style=color:#88c0d0>                logAddInt</span><span style=color:#eceff4>:</span><span> logAddInt</span><span style=color:#eceff4>,</span></span>
+<span class=giallo-l><span style=color:#eceff4>            }</span></span>
+<span class=giallo-l><span style=color:#eceff4>        }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (</span><span style=color:#81a1c1>async</span><span style=color:#eceff4> ()</span><span style=color:#81a1c1> =></span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#81a1c1>            let</span><span> obj</span><span style=color:#81a1c1> = await</span><span> WebAssembly</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>instantiateStreaming</span><span>(</span><span style=color:#88c0d0>fetch</span><span>(</span><span style=color:#eceff4>'</span><span style=color:#a3be8c>addInt.wasm</span><span style=color:#eceff4>'</span><span>)</span><span style=color:#eceff4>,</span><span> importObject)</span><span style=color:#81a1c1>;</span><span style=color:#616e88> // 3</span></span>
+<span class=giallo-l><span>            addIntWasm</span><span style=color:#81a1c1> =</span><span> obj</span><span style=color:#eceff4>.</span><span>instance</span><span style=color:#eceff4>.</span><span>exports</span><span style=color:#eceff4>.</span><span>addInt</span><span style=color:#81a1c1>;</span><span style=color:#616e88>                                             // 4</span></span>
+<span class=giallo-l><span style=color:#81a1c1>            let</span><span> btn</span><span style=color:#81a1c1> =</span><span> document</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>getElementById</span><span>(</span><span style=color:#eceff4>"</span><span style=color:#a3be8c>addIntButton</span><span style=color:#eceff4>"</span><span>)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span>            btn</span><span style=color:#eceff4>.</span><span>style</span><span style=color:#eceff4>.</span><span>display</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>block</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>        }</span><span>)()</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#81a1c1>        function</span><span style=color:#88c0d0> onPageLoad</span><span style=color:#eceff4>() {</span></span>
+<span class=giallo-l><span>            (</span><span style=color:#81a1c1>async</span><span style=color:#eceff4> ()</span><span style=color:#81a1c1> =></span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span>                output</span><span style=color:#81a1c1> =</span><span> document</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>getElementById</span><span>(</span><span style=color:#eceff4>"</span><span style=color:#a3be8c>output</span><span style=color:#eceff4>"</span><span>)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>            }</span><span>)()</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>        }</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    &lt;/script></span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;/head></span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;body</span><span style=color:#8fbcbb> onLoad</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>onPageLoad()</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>></span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;input</span><span style=color:#8fbcbb> type</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>number</span><span style=color:#eceff4>"</span><span style=color:#8fbcbb> id</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>a_val</span><span style=color:#eceff4>"</span><span style=color:#8fbcbb> value</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>0</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>>&lt;br>&lt;br></span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;input</span><span style=color:#8fbcbb> type</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>number</span><span style=color:#eceff4>"</span><span style=color:#8fbcbb> id</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>b_val</span><span style=color:#eceff4>"</span><span style=color:#8fbcbb> value</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>0</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>>&lt;br>&lt;br></span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;button</span><span style=color:#8fbcbb> id</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>addIntButton</span><span style=color:#eceff4>"</span><span style=color:#8fbcbb> type</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>button</span><span style=color:#eceff4>"</span><span style=color:#8fbcbb> style</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>display:none</span><span style=color:#eceff4>"</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>        onclick</span><span style=color:#eceff4>="</span><span style=color:#88c0d0>addIntWasm</span><span style=color:#a3be8c>(</span></span>
+<span class=giallo-l><span>                document</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>getElementById</span><span style=color:#a3be8c>(</span><span style=color:#eceff4>'</span><span style=color:#a3be8c>a_val</span><span style=color:#eceff4>'</span><span style=color:#a3be8c>)</span><span style=color:#eceff4>.</span><span>value</span><span style=color:#eceff4>,</span></span>
+<span class=giallo-l><span>                document</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>getElementById</span><span style=color:#a3be8c>(</span><span style=color:#eceff4>'</span><span style=color:#a3be8c>b_val</span><span style=color:#eceff4>'</span><span style=color:#a3be8c>)</span><span style=color:#eceff4>.</span><span>value</span><span style=color:#a3be8c>)</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>></span></span>
+<span class=giallo-l><span>    Add Values</span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;/button></span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;br></span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;p</span><span style=color:#8fbcbb> id</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>output</span><span style=color:#eceff4>"</span><span style=color:#8fbcbb> style</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>float:left; width:200px; min-height:300px;</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>></span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;/p></span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;/body></span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;/html></span></span></code></pre><ol><li><code>logAddInt</code>はjsからwasmに渡す関数です。wasmから呼ばれたら結果をDOMに追記していきます。<li>jsからwasmに渡すobjectです。<code>logAddInt</code>はwasm側と一致している必要があります。<li>wasmのinstance化です。binaryを<code>fetch()</code>で取得しています。第二引数でimport用のobjectを渡します。<li>jsからcallするwasmの関数です。buttonのonclickに設定します。</ol><p><code>addInt.wat</code>を以下のように変更します。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>(module</span></span>
+<span class=giallo-l><span>    (import "env" "logAddInt" (func $logAddInt (param i32 i32 i32))) ;; 1</span></span>
+<span class=giallo-l><span>    (func (export "addInt")</span></span>
+<span class=giallo-l><span>    (param $value_1 i32) (param $value_2 i32)</span></span>
+<span class=giallo-l><span>    (local $sum i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>    local.get $value_1</span></span>
+<span class=giallo-l><span>    local.get $value_2</span></span>
+<span class=giallo-l><span>    i32.add</span></span>
+<span class=giallo-l><span>    local.set $sum</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>    (call $logAddInt (local.get $value_1) (local.get $value_2) (local.get $sum)) ;; 2</span></span>
+<span class=giallo-l><span>    )</span></span>
+<span class=giallo-l><span>)</span></span></code></pre><ol><li>wasmが組み込み環境(実行環境/host環境)から取得する関数を宣言します。<li>importした関数の呼び出しです。</ol><p>変更したら、<code>wat2wasm addInt.wat</code>でwasmに変換します。<p>最後にhtmlとwasmをserveするための<code>server.js</code>を作成します。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=javascript><span class=giallo-l><span style=color:#81a1c1>const</span><span> connect</span><span style=color:#81a1c1> =</span><span style=color:#88c0d0> require</span><span>(</span><span style=color:#eceff4>'</span><span style=color:#a3be8c>connect</span><span style=color:#eceff4>'</span><span>)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>const</span><span> serveStatic</span><span style=color:#81a1c1> =</span><span style=color:#88c0d0> require</span><span>(</span><span style=color:#eceff4>'</span><span style=color:#a3be8c>serve-static</span><span style=color:#eceff4>'</span><span>)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#88c0d0>connect</span><span>()</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>use</span><span>(</span><span style=color:#88c0d0>serveStatic</span><span>(__dirname</span><span style=color:#81a1c1>+</span><span style=color:#eceff4>"</span><span style=color:#a3be8c>/</span><span style=color:#eceff4>"</span><span>))</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>listen</span><span>(</span><span style=color:#b48ead>8080</span><span style=color:#eceff4>,</span><span style=color:#81a1c1> function</span><span style=color:#eceff4>() {</span></span>
+<span class=giallo-l><span>  console</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>log</span><span>(</span><span style=color:#eceff4>'</span><span style=color:#a3be8c>localhost:8080</span><span style=color:#eceff4>'</span><span>)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span><span>)</span><span style=color:#81a1c1>;</span></span></code></pre><p>これで以下のようにserverを起動したのちbrowserで<code>localhost:8080</code>にアクセスします。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=shellscript><span class=giallo-l><span style=color:#88c0d0>node</span><span style=color:#a3be8c> server.js</span></span></code></pre><p>[f:id:yamaguchi7073xtt:20220705044410p:plain]<p>このように組み込み環境(browser, node)とwasm間ではimport/exportをお互いの関数を呼び合うことができることが確かめられました。<h2 id=hello-world><a aria-label="Anchor link for: hello-world" class=zola-anchor href=#hello-world>Hello World</a></h2><p>WATをWASMに変換して組み込み環境(node,browser)から実行することができたので、Hello Worldをやってみます。<br> まず以下のWATを作成します。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>(module</span></span>
+<span class=giallo-l><span>    (import "env" "print_string" (func $print_string(param i32)))  ;; 1</span></span>
+<span class=giallo-l><span>    (import "env" "buffer" (memory 1))                             ;; 2</span></span>
+<span class=giallo-l><span>    (global $start_string (import "env" "start_string") i32)       ;; 3</span></span>
+<span class=giallo-l><span>    (global $string_len i32 (i32.const 12))</span></span>
+<span class=giallo-l><span>    (data (global.get $start_string) "hello world!")               ;; 4</span></span>
+<span class=giallo-l><span>    (func (export "helloworld")</span></span>
+<span class=giallo-l><span>        (call $print_string (global.get $string_len))              ;; 5</span></span>
+<span class=giallo-l><span>    )</span></span>
+<span class=giallo-l><span>)</span></span></code></pre><ol><li>WASMからI/Oをすることができないので、組み込み環境からhello world出力用の関数をimportします。<li>線形メモリを利用することを宣言します。実際のメモリはjs側で確保してWASMに渡します。<li>線形メモリのどの位置にhello world文字列を生成するかをjs側から指定します。<li>指定された線形メモリ位置にUTF-8のbyte列を生成します。<li>importした文字列出力用関数に出力する文字列の長さを渡します。</ol><p>jsとWASMの役割分担がややこしいですが以下のようになっています。<ul><li>js側 <ul><li>メモリ確保<li>確保したメモリのどの位置にhello worldを出力するかを指定<li>出力する文字列の長さを引数にとる関数をWASMに渡す</ul><li>WASM側 <ul><li>importしたメモリの指定された位置に"hello world" UTF-8 byte列を生成<li>出力用関数に"hello world"の長さを引数にして呼び出す</ul></ul><p>js側は以下のように作成します。(<code>helloworld.js</code>)<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=javascript><span class=giallo-l><span style=color:#81a1c1>const</span><span> fs</span><span style=color:#81a1c1> =</span><span style=color:#88c0d0> require</span><span>(</span><span style=color:#eceff4>'</span><span style=color:#a3be8c>fs</span><span style=color:#eceff4>'</span><span>)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>const</span><span> bytes</span><span style=color:#81a1c1> =</span><span> fs</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>readFileSync</span><span>(__dirname</span><span style=color:#81a1c1> +</span><span style=color:#eceff4> '</span><span style=color:#a3be8c>/helloworld.wasm</span><span style=color:#eceff4>'</span><span>)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#81a1c1>let</span><span> hello_world</span><span style=color:#81a1c1> = null;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>let</span><span> start_string_index</span><span style=color:#81a1c1> =</span><span style=color:#b48ead> 200</span><span style=color:#81a1c1>;</span><span style=color:#616e88>                       // 1</span></span>
+<span class=giallo-l><span style=color:#81a1c1>let</span><span> memory</span><span style=color:#81a1c1> = new</span><span> WebAssembly</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>Memory</span><span>(</span><span style=color:#eceff4>{</span><span style=color:#88c0d0>initial</span><span style=color:#eceff4>:</span><span style=color:#b48ead> 1</span><span style=color:#eceff4>}</span><span>)</span><span style=color:#81a1c1>;</span><span style=color:#616e88>  // 2</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#81a1c1>let</span><span> importObject</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#88c0d0>  env</span><span style=color:#eceff4>: {</span></span>
+<span class=giallo-l><span style=color:#88c0d0>    buffer</span><span style=color:#eceff4>:</span><span> memory</span><span style=color:#eceff4>,</span><span style=color:#616e88>                                 // 3</span></span>
+<span class=giallo-l><span style=color:#88c0d0>    start_string</span><span style=color:#eceff4>:</span><span> start_string_index</span><span style=color:#eceff4>,</span></span>
+<span class=giallo-l><span style=color:#88c0d0>    print_string</span><span style=color:#eceff4>:</span><span style=color:#81a1c1> function</span><span style=color:#eceff4> (</span><span>str_len</span><span style=color:#eceff4>) {</span></span>
+<span class=giallo-l><span style=color:#616e88>      // 4  </span></span>
+<span class=giallo-l><span style=color:#81a1c1>      const</span><span> bytes</span><span style=color:#81a1c1> = new</span><span style=color:#88c0d0> Uint8Array</span><span>(memory</span><span style=color:#eceff4>.</span><span>buffer</span><span style=color:#eceff4>,</span></span>
+<span class=giallo-l><span>          start_string_index</span><span style=color:#eceff4>,</span></span>
+<span class=giallo-l><span>          str_len)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>      const</span><span> log_string</span><span style=color:#81a1c1> = new</span><span style=color:#88c0d0> TextDecoder</span><span>(</span><span style=color:#eceff4>'</span><span style=color:#a3be8c>utf8</span><span style=color:#eceff4>'</span><span>)</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>decode</span><span>(bytes)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span>      console</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>log</span><span>(log_string)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>(</span><span style=color:#81a1c1>async</span><span style=color:#eceff4> ()</span><span style=color:#81a1c1> =></span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#81a1c1>  let</span><span> obj</span><span style=color:#81a1c1> = await</span><span> WebAssembly</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>instantiate</span><span>(</span><span style=color:#81a1c1>new</span><span style=color:#88c0d0> Uint8Array</span><span>(bytes)</span><span style=color:#eceff4>,</span><span> importObject)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span>  (</span><span style=color:#eceff4>{</span><span style=color:#88c0d0>helloworld</span><span style=color:#eceff4>:</span><span> hello_world</span><span style=color:#eceff4>}</span><span style=color:#81a1c1> =</span><span> obj</span><span style=color:#eceff4>.</span><span>instance</span><span style=color:#eceff4>.</span><span>exports)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#88c0d0>  hello_world</span><span>()</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span><span>)()</span><span style=color:#81a1c1>;</span></span></code></pre><ol><li>開始200byte目にhello worldを出力することを指定<li>WASMに渡すメモリを確保します<li>確保したメモリをWASMに渡します<li>確保したメモリ位置をUTF8として解釈します</ol><pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=shellscript><span class=giallo-l><span style=color:#88c0d0>❯</span><span style=color:#a3be8c> node helloworld.js</span></span>
+<span class=giallo-l><span style=color:#88c0d0>hello</span><span style=color:#a3be8c> world!</span></span></code></pre><p>無事、hello world!がWASMでできました🎉<br> またここで登場した線形メモリ(<code>WebAssembly.Memory</code>)については6章で詳しく説明されています。<br> 自分の理解としてはWASMとjs間で共有できるBufferで、ページ(64KB)単位で確保するものと考えております。<br> この線形メモリの実用的な利用例は最後のDOM操作でふれます。<h2 id=is-prime><a aria-label="Anchor link for: is-prime" class=zola-anchor href=#is-prime><code>is_prime</code></a></h2><p>Hello Worldが済んだので、WATの制御フロー(loop,if)を見ていきます。加算から一歩進んで、素数を判定するmoduleを作っていきます。<br> まずWATからですが長くなるので少しつづみていきます。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>(module</span></span>
+<span class=giallo-l><span>    ;; 偶数の判定</span></span>
+<span class=giallo-l><span>    (func $even_check (param $n i32) (result i32)</span></span>
+<span class=giallo-l><span>        local.get $n          ;; [ n ]</span></span>
+<span class=giallo-l><span>        i32.const 2           ;; [ n 2 ]</span></span>
+<span class=giallo-l><span>        i32.rem_u             ;; [ 0 ]   | [ 1 ] </span></span>
+<span class=giallo-l><span>        i32.const 0           ;; [ 0 0 ] | [ 1 0 ]</span></span>
+<span class=giallo-l><span>        i32.eq ;; $n % 2 == 0 ;; [ 1 ] | [ 0 ] </span></span>
+<span class=giallo-l><span>    )</span></span>
+<span class=giallo-l><span>)</span></span></code></pre><p>helper関数として偶数を判定する<code>even_check</code>を定義します。<br> コメントで命令実行後のスタックの様子を書いてあります。(<code>|</code>はまたはの意味です)<br> WASMにはデータ型としてbooleanがなく0以外がtrue, 0がfalseとして扱われます。<br> <code>rem_u</code>は除算の余りを出力します。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>    ;; 2と等しいかの判定</span></span>
+<span class=giallo-l><span>    (func $eq_2 (param $n i32) (result i32)</span></span>
+<span class=giallo-l><span>        local.get $n</span></span>
+<span class=giallo-l><span>        i32.const 2</span></span>
+<span class=giallo-l><span>        i32.eq</span></span>
+<span class=giallo-l><span>    )</span></span>
+<span class=giallo-l><span>    ;; n = m * q. nがmの倍数かの判定。</span></span>
+<span class=giallo-l><span>    (func $multiple_check (param $n i32) (param $m i32) (result i32)</span></span>
+<span class=giallo-l><span>        local.get $n</span></span>
+<span class=giallo-l><span>        local.get $m</span></span>
+<span class=giallo-l><span>        i32.rem_u ;; $n % $m</span></span>
+<span class=giallo-l><span>        i32.const 0</span></span>
+<span class=giallo-l><span>        i32.eq</span></span>
+<span class=giallo-l><span>    )</span></span></code></pre><p>次に2と等しいか判定する<code>eq_2</code>と第一引数が第二引数の倍数かを判定する<code>multiple_check</code>を定義します。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>    ;; 素数の判定</span></span>
+<span class=giallo-l><span>    (func (export "is_prime") (param $n i32) (result i32)</span></span>
+<span class=giallo-l><span>        (local $i i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        ;; 1と等しいかの判定</span></span>
+<span class=giallo-l><span>        (if (i32.eq (local.get $n) (i32.const 1))</span></span>
+<span class=giallo-l><span>            (then</span></span>
+<span class=giallo-l><span>                i32.const 0</span></span>
+<span class=giallo-l><span>                return</span></span>
+<span class=giallo-l><span>            )</span></span>
+<span class=giallo-l><span>        )</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        ;; 2と等しいかの判定</span></span>
+<span class=giallo-l><span>        (if (call $eq_2 (local.get $n))</span></span>
+<span class=giallo-l><span>            (then</span></span>
+<span class=giallo-l><span>                i32.const 1</span></span>
+<span class=giallo-l><span>                return</span></span>
+<span class=giallo-l><span>            )</span></span>
+<span class=giallo-l><span>        )</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (block $not_prime </span></span>
+<span class=giallo-l><span>            (call $even_check (local.get $n))</span></span>
+<span class=giallo-l><span>            br_if $not_prime ;; 偶数なので素数ではない</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (local.set $i (i32.const 1))</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (loop $prime_test_loop</span></span>
+<span class=giallo-l><span>                ;; $i += 2</span></span>
+<span class=giallo-l><span>                ;; teeはsetと同じだがstackをpopしない</span></span>
+<span class=giallo-l><span>                (local.tee $i</span></span>
+<span class=giallo-l><span>                    (i32.add (local.get $i) (i32.const 2)))</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                local.get $n ;; stack = [ $i $n ]</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                i32.ge_u ;; $i >= $n</span></span>
+<span class=giallo-l><span>                if</span></span>
+<span class=giallo-l><span>                    ;; $nを調べきったので素数と判定</span></span>
+<span class=giallo-l><span>                    i32.const 1</span></span>
+<span class=giallo-l><span>                    return</span></span>
+<span class=giallo-l><span>                end</span></span>
+<span class=giallo-l><span>                ;; stack = [];</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                ;; $nが$iの倍数なら素数ではない</span></span>
+<span class=giallo-l><span>                (call $multiple_check (local.get $n) (local.get $i))</span></span>
+<span class=giallo-l><span>                br_if $not_prime</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                ;; loopを繰り返す</span></span>
+<span class=giallo-l><span>                br $prime_test_loop</span></span>
+<span class=giallo-l><span>            ) ;; $prime_test_loop end</span></span>
+<span class=giallo-l><span>        )</span></span>
+<span class=giallo-l><span>        ;; br $not_prime jump here</span></span>
+<span class=giallo-l><span>        i32.const 0</span></span>
+<span class=giallo-l><span>    )</span></span></code></pre><p>ここで、条件分岐(<code>if</code>)とloopについて簡単に解説します。<br> <code>if</code>は実行時のスタックの先頭を評価してtrue(0以外)なら<code>end</code>までの命令を実行します。ここでは利用していませんが<code>else</code>も書けます。<br> blockは少々わかりづらいのですが、<code>br</code>(branch)命令でblockを抜け出すことができます。<code>br_if</code>はスタックの先頭を評価してtrueなら<code>br</code>する命令です。上の例では<code>br $not_prime</code>でblock分を抜け出すので結果的にfalse(0)が戻り値となります。<p>loopも直感に反して自動ではloopしてくれません。明示的にloopの先頭にjumpする<code>br</code>命令を利用してはじめてloopできます。<br> 上の例では<code>br $prime_test_loop</code>でloopの先頭に戻ります。<p><code>local.tee $i</code>は、スタックの先頭を<code>$i</code>に代入しつつ、その値をスタックに残します(出力します)<br> loop制御用のindex変数をインクリメントしつつ、終了判定する場合によく使われていました。<p>このWATをWASMに変換して、呼び出すjsを作成します。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=javascript><span class=giallo-l><span style=color:#81a1c1>const</span><span> fs</span><span style=color:#81a1c1> =</span><span style=color:#88c0d0> require</span><span>(</span><span style=color:#eceff4>'</span><span style=color:#a3be8c>fs</span><span style=color:#eceff4>'</span><span>)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>const</span><span> bytes</span><span style=color:#81a1c1> =</span><span> fs</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>readFileSync</span><span>(__dirname</span><span style=color:#81a1c1> +</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>/is_prime.wasm</span><span style=color:#eceff4>"</span><span>)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>const</span><span> value</span><span style=color:#81a1c1> =</span><span style=color:#88c0d0> parseInt</span><span>(process</span><span style=color:#eceff4>.</span><span>argv[</span><span style=color:#b48ead>2</span><span>])</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>(</span><span style=color:#81a1c1>async</span><span style=color:#eceff4> ()</span><span style=color:#81a1c1> =></span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#81a1c1>  let</span><span> obj</span><span style=color:#81a1c1> = await</span><span> WebAssembly</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>instantiate</span><span>(</span><span style=color:#81a1c1>new</span><span style=color:#88c0d0> Uint8Array</span><span>(bytes))</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>  if</span><span>(</span><span style=color:#81a1c1>!!</span><span>obj</span><span style=color:#eceff4>.</span><span>instance</span><span style=color:#eceff4>.</span><span>exports</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>is_prime</span><span>(value))</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span>    console</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>log</span><span>(</span><span style=color:#eceff4>`</span><span style=color:#81a1c1>${</span><span>value</span><span style=color:#81a1c1>}</span><span style=color:#a3be8c> is prime!</span><span style=color:#eceff4>`</span><span>)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span><span style=color:#81a1c1> else</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span>    console</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>log</span><span>(</span><span style=color:#eceff4>`</span><span style=color:#81a1c1>${</span><span>value</span><span style=color:#81a1c1>}</span><span style=color:#a3be8c> is NOT prime</span><span style=color:#eceff4>`</span><span>)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span><span>)()</span><span style=color:#81a1c1>;</span></span></code></pre><pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=shellscript><span class=giallo-l><span style=color:#88c0d0>❯</span><span style=color:#a3be8c> node is_prime.js</span><span style=color:#b48ead> 57</span></span>
+<span class=giallo-l><span style=color:#88c0d0>57</span><span style=color:#a3be8c> is NOT prime</span></span></code></pre><p>無事判定できました。<h2 id=domcao-zuo><a aria-label="Anchor link for: domcao-zuo" class=zola-anchor href=#domcao-zuo>DOM操作</a></h2><p>最後にcanvasを操作する例を見ていきます。<br> WASMからcanvasは操作できないので、canvasに描画するメモリをWASM側で操作してそれをjs側でレンダリングすることで実現します。<br> ここで作るのは、ある移動する複数のオブジェクトをレンダリングし、オブジェクド同士が衝突しているかを判定するWASMです。<br> オブジェクトはx,y座標とx,yそれぞれの速度を保持します。<br> WASMはcanvasに描画されるメモリ領域とオブジェクトの状態を管理する領域を管理します。<figure><div class=fig-images-row><img , alt src=images/wasm_memory_overview.png></div><figcaption>メモリ領域の概要</figcaption></figure><p>まず、htmlは以下のようになります。<p><code>collide.html</code><pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=html><span class=giallo-l><span style=color:#81a1c1>&lt;!DOCTYPE</span><span style=color:#8fbcbb> html</span><span style=color:#81a1c1>></span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;html></span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;head></span></span>
+<span class=giallo-l><span style=color:#81a1c1>  &lt;meta</span><span style=color:#8fbcbb> charset</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>UTF-8</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>></span></span>
+<span class=giallo-l><span style=color:#81a1c1>  &lt;meta</span><span style=color:#8fbcbb> name</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>viewport</span><span style=color:#eceff4>"</span><span style=color:#8fbcbb> content</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>widh=device-width,initial-scale=1.0</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>></span></span>
+<span class=giallo-l><span style=color:#81a1c1>  &lt;title></span><span>Collision Detection</span><span style=color:#81a1c1>&lt;/title></span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;/head></span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;body></span></span>
+<span class=giallo-l><span style=color:#81a1c1>  &lt;canvas</span><span style=color:#8fbcbb> id</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>cnvs</span><span style=color:#eceff4>"</span><span style=color:#8fbcbb> width</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>512</span><span style=color:#eceff4>"</span><span style=color:#8fbcbb> height</span><span style=color:#eceff4>="</span><span style=color:#a3be8c>512</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>>&lt;/canvas></span></span>
+<span class=giallo-l><span style=color:#81a1c1>  &lt;script></span></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> cnvs_size</span><span style=color:#81a1c1> =</span><span style=color:#b48ead> 512</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> no_hit_color</span><span style=color:#81a1c1> =</span><span style=color:#b48ead> 0xff_00_ff_00</span><span style=color:#616e88> // green</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> hit_color</span><span style=color:#81a1c1> =</span><span style=color:#b48ead> 0xff_00_00_ff</span><span style=color:#81a1c1>;</span><span style=color:#616e88> // red</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> pixel_count</span><span style=color:#81a1c1> =</span><span> cnvs_size</span><span style=color:#81a1c1> *</span><span> cnvs_size</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> canvas</span><span style=color:#81a1c1> =</span><span> document</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>getElementById</span><span>(</span><span style=color:#eceff4>"</span><span style=color:#a3be8c>cnvs</span><span style=color:#eceff4>"</span><span>)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> ctx</span><span style=color:#81a1c1> =</span><span> canvas</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>getContext</span><span>(</span><span style=color:#eceff4>"</span><span style=color:#a3be8c>2d</span><span style=color:#eceff4>"</span><span>)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span>    ctx</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>clearRect</span><span>(</span><span style=color:#b48ead>0</span><span style=color:#eceff4>,</span><span style=color:#b48ead>0</span><span style=color:#eceff4>,</span><span style=color:#b48ead>512</span><span style=color:#eceff4>,</span><span style=color:#b48ead>512</span><span>)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> obj_start</span><span style=color:#81a1c1> =</span><span> pixel_count</span><span style=color:#81a1c1> *</span><span style=color:#b48ead> 4</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> obj_start_32</span><span style=color:#81a1c1> =</span><span> pixel_count</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> obj_size</span><span style=color:#81a1c1> =</span><span style=color:#b48ead> 4</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> obj_cnt</span><span style=color:#81a1c1> =</span><span style=color:#b48ead> 3000</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> stride_bytes</span><span style=color:#81a1c1> =</span><span style=color:#b48ead> 16</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> x_offset</span><span style=color:#81a1c1> =</span><span style=color:#b48ead> 0</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> y_offset</span><span style=color:#81a1c1> =</span><span style=color:#b48ead> 4</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> xv_offset</span><span style=color:#81a1c1> =</span><span style=color:#b48ead> 8</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> yv_offset</span><span style=color:#81a1c1> =</span><span style=color:#b48ead> 12</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> memory</span><span style=color:#81a1c1> = new</span><span> WebAssembly</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>Memory</span><span>(</span><span style=color:#eceff4>{</span><span style=color:#88c0d0> initial</span><span style=color:#eceff4>:</span><span style=color:#b48ead> 80</span><span style=color:#eceff4> }</span><span>)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> mem_i8</span><span style=color:#81a1c1> = new</span><span style=color:#88c0d0> Uint8Array</span><span>(memory</span><span style=color:#eceff4>.</span><span>buffer)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> mem_i32</span><span style=color:#81a1c1> = new</span><span style=color:#88c0d0> Uint32Array</span><span>(memory</span><span style=color:#eceff4>.</span><span>buffer)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> importObject</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#88c0d0>      env</span><span style=color:#eceff4>: {</span></span>
+<span class=giallo-l><span style=color:#88c0d0>        buffer</span><span style=color:#eceff4>:</span><span> memory</span><span style=color:#eceff4>,</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#88c0d0>        cnvs_size</span><span style=color:#eceff4>:</span><span> cnvs_size</span><span style=color:#eceff4>,</span></span>
+<span class=giallo-l><span style=color:#88c0d0>        no_hit_color</span><span style=color:#eceff4>:</span><span> no_hit_color</span><span style=color:#eceff4>,</span></span>
+<span class=giallo-l><span style=color:#88c0d0>        hit_color</span><span style=color:#eceff4>:</span><span> hit_color</span><span style=color:#eceff4>,</span></span>
+<span class=giallo-l><span style=color:#88c0d0>        obj_start</span><span style=color:#eceff4>:</span><span> obj_start</span><span style=color:#eceff4>,</span></span>
+<span class=giallo-l><span style=color:#88c0d0>        obj_cnt</span><span style=color:#eceff4>:</span><span> obj_cnt</span><span style=color:#eceff4>,</span></span>
+<span class=giallo-l><span style=color:#88c0d0>        obj_size</span><span style=color:#eceff4>:</span><span> obj_size</span><span style=color:#eceff4>,</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#88c0d0>        x_offset</span><span style=color:#eceff4>:</span><span> x_offset</span><span style=color:#eceff4>,</span></span>
+<span class=giallo-l><span style=color:#88c0d0>        y_offset</span><span style=color:#eceff4>:</span><span> y_offset</span><span style=color:#eceff4>,</span></span>
+<span class=giallo-l><span style=color:#88c0d0>        xv_offset</span><span style=color:#eceff4>:</span><span> xv_offset</span><span style=color:#eceff4>,</span></span>
+<span class=giallo-l><span style=color:#88c0d0>        yv_offset</span><span style=color:#eceff4>:</span><span> yv_offset</span><span style=color:#eceff4>,</span></span>
+<span class=giallo-l><span style=color:#eceff4>      }</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> image_data</span><span style=color:#81a1c1> = new</span><span style=color:#88c0d0> ImageData</span><span>(</span></span>
+<span class=giallo-l><span style=color:#81a1c1>        new</span><span style=color:#88c0d0> Uint8ClampedArray</span><span>(memory</span><span style=color:#eceff4>.</span><span>buffer</span><span style=color:#eceff4>,</span><span style=color:#b48ead> 0</span><span style=color:#eceff4>,</span><span> obj_start)</span><span style=color:#eceff4>,</span><span> cnvs_size</span><span style=color:#eceff4>,</span><span> cnvs_size</span></span>
+<span class=giallo-l><span>    )</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#81a1c1>    const</span><span> stride_i32</span><span style=color:#81a1c1> =</span><span> stride_bytes</span><span style=color:#81a1c1> /</span><span style=color:#b48ead> 4</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    for</span><span> (</span><span style=color:#81a1c1>let</span><span> i</span><span style=color:#81a1c1> =</span><span style=color:#b48ead> 0</span><span style=color:#81a1c1>;</span><span> i</span><span style=color:#81a1c1> &lt;</span><span> obj_cnt</span><span style=color:#81a1c1> *</span><span> stride_i32</span><span style=color:#81a1c1>;</span><span> i</span><span style=color:#81a1c1> +=</span><span> stride_i32)</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#81a1c1>      let</span><span> temp</span><span style=color:#81a1c1> =</span><span> Math</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>floor</span><span>(Math</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>random</span><span>()</span><span style=color:#81a1c1> *</span><span> cnvs_size)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span>      mem_i32[obj_start_32</span><span style=color:#81a1c1>+</span><span>i]</span><span style=color:#81a1c1> =</span><span> temp</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>      temp</span><span style=color:#81a1c1> =</span><span> Math</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>floor</span><span>(Math</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>random</span><span>()</span><span style=color:#81a1c1> *</span><span> cnvs_size)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span>      mem_i32[obj_start_32</span><span style=color:#81a1c1>+</span><span>i</span><span style=color:#81a1c1> +</span><span style=color:#b48ead> 1</span><span>]</span><span style=color:#81a1c1> =</span><span> temp</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>      temp</span><span style=color:#81a1c1> =</span><span> (Math</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>round</span><span>(Math</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>random</span><span>()</span><span style=color:#81a1c1> *</span><span style=color:#b48ead> 4</span><span>)</span><span style=color:#81a1c1> -</span><span style=color:#b48ead>2</span><span> )</span></span>
+<span class=giallo-l><span>      mem_i32[obj_start_32</span><span style=color:#81a1c1> +</span><span> i</span><span style=color:#81a1c1> +</span><span style=color:#b48ead> 2</span><span>]</span><span style=color:#81a1c1> =</span><span> temp</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>      temp</span><span style=color:#81a1c1> =</span><span> (Math</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>round</span><span>(Math</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>random</span><span>()</span><span style=color:#81a1c1> *</span><span style=color:#b48ead> 4</span><span>)</span><span style=color:#81a1c1> -</span><span style=color:#b48ead>2</span><span> )</span></span>
+<span class=giallo-l><span>      mem_i32[obj_start_32</span><span style=color:#81a1c1> +</span><span> i</span><span style=color:#81a1c1> +</span><span style=color:#b48ead> 3</span><span>]</span><span style=color:#81a1c1> =</span><span> temp</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#81a1c1>    let</span><span> animation_wasm</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    function</span><span style=color:#88c0d0> animate</span><span style=color:#eceff4>() {</span></span>
+<span class=giallo-l><span style=color:#88c0d0>      animation_wasm</span><span>()</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span>      ctx</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>putImageData</span><span>(image_data</span><span style=color:#eceff4>,</span><span style=color:#b48ead> 0</span><span style=color:#eceff4>,</span><span style=color:#b48ead>0</span><span>)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#88c0d0>      requestAnimationFrame</span><span>(animate)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>    (</span><span style=color:#81a1c1>async</span><span style=color:#eceff4> ()</span><span style=color:#81a1c1> =></span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#81a1c1>      let</span><span> obj</span><span style=color:#81a1c1> = await</span><span> WebAssembly</span><span style=color:#eceff4>.</span><span style=color:#88c0d0>instantiateStreaming</span><span>(</span><span style=color:#88c0d0>fetch</span><span>(</span><span style=color:#eceff4>'</span><span style=color:#a3be8c>collide.wasm</span><span style=color:#eceff4>'</span><span>)</span><span style=color:#eceff4>,</span><span> importObject)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span>      animation_wasm</span><span style=color:#81a1c1> =</span><span> obj</span><span style=color:#eceff4>.</span><span>instance</span><span style=color:#eceff4>.</span><span>exports</span><span style=color:#eceff4>.</span><span>main</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#88c0d0>      requestAnimationFrame</span><span>(animate)</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span><span>)()</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#81a1c1>  &lt;/script></span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;/body></span></span>
+<span class=giallo-l><span style=color:#81a1c1>&lt;/html></span></span></code></pre><p>canvasのframeを描画するたびに、WASM側の<code>main</code>を呼び出します。<br> WASM側は<code>main</code>の中で二つのことを行います。<ol><li>objectの状態変更<li>canvasの描画領域の更新</ol><p>WATは以下のようになります。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>(module</span></span>
+<span class=giallo-l><span>    (global $cnvs_size (import "env" "cnvs_size") i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>    (global $no_hit_color (import "env" "no_hit_color") i32)</span></span>
+<span class=giallo-l><span>    (global $hit_color (import "env" "hit_color") i32)</span></span>
+<span class=giallo-l><span>    (global $obj_start (import "env" "obj_start") i32)</span></span>
+<span class=giallo-l><span>    (global $obj_size (import "env" "obj_size") i32)</span></span>
+<span class=giallo-l><span>    (global $obj_cnt (import "env" "obj_cnt") i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>    (global $x_offset (import "env" "x_offset") i32)</span></span>
+<span class=giallo-l><span>    (global $y_offset (import "env" "y_offset") i32)</span></span>
+<span class=giallo-l><span>    (global $xv_offset (import "env" "xv_offset") i32)</span></span>
+<span class=giallo-l><span>    (global $yv_offset (import "env" "yv_offset") i32)</span></span>
+<span class=giallo-l><span>    (import "env" "buffer" (memory 80))</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>    (func $clear_canvas</span></span>
+<span class=giallo-l><span>        (local $i i32)</span></span>
+<span class=giallo-l><span>        (local $pixel_bytes i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        global.get $cnvs_size</span></span>
+<span class=giallo-l><span>        global.get $cnvs_size</span></span>
+<span class=giallo-l><span>        i32.mul</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        i32.const 4</span></span>
+<span class=giallo-l><span>        i32.mul</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        local.set $pixel_bytes;; $pixel_bytes = $width * $height * 4</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (loop $pixel_loop</span></span>
+<span class=giallo-l><span>            (i32.store (local.get $i) (i32.const 0xff_00_00_00))</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (i32.add (local.get $i) (i32.const 4))</span></span>
+<span class=giallo-l><span>            local.set $i ;; $i += 4</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (i32.lt_u (local.get $i) (local.get $pixel_bytes))</span></span>
+<span class=giallo-l><span>            br_if $pixel_loop</span></span>
+<span class=giallo-l><span>        )</span></span>
+<span class=giallo-l><span>    )</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>    (func $abs</span></span>
+<span class=giallo-l><span>        (param $value i32)</span></span>
+<span class=giallo-l><span>        (result i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (i32.lt_s (local.get $value) (i32.const 0))</span></span>
+<span class=giallo-l><span>        if</span></span>
+<span class=giallo-l><span>            i32.const 0</span></span>
+<span class=giallo-l><span>            local.get $value</span></span>
+<span class=giallo-l><span>            i32.sub</span></span>
+<span class=giallo-l><span>            return</span></span>
+<span class=giallo-l><span>        end</span></span>
+<span class=giallo-l><span>        local.get $value</span></span>
+<span class=giallo-l><span>    )</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>    (func $set_pixel</span></span>
+<span class=giallo-l><span>        (param $x i32)</span></span>
+<span class=giallo-l><span>        (param $y i32)</span></span>
+<span class=giallo-l><span>        (param $c i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (i32.ge_u (local.get $x) (global.get $cnvs_size))</span></span>
+<span class=giallo-l><span>        if</span></span>
+<span class=giallo-l><span>            return</span></span>
+<span class=giallo-l><span>        end</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (i32.ge_u (local.get $y) (global.get $cnvs_size))</span></span>
+<span class=giallo-l><span>        if</span></span>
+<span class=giallo-l><span>            return</span></span>
+<span class=giallo-l><span>        end</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        local.get $y</span></span>
+<span class=giallo-l><span>        global.get $cnvs_size</span></span>
+<span class=giallo-l><span>        i32.mul</span></span>
+<span class=giallo-l><span>        local.get $x</span></span>
+<span class=giallo-l><span>        i32.add</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        i32.const 4</span></span>
+<span class=giallo-l><span>        i32.mul</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        local.get $c</span></span>
+<span class=giallo-l><span>        i32.store</span></span>
+<span class=giallo-l><span>    )</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>    (func $draw_obj</span></span>
+<span class=giallo-l><span>        (param $x i32)</span></span>
+<span class=giallo-l><span>        (param $y i32)</span></span>
+<span class=giallo-l><span>        (param $c i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (local $max_x i32)</span></span>
+<span class=giallo-l><span>        (local $max_y i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (local $xi i32)</span></span>
+<span class=giallo-l><span>        (local $yi i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        local.get $x</span></span>
+<span class=giallo-l><span>        local.tee $xi</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        global.get $obj_size</span></span>
+<span class=giallo-l><span>        i32.add</span></span>
+<span class=giallo-l><span>        local.set $max_x</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        local.get $y</span></span>
+<span class=giallo-l><span>        local.tee $yi</span></span>
+<span class=giallo-l><span>        global.get $obj_size</span></span>
+<span class=giallo-l><span>        i32.add</span></span>
+<span class=giallo-l><span>        local.set $max_y</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (block $break (loop $draw_loop</span></span>
+<span class=giallo-l><span>            local.get $xi</span></span>
+<span class=giallo-l><span>            local.get $yi</span></span>
+<span class=giallo-l><span>            local.get $c</span></span>
+<span class=giallo-l><span>            call $set_pixel</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            local.get $xi</span></span>
+<span class=giallo-l><span>            i32.const 1</span></span>
+<span class=giallo-l><span>            i32.add</span></span>
+<span class=giallo-l><span>            local.tee $xi</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            local.get $max_x</span></span>
+<span class=giallo-l><span>            i32.ge_u</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            if</span></span>
+<span class=giallo-l><span>                local.get $x</span></span>
+<span class=giallo-l><span>                local.set $xi</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                local.get $yi</span></span>
+<span class=giallo-l><span>                i32.const 1</span></span>
+<span class=giallo-l><span>                i32.add</span></span>
+<span class=giallo-l><span>                local.tee $yi</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                local.get $max_y</span></span>
+<span class=giallo-l><span>                i32.ge_u</span></span>
+<span class=giallo-l><span>                br_if $break</span></span>
+<span class=giallo-l><span>            end</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            br $draw_loop</span></span>
+<span class=giallo-l><span>        ))</span></span>
+<span class=giallo-l><span>    )</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>    (func $set_obj_attr</span></span>
+<span class=giallo-l><span>        (param $obj_number i32)</span></span>
+<span class=giallo-l><span>        (param $attr_offset i32)</span></span>
+<span class=giallo-l><span>        (param $value i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        local.get $obj_number</span></span>
+<span class=giallo-l><span>        i32.const 16</span></span>
+<span class=giallo-l><span>        i32.mul</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        global.get $obj_start</span></span>
+<span class=giallo-l><span>        i32.add</span></span>
+<span class=giallo-l><span>        local.get $attr_offset</span></span>
+<span class=giallo-l><span>        i32.add</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        local.get $value</span></span>
+<span class=giallo-l><span>        i32.store</span></span>
+<span class=giallo-l><span>    )</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>    (func $get_obj_attr</span></span>
+<span class=giallo-l><span>        (param $obj_number i32)</span></span>
+<span class=giallo-l><span>        (param $attr_offset i32)</span></span>
+<span class=giallo-l><span>        (result i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        local.get $obj_number</span></span>
+<span class=giallo-l><span>        i32.const 16</span></span>
+<span class=giallo-l><span>        i32.mul</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        global.get $obj_start</span></span>
+<span class=giallo-l><span>        i32.add</span></span>
+<span class=giallo-l><span>        local.get $attr_offset</span></span>
+<span class=giallo-l><span>        i32.add</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        i32.load</span></span>
+<span class=giallo-l><span>    )</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>    (func $main (export "main")</span></span>
+<span class=giallo-l><span>        (local $i i32)</span></span>
+<span class=giallo-l><span>        (local $j i32)</span></span>
+<span class=giallo-l><span>        (local $outer_ptr i32)</span></span>
+<span class=giallo-l><span>        (local $inner_ptr i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (local $x1 i32)</span></span>
+<span class=giallo-l><span>        (local $x2 i32)</span></span>
+<span class=giallo-l><span>        (local $y1 i32)</span></span>
+<span class=giallo-l><span>        (local $y2 i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (local $xdist i32)</span></span>
+<span class=giallo-l><span>        (local $ydist i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (local $i_hit i32)</span></span>
+<span class=giallo-l><span>        (local $xv i32)</span></span>
+<span class=giallo-l><span>        (local $yv i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (call $clear_canvas)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (loop $move_loop</span></span>
+<span class=giallo-l><span>            (call $get_obj_attr (local.get $i) (global.get $x_offset))</span></span>
+<span class=giallo-l><span>            local.set $x1</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (call $get_obj_attr (local.get $i) (global.get $y_offset))</span></span>
+<span class=giallo-l><span>            local.set $y1</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (call $get_obj_attr (local.get $i) (global.get $xv_offset))</span></span>
+<span class=giallo-l><span>            local.set $xv</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (call $get_obj_attr (local.get $i) (global.get $yv_offset))</span></span>
+<span class=giallo-l><span>            local.set $yv</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (i32.add (local.get $xv) (local.get $x1))</span></span>
+<span class=giallo-l><span>            i32.const 0x1ff ;; 511</span></span>
+<span class=giallo-l><span>            i32.and</span></span>
+<span class=giallo-l><span>            local.set $x1</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (i32.add (local.get $yv) (local.get $y1))</span></span>
+<span class=giallo-l><span>            i32.const 0x1ff ;; 511</span></span>
+<span class=giallo-l><span>            i32.and</span></span>
+<span class=giallo-l><span>            local.set $y1</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (call $set_obj_attr</span></span>
+<span class=giallo-l><span>                (local.get $i)</span></span>
+<span class=giallo-l><span>                (global.get $x_offset)</span></span>
+<span class=giallo-l><span>                (local.get $x1)</span></span>
+<span class=giallo-l><span>            )</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (call $set_obj_attr</span></span>
+<span class=giallo-l><span>                (local.get $i)</span></span>
+<span class=giallo-l><span>                (global.get $y_offset)</span></span>
+<span class=giallo-l><span>                (local.get $y1)</span></span>
+<span class=giallo-l><span>            )</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            local.get $i</span></span>
+<span class=giallo-l><span>            i32.const 1</span></span>
+<span class=giallo-l><span>            i32.add</span></span>
+<span class=giallo-l><span>            local.tee $i</span></span>
+<span class=giallo-l><span>            global.get $obj_cnt</span></span>
+<span class=giallo-l><span>            i32.lt_u</span></span>
+<span class=giallo-l><span>            if</span></span>
+<span class=giallo-l><span>                br $move_loop</span></span>
+<span class=giallo-l><span>            end</span></span>
+<span class=giallo-l><span>        )</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        i32.const 0</span></span>
+<span class=giallo-l><span>        local.set $i</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (loop $outer_loop (block $outer_break</span></span>
+<span class=giallo-l><span>            i32.const 0</span></span>
+<span class=giallo-l><span>            local.tee $j</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            local.set $i_hit</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (call $get_obj_attr (local.get $i) (global.get $x_offset))</span></span>
+<span class=giallo-l><span>            local.set $x1</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (call $get_obj_attr (local.get $i) (global.get $y_offset))</span></span>
+<span class=giallo-l><span>            local.set $y1</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (loop $inner_loop (block $inner_break</span></span>
+<span class=giallo-l><span>                local.get $i</span></span>
+<span class=giallo-l><span>                local.get $j</span></span>
+<span class=giallo-l><span>                i32.eq</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                if</span></span>
+<span class=giallo-l><span>                    local.get $j</span></span>
+<span class=giallo-l><span>                    i32.const 1</span></span>
+<span class=giallo-l><span>                    i32.add</span></span>
+<span class=giallo-l><span>                    local.set $j</span></span>
+<span class=giallo-l><span>                end</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                local.get $j</span></span>
+<span class=giallo-l><span>                global.get $obj_cnt</span></span>
+<span class=giallo-l><span>                i32.ge_u</span></span>
+<span class=giallo-l><span>                if</span></span>
+<span class=giallo-l><span>                    br $inner_break</span></span>
+<span class=giallo-l><span>                end</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                (call $get_obj_attr (local.get $j) (global.get $x_offset))</span></span>
+<span class=giallo-l><span>                local.set $x2</span></span>
+<span class=giallo-l><span>                (i32.sub (local.get $x1) (local.get $x2))</span></span>
+<span class=giallo-l><span>                call $abs</span></span>
+<span class=giallo-l><span>                local.tee $xdist</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                global.get $obj_size</span></span>
+<span class=giallo-l><span>                i32.ge_u</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                ;; 衝突していない</span></span>
+<span class=giallo-l><span>                if</span></span>
+<span class=giallo-l><span>                    local.get $j</span></span>
+<span class=giallo-l><span>                    i32.const 1</span></span>
+<span class=giallo-l><span>                    i32.add</span></span>
+<span class=giallo-l><span>                    local.set $j</span></span>
+<span class=giallo-l><span>                    br $inner_loop</span></span>
+<span class=giallo-l><span>                end</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                (call $get_obj_attr (local.get $j) (global.get $y_offset))</span></span>
+<span class=giallo-l><span>                local.set $y2</span></span>
+<span class=giallo-l><span>                (i32.sub (local.get $y1) (local.get $y2))</span></span>
+<span class=giallo-l><span>                call $abs</span></span>
+<span class=giallo-l><span>                local.tee $ydist</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                global.get $obj_size</span></span>
+<span class=giallo-l><span>                i32.ge_u</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                ;; 衝突していない</span></span>
+<span class=giallo-l><span>                if</span></span>
+<span class=giallo-l><span>                    local.get $j</span></span>
+<span class=giallo-l><span>                    i32.const 1</span></span>
+<span class=giallo-l><span>                    i32.add</span></span>
+<span class=giallo-l><span>                    local.set $j</span></span>
+<span class=giallo-l><span>                    br $inner_loop</span></span>
+<span class=giallo-l><span>                end</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                i32.const 1</span></span>
+<span class=giallo-l><span>                local.set $i_hit</span></span>
+<span class=giallo-l><span>            ))</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            local.get $i_hit</span></span>
+<span class=giallo-l><span>            i32.const 0</span></span>
+<span class=giallo-l><span>            i32.eq</span></span>
+<span class=giallo-l><span>            if</span></span>
+<span class=giallo-l><span>                (call $draw_obj</span></span>
+<span class=giallo-l><span>                    (local.get $x1) (local.get $y1) (global.get $no_hit_color))</span></span>
+<span class=giallo-l><span>            else</span></span>
+<span class=giallo-l><span>                (call $draw_obj</span></span>
+<span class=giallo-l><span>                    (local.get $x1) (local.get $y1) (global.get $hit_color))</span></span>
+<span class=giallo-l><span>            end</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            local.get $i</span></span>
+<span class=giallo-l><span>            i32.const 1</span></span>
+<span class=giallo-l><span>            i32.add</span></span>
+<span class=giallo-l><span>            local.tee $i</span></span>
+<span class=giallo-l><span>            global.get $obj_cnt</span></span>
+<span class=giallo-l><span>            i32.lt_u</span></span>
+<span class=giallo-l><span>            if</span></span>
+<span class=giallo-l><span>                br $outer_loop</span></span>
+<span class=giallo-l><span>            end</span></span>
+<span class=giallo-l><span>        ))</span></span>
+<span class=giallo-l><span>    )</span></span>
+<span class=giallo-l><span>)</span></span></code></pre><p>長いですが、最後の<code>main</code>から見ていくととても単純な処理をしているだけなのがわかります。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>    (func $main (export "main")</span></span>
+<span class=giallo-l><span>        (local $i i32)</span></span>
+<span class=giallo-l><span>        (local $j i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (local $x1 i32)</span></span>
+<span class=giallo-l><span>        (local $x2 i32)</span></span>
+<span class=giallo-l><span>        (local $y1 i32)</span></span>
+<span class=giallo-l><span>        (local $y2 i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (local $xdist i32)</span></span>
+<span class=giallo-l><span>        (local $ydist i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (local $i_hit i32)</span></span>
+<span class=giallo-l><span>        (local $xv i32)</span></span>
+<span class=giallo-l><span>        (local $yv i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (call $clear_canvas)</span></span></code></pre><p>まず、必要なlocal変数を宣言します。<br> Frame毎に各オブジェクトの状態を更新するので、<code>$i</code>は現在の処理対象のオブジェクトのindexです。<code>$j</code>は各オブジェクトとの衝突判定をするためのinner loopのindexです。<br> 最初に<code>$clear_canvas</code>を呼び出してレンダリング領域をリセットします。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>    (func $clear_canvas</span></span>
+<span class=giallo-l><span>        (local $i i32)</span></span>
+<span class=giallo-l><span>        (local $pixel_bytes i32)</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        global.get $cnvs_size</span></span>
+<span class=giallo-l><span>        global.get $cnvs_size</span></span>
+<span class=giallo-l><span>        i32.mul</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        i32.const 4</span></span>
+<span class=giallo-l><span>        i32.mul</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        local.set $pixel_bytes;; $pixel_bytes = $width * $height * 4</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (loop $pixel_loop</span></span>
+<span class=giallo-l><span>            (i32.store (local.get $i) (i32.const 0xff_00_00_00))</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (i32.add (local.get $i) (i32.const 4))</span></span>
+<span class=giallo-l><span>            local.set $i ;; $i += 4</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (i32.lt_u (local.get $i) (local.get $pixel_bytes))</span></span>
+<span class=giallo-l><span>            br_if $pixel_loop</span></span>
+<span class=giallo-l><span>        )</span></span>
+<span class=giallo-l><span>    )</span></span></code></pre><p>1pixel 4byteなので4byteずつインクリメントしながら、黒色(<code>0xff_00_00_00</code>)にしていきます。<br> 次に<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>        (loop $move_loop</span></span>
+<span class=giallo-l><span>            (call $get_obj_attr (local.get $i) (global.get $x_offset))</span></span>
+<span class=giallo-l><span>            local.set $x1</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (call $get_obj_attr (local.get $i) (global.get $y_offset))</span></span>
+<span class=giallo-l><span>            local.set $y1</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (call $get_obj_attr (local.get $i) (global.get $xv_offset))</span></span>
+<span class=giallo-l><span>            local.set $xv</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (call $get_obj_attr (local.get $i) (global.get $yv_offset))</span></span>
+<span class=giallo-l><span>            local.set $yv</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (i32.add (local.get $xv) (local.get $x1))</span></span>
+<span class=giallo-l><span>            i32.const 0x1ff ;; 511</span></span>
+<span class=giallo-l><span>            i32.and</span></span>
+<span class=giallo-l><span>            local.set $x1</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (i32.add (local.get $yv) (local.get $y1))</span></span>
+<span class=giallo-l><span>            i32.const 0x1ff ;; 511</span></span>
+<span class=giallo-l><span>            i32.and</span></span>
+<span class=giallo-l><span>            local.set $y1</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (call $set_obj_attr</span></span>
+<span class=giallo-l><span>                (local.get $i)</span></span>
+<span class=giallo-l><span>                (global.get $x_offset)</span></span>
+<span class=giallo-l><span>                (local.get $x1)</span></span>
+<span class=giallo-l><span>            )</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (call $set_obj_attr</span></span>
+<span class=giallo-l><span>                (local.get $i)</span></span>
+<span class=giallo-l><span>                (global.get $y_offset)</span></span>
+<span class=giallo-l><span>                (local.get $y1)</span></span>
+<span class=giallo-l><span>            )</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            local.get $i</span></span>
+<span class=giallo-l><span>            i32.const 1</span></span>
+<span class=giallo-l><span>            i32.add</span></span>
+<span class=giallo-l><span>            local.tee $i</span></span>
+<span class=giallo-l><span>            global.get $obj_cnt</span></span>
+<span class=giallo-l><span>            i32.lt_u</span></span>
+<span class=giallo-l><span>            if</span></span>
+<span class=giallo-l><span>                br $move_loop</span></span>
+<span class=giallo-l><span>            end</span></span>
+<span class=giallo-l><span>        )</span></span></code></pre><p>処理対象のオブジェクトの<code>x,y,xv,xy</code>を取得して、それぞれの速度を加算したのち、メモリを更新します。<br> <code>0x1ff</code>とandをとることで、描画領域をはみでたオブジェクトの位置がリセットされるようになっています。<br> ビット演算でこんなことができるのかと思いました。本書ではビット演算についても丁寧に解説されております。<br> ここまでで、frameの描画毎にオブジェクトの位置情報が更新されることがわかりました。<br> 最後に、オブジェクトの衝突判定を行い、描画領域を更新します。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>        i32.const 0</span></span>
+<span class=giallo-l><span>        local.set $i</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>        (loop $outer_loop (block $outer_break</span></span>
+<span class=giallo-l><span>            i32.const 0</span></span>
+<span class=giallo-l><span>            local.tee $j</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            local.set $i_hit</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (call $get_obj_attr (local.get $i) (global.get $x_offset))</span></span>
+<span class=giallo-l><span>            local.set $x1</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (call $get_obj_attr (local.get $i) (global.get $y_offset))</span></span>
+<span class=giallo-l><span>            local.set $y1</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            (loop $inner_loop (block $inner_break</span></span>
+<span class=giallo-l><span>                local.get $i</span></span>
+<span class=giallo-l><span>                local.get $j</span></span>
+<span class=giallo-l><span>                i32.eq</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                if</span></span>
+<span class=giallo-l><span>                    local.get $j</span></span>
+<span class=giallo-l><span>                    i32.const 1</span></span>
+<span class=giallo-l><span>                    i32.add</span></span>
+<span class=giallo-l><span>                    local.set $j</span></span>
+<span class=giallo-l><span>                end</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                local.get $j</span></span>
+<span class=giallo-l><span>                global.get $obj_cnt</span></span>
+<span class=giallo-l><span>                i32.ge_u</span></span>
+<span class=giallo-l><span>                if</span></span>
+<span class=giallo-l><span>                    br $inner_break</span></span>
+<span class=giallo-l><span>                end</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                (call $get_obj_attr (local.get $j) (global.get $x_offset))</span></span>
+<span class=giallo-l><span>                local.set $x2</span></span>
+<span class=giallo-l><span>                (i32.sub (local.get $x1) (local.get $x2))</span></span>
+<span class=giallo-l><span>                call $abs</span></span>
+<span class=giallo-l><span>                local.tee $xdist</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                global.get $obj_size</span></span>
+<span class=giallo-l><span>                i32.ge_u</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                ;; 衝突していない</span></span>
+<span class=giallo-l><span>                if</span></span>
+<span class=giallo-l><span>                    local.get $j</span></span>
+<span class=giallo-l><span>                    i32.const 1</span></span>
+<span class=giallo-l><span>                    i32.add</span></span>
+<span class=giallo-l><span>                    local.set $j</span></span>
+<span class=giallo-l><span>                    br $inner_loop</span></span>
+<span class=giallo-l><span>                end</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                (call $get_obj_attr (local.get $j) (global.get $y_offset))</span></span>
+<span class=giallo-l><span>                local.set $y2</span></span>
+<span class=giallo-l><span>                (i32.sub (local.get $y1) (local.get $y2))</span></span>
+<span class=giallo-l><span>                call $abs</span></span>
+<span class=giallo-l><span>                local.tee $ydist</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                global.get $obj_size</span></span>
+<span class=giallo-l><span>                i32.ge_u</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                ;; 衝突していない</span></span>
+<span class=giallo-l><span>                if</span></span>
+<span class=giallo-l><span>                    local.get $j</span></span>
+<span class=giallo-l><span>                    i32.const 1</span></span>
+<span class=giallo-l><span>                    i32.add</span></span>
+<span class=giallo-l><span>                    local.set $j</span></span>
+<span class=giallo-l><span>                    br $inner_loop</span></span>
+<span class=giallo-l><span>                end</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>                i32.const 1</span></span>
+<span class=giallo-l><span>                local.set $i_hit</span></span>
+<span class=giallo-l><span>            ))</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            local.get $i_hit</span></span>
+<span class=giallo-l><span>            i32.const 0</span></span>
+<span class=giallo-l><span>            i32.eq</span></span>
+<span class=giallo-l><span>            if</span></span>
+<span class=giallo-l><span>                (call $draw_obj</span></span>
+<span class=giallo-l><span>                    (local.get $x1) (local.get $y1) (global.get $no_hit_color))</span></span>
+<span class=giallo-l><span>            else</span></span>
+<span class=giallo-l><span>                (call $draw_obj</span></span>
+<span class=giallo-l><span>                    (local.get $x1) (local.get $y1) (global.get $hit_color))</span></span>
+<span class=giallo-l><span>            end</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span>            local.get $i</span></span>
+<span class=giallo-l><span>            i32.const 1</span></span>
+<span class=giallo-l><span>            i32.add</span></span>
+<span class=giallo-l><span>            local.tee $i</span></span>
+<span class=giallo-l><span>            global.get $obj_cnt</span></span>
+<span class=giallo-l><span>            i32.lt_u</span></span>
+<span class=giallo-l><span>            if</span></span>
+<span class=giallo-l><span>                br $outer_loop</span></span>
+<span class=giallo-l><span>            end</span></span>
+<span class=giallo-l><span>        ))</span></span></code></pre><p>オブジェクトの衝突判定は<code>|x1 - x2|</code> &lt; <code>object_size</code> かつ <code>|y1 - y2| &lt; object_size</code>で判定します。 WATをWASMに変換して<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=shellscript><span class=giallo-l><span style=color:#88c0d0>node</span><span style=color:#a3be8c> server.js</span></span></code></pre><p>を実行して、<code>localhost:8080/collide.html</code>にアクセスしてみると以下のように描画されました🎉<figure><div class=fig-images-row><img , alt src=images/wasm_object_collision.gif></div><figcaption>完成</figcaption></figure><h2 id=hurerarenakatutakoto><a aria-label="Anchor link for: hurerarenakatutakoto" class=zola-anchor href=#hurerarenakatutakoto>ふれられなかったこと</a></h2><p>本記事ではふれられませんでしたが、本書ではさらにここからWASMのパフォーマンスチューニングやデバッグをおこなうための実用的な知識が述べられております。</div></article></main><footer class=blog-footer><p>© 2026 <a href=https://blog.ymgyt.io> ymgyt </a> | Made with <a href=https://www.getzola.org rel=noopener target=_blank>Zola</a> | <a href=https://github.com/ymgyt/blog>Repository</a> | <a href=https://blog.ymgyt.io/atom.xml target=_blank title=rss> <svg viewbox="0 0 24 24" class=icon fill=none height=24 stroke=currentColor stroke-linecap=round stroke-linejoin=round stroke-width=2 width=24 xmlns=http://www.w3.org/2000/svg><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx=5 cy=19 r=1></circle></svg> </a></footer></div></div>

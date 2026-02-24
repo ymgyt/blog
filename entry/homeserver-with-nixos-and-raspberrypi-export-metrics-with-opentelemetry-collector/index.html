@@ -1,0 +1,231 @@
+<!doctype html><html lang=ja><head><meta charset=UTF-8><meta content="width=device-width,initial-scale=1" name=viewport><link href=https://blog.ymgyt.io/favicon.ico rel=icon sizes=any><link href=https://blog.ymgyt.io/icon.svg rel=icon type=image/svg+xml><link href=https://blog.ymgyt.io/apple-touch-icon.png rel=apple-touch-icon><link href=https://blog.ymgyt.io/manifest.webmanifest rel=manifest><link href=https://blog.ymgyt.io/style.css rel=stylesheet><link href=https://blog.ymgyt.io/atom.xml rel=alternate title=Atom type=application/atom+xml><script src="https://www.googletagmanager.com/gtag/js?id=G-GTB0KMLN90" async></script><script>window.dataLayer = window.dataLayer || [];
+	function gtag() {dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-GTB0KMLN90');</script><title>❄️ NixOSとRaspberry Piで自宅server | Part 4 opentelemetry-collectorでmetricsを取得 | Happy developing</title><meta content=opentelemetry-collectorとopenobserveによるmetrics管理 name=description><meta content=summary name=twitter:card><meta content="@YAmaguchixt " name=twitter:site><meta content="❄️ NixOSとRaspberry Piで自宅server | Part 4 opentelemetry-collectorでmetricsを取得" name=twitter:title><meta content=opentelemetry-collectorとopenobserveによるmetrics管理 name=twitter:description><meta content=https://blog.ymgyt.io/images/emoji/snowflake.png name=twitter:image><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script async id=MathJax-script src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script><body><div class=world><div class=content-container><header class=blog-header-container><div class=blog-logo><a href=https://blog.ymgyt.io>Happy developing</a></div><div class=blog-nav><nav><ul><li><a href=https://blog.ymgyt.io/entry/>Entries</a><li><a href=https://blog.ymgyt.io/tags/>Tags</a><li><a href=https://blog.ymgyt.io/about/>About</a><li><a href=https://github.com/ymgyt> <img alt=Github class=icon src=https://blog.ymgyt.io/images/icon/github.svg> </a><li><a href="https://twitter.com/YAmaguchixt "> <img alt=Twitter class=icon src=https://blog.ymgyt.io/images/icon/twitter.svg> </a></ul></nav></div></header><main class=blog-main><article><header class=entry-header><h1 class=entry-title>❄️ NixOSとRaspberry Piで自宅server | Part 4 opentelemetry-collectorでmetricsを取得</h1><div class=entry-meta><p class=entry-meta-item>🗓 2023-10-09<p class=entry-meta-item>🏷 <span class=tag><a href=https://blog.ymgyt.io/tags/nix/>nix</a></span> <span class=tag><a href=https://blog.ymgyt.io/tags/opentelemetry/>opentelemetry</a></span></div></header><aside class=entry-toc><nav><ul class=entry-toc-toplevel-list><li><a href=https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-export-metrics-with-opentelemetry-collector/#systemddeopentelemetry-collectorwodong-kasu>systemdでopentelemetry-collectorを動かす</a><li><a href=https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-export-metrics-with-opentelemetry-collector/#opentelemetry-collector-config-yaml>opentelemetry-collector config.yaml</a><li><a href=https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-export-metrics-with-opentelemetry-collector/#matome>まとめ</a></ul></nav></aside><div class=entry-content><p><a href=https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-install-nixos/ rel=external>Part 1 NixOSをinstall</a><br> <a href=https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-deploy-with-deploy-rs/ rel=external>Part 2 deply-rsでNixOS Configurationを適用</a><br> <a href=https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-secret-management-with-ragenix/ rel=external>Part 3 ragenixでsecret管理</a><br> Part 4 opentelemetry-collectorとopenobserveでmetricsを取得(👈 この記事)<br> <a href=https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-get-cpu-temperature/ rel=external>Part 5 CPUの温度をmetricsとして取得</a><p>Part 4ではraspi上でopentelemetry-collector(contrib destribution)を動かしてmetricsをとれることを目指します。 metricsのexport先は<a href=https://openobserve.ai/ rel=external>openobserve</a>を利用します。今回はcloud版を利用します。<br> 現在のところ、openobserveのcloud版は月200GB ingestion, 15日間保持までならfree planで利用できます。<br> またcluster構成でなければ自前でhostするのもやりやすいのでいずれはraspi上で動かせればと考えていますが、CHANGELOGをみているとまだまだ開発中といった感じなのでもうすこし安定してからにしようかと思っています。<p>openobserveへのmetricsのexportには組織情報やcredentialが必要です。これは<a href=https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-secret-management-with-ragenix/ rel=external>Part 3</a>で準備してあり、既にdeploy済である前提です。<p>利用するopentelemetry-collectorのversionはcontrib版の<code>v0.78.0</code>です。<h2 id=systemddeopentelemetry-collectorwodong-kasu><a aria-label="Anchor link for: systemddeopentelemetry-collectorwodong-kasu" class=zola-anchor href=#systemddeopentelemetry-collectorwodong-kasu>systemdでopentelemetry-collectorを動かす</a></h2><p>基本的にやることは簡単で、systemdからopentelemetry-collectorを起動する設定を行うだけです。<br> 自分はsystemdがよくわかっていなかったので、<a href=https://learning.oreilly.com/library/view/linux-service-management/9781801811644/ rel=external>Linux Service Management Made Easy with systemd</a>を読んでみました。<br> こちらの本は非常に参考になり別で感想を書こうと思っています。　<p>opentelemetryやcollectorとはそもそもなにかについては以前、<a href=https://blog.ymgyt.io/entry/starting_opentelemetry_with_rust/ rel=external>記事</a>を書いたのでよければ読んでみてください。<p>ということでnixの設定に戻ります。<br> まず、opentelemetry-collecotr用に<code>modules/opentelemetry-collector/</code> directoryを作成して、そこに<code>default.nix</code>を以下のように定義します。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=nix><span class=giallo-l><span style=color:#eceff4>{</span><span> pkgs</span><span style=color:#81a1c1>,</span><span> config</span><span style=color:#81a1c1>,</span><span> mysecrets</span><span style=color:#81a1c1>, ...</span><span style=color:#eceff4> }:</span><span> </span></span>
+<span class=giallo-l><span style=color:#81a1c1>  let</span><span> </span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    otelColUser</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>opentelemetry-collector</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    otelColGroup</span><span style=color:#81a1c1> =</span><span> otelColUser</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>  in</span></span>
+<span class=giallo-l><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#616e88>  # Create user statically for age to execute chown</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  users</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span><span> </span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    groups</span><span>.</span><span style=color:#eceff4>"</span><span style=color:#a3be8c>opentelemetry-collector</span><span style=color:#eceff4>"</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      name</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#81a1c1>${</span><span>otelColGroup</span><span style=color:#81a1c1>}</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    users</span><span>.</span><span style=color:#eceff4>"</span><span style=color:#a3be8c>opentelemetry-collector</span><span style=color:#eceff4>"</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      name</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#81a1c1>${</span><span>otelColUser</span><span style=color:#81a1c1>}</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      isSystemUser</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      group</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#81a1c1>${</span><span>otelColGroup</span><span style=color:#81a1c1>}</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span><span style=color:#81a1c1>;</span><span>  </span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#616e88>  # Credential for opentelemetry-collector to export telemetry to openobserve cloud</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  age</span><span>.</span><span style=color:#8fbcbb>secrets</span><span>.</span><span style=color:#eceff4>"</span><span style=color:#a3be8c>openobserve</span><span style=color:#eceff4>"</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    file</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#81a1c1>${</span><span>mysecrets</span><span style=color:#81a1c1>}</span><span style=color:#a3be8c>/openobserve.age</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    mode</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>0440</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    owner</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#81a1c1>${</span><span>otelColUser</span><span style=color:#81a1c1>}</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    group</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#81a1c1>${</span><span>otelColGroup</span><span style=color:#81a1c1>}</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#616e88>  # Put opentelemetry-collector config file</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  environment</span><span>.</span><span style=color:#8fbcbb>etc</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#eceff4>    "</span><span style=color:#a3be8c>opentelemetry-collector/config.yaml</span><span style=color:#eceff4>"</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      mode</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>0440</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      user</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#81a1c1>${</span><span>otelColUser</span><span style=color:#81a1c1>}</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      group</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#81a1c1>${</span><span>otelColGroup</span><span style=color:#81a1c1>}</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      text</span><span style=color:#81a1c1> = builtins.</span><span>readFile</span><span style=color:#a3be8c> ./config.yaml</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#616e88>  # Enable opentelemetry-collecotr service</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  systemd</span><span>.</span><span style=color:#8fbcbb>services</span><span>.</span><span style=color:#8fbcbb>opentelemetry-collector</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    description</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>Opentelemetry Collector Serivice</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    wantedBy</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [ "</span><span style=color:#a3be8c>multi-user.target</span><span style=color:#eceff4>" ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    serviceConfig</span><span style=color:#81a1c1> = let</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      conf</span><span style=color:#81a1c1> =</span></span>
+<span class=giallo-l><span style=color:#eceff4>        "</span><span style=color:#81a1c1>${</span><span>config</span><span style=color:#81a1c1>.</span><span>environment</span><span style=color:#81a1c1>.</span><span>etc</span><span style=color:#81a1c1>.</span><span style=color:#eceff4>"</span><span style=color:#a3be8c>opentelemetry-collector/config.yaml</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>.</span><span>source</span><span style=color:#81a1c1>.</span><span>outPath</span><span style=color:#81a1c1>}</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      ExecStart</span><span style=color:#81a1c1> =</span></span>
+<span class=giallo-l><span style=color:#eceff4>        "</span><span style=color:#81a1c1>${</span><span>pkgs</span><span style=color:#81a1c1>.</span><span>opentelemetry-collector-contrib</span><span style=color:#81a1c1>}</span><span style=color:#a3be8c>/bin/otelcontribcol --config=file:</span><span style=color:#81a1c1>${</span><span>conf</span><span style=color:#81a1c1>}</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#81a1c1>    in</span><span style=color:#eceff4> {</span></span>
+<span class=giallo-l><span style=color:#81a1c1>      inherit</span><span style=color:#8fbcbb> ExecStart</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      EnvironmentFile</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> [</span><span> </span></span>
+<span class=giallo-l><span style=color:#616e88>        # referenced by environment variable substitution in config file like '${env:FOO}'</span></span>
+<span class=giallo-l><span>        config</span><span style=color:#81a1c1>.</span><span>age</span><span style=color:#81a1c1>.</span><span>secrets</span><span style=color:#81a1c1>.</span><span>openobserve</span><span style=color:#81a1c1>.</span><span>path</span></span>
+<span class=giallo-l><span style=color:#eceff4>       ]</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#616e88>      # age executes chown on secret files, so user and group should exists in advance</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      DynamicUser</span><span style=color:#81a1c1> = false;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      User</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#81a1c1>${</span><span>otelColUser</span><span style=color:#81a1c1>}</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      Group</span><span style=color:#81a1c1>  =</span><span style=color:#eceff4> "</span><span style=color:#81a1c1>${</span><span>otelColGroup</span><span style=color:#81a1c1>}</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      Restart</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>always</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      ProtectSystem</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>full</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      DevicePolicy</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>closed</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      NoNewPrivileges</span><span style=color:#81a1c1> = true;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      WorkingDirectory</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>/var/lib/opentelemetry-collector</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      StateDirectory</span><span style=color:#81a1c1> =</span><span style=color:#eceff4> "</span><span style=color:#a3be8c>opentelemetry-collector</span><span style=color:#eceff4>"</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>    }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>  }</span><span style=color:#81a1c1>;</span></span>
+<span class=giallo-l><span style=color:#eceff4>}</span></span></code></pre><p>このmoduleをimportしてdeployすればopentelemetry-collectorが起動して、openobserveにmetricsをexportしてくれます。<br> 実行コマンドはcontrib版なので<code>otelcontribcol</code>です。<br> opentelemetry-collectorの設定fileは<code>modules/opentelemetry-collector/config.yaml</code>に定義しており、<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>environment.etc = {</span></span>
+<span class=giallo-l><span>  "opentelemetry-collector/config.yaml" = {</span></span>
+<span class=giallo-l><span>    mode = "0440";</span></span>
+<span class=giallo-l><span>    user = "${otelColUser}";</span></span>
+<span class=giallo-l><span>    group = "${otelColGroup}";</span></span>
+<span class=giallo-l><span>    text = builtins.readFile ./config.yaml;</span></span>
+<span class=giallo-l><span>  };</span></span>
+<span class=giallo-l><span>};</span></span></code></pre><p>とすることで、raspi上に<code>/etc/opentelemetry-collector/config.yaml</code>が作成されます。<p>参照する際は<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=plain><span class=giallo-l><span>systemd.services.opentelemetry-collector = {</span></span>
+<span class=giallo-l><span>  # ...</span></span>
+<span class=giallo-l><span>  serviceConfig = let</span></span>
+<span class=giallo-l><span>    conf =</span></span>
+<span class=giallo-l><span>      "${config.environment.etc."opentelemetry-collector/config.yaml".source.outPath}";</span></span>
+<span class=giallo-l><span>    ExecStart =</span></span>
+<span class=giallo-l><span>      "${pkgs.opentelemetry-collector-contrib}/bin/otelcontribcol --config=file:${conf}";</span></span>
+<span class=giallo-l><span>  in {</span></span>
+<span class=giallo-l><span>    inherit ExecStart;</span></span>
+<span class=giallo-l><span>    # ...</span></span>
+<span class=giallo-l><span>  };</span></span>
+<span class=giallo-l><span>};</span></span></code></pre><p>のように<code>config.environment.etc."opentelemetry-collector".config.yaml.source.outPath</code>を参照できます。<h2 id=opentelemetry-collector-config-yaml><a aria-label="Anchor link for: opentelemetry-collector-config-yaml" class=zola-anchor href=#opentelemetry-collector-config-yaml>opentelemetry-collector config.yaml</a></h2><p>続いてopentelemetry-collectorの設定fileですが、以下のように定義しました。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=yaml><span class=giallo-l><span style=color:#8fbcbb>receivers</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  hostmetrics</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    collection_interval</span><span style=color:#eceff4>:</span><span style=color:#a3be8c> 1m</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    scrapers</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      cpu</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>        metrics</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          system.cpu.time</span><span style=color:#eceff4>: {</span><span style=color:#8fbcbb> enabled</span><span style=color:#eceff4>:</span><span style=color:#81a1c1> false</span><span style=color:#eceff4> }</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          system.cpu.utilization</span><span style=color:#eceff4>: {</span><span style=color:#8fbcbb> enabled</span><span style=color:#eceff4>:</span><span style=color:#81a1c1> true</span><span style=color:#eceff4> }</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      memory</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>        metrics</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          system.memory.usage</span><span style=color:#eceff4>: {</span><span style=color:#8fbcbb> enabled</span><span style=color:#eceff4>:</span><span style=color:#81a1c1> false</span><span style=color:#eceff4> }</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          system.memory.utilization</span><span style=color:#eceff4>: {</span><span style=color:#8fbcbb> enabled</span><span style=color:#eceff4>:</span><span style=color:#81a1c1> true</span><span style=color:#eceff4> }</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      network</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>        include</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          interfaces</span><span style=color:#eceff4>: ["</span><span style=color:#a3be8c>end0</span><span style=color:#eceff4>"]</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          match_type</span><span style=color:#eceff4>:</span><span style=color:#a3be8c> strict</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>        metrics</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          system.network.connections</span><span style=color:#eceff4>: {</span><span style=color:#8fbcbb> enabled</span><span style=color:#eceff4>:</span><span style=color:#81a1c1> true</span><span style=color:#eceff4> }</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          system.network.dropped</span><span style=color:#eceff4>: {</span><span style=color:#8fbcbb> enabled</span><span style=color:#eceff4>:</span><span style=color:#81a1c1> false</span><span style=color:#eceff4> }</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          system.network.errors</span><span style=color:#eceff4>: {</span><span style=color:#8fbcbb> enabled</span><span style=color:#eceff4>:</span><span style=color:#81a1c1> false</span><span style=color:#eceff4> }</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          system.network.io</span><span style=color:#eceff4>: {</span><span style=color:#8fbcbb> enabled</span><span style=color:#eceff4>:</span><span style=color:#81a1c1> true</span><span style=color:#eceff4> }</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          system.network.packets</span><span style=color:#eceff4>: {</span><span style=color:#8fbcbb> enabled</span><span style=color:#eceff4>:</span><span style=color:#81a1c1> false</span><span style=color:#eceff4> }</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  hostmetrics/fs</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    collection_interval</span><span style=color:#eceff4>:</span><span style=color:#a3be8c> 60m</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    scrapers</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      filesystem</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>        exclude_mount_points</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          mount_points</span><span style=color:#eceff4>: ["</span><span style=color:#a3be8c>/nix/store</span><span style=color:#eceff4>"]</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          match_type</span><span style=color:#eceff4>:</span><span style=color:#a3be8c> strict</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>        metrics</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          system.filesystem.inodes.usage</span><span style=color:#eceff4>: {</span><span style=color:#8fbcbb> enabled</span><span style=color:#eceff4>:</span><span style=color:#81a1c1> false</span><span style=color:#eceff4> }</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          system.filesystem.usage</span><span style=color:#eceff4>: {</span><span style=color:#8fbcbb> enabled</span><span style=color:#eceff4>:</span><span style=color:#81a1c1> false</span><span style=color:#eceff4> }</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>          system.filesystem.utilization</span><span style=color:#eceff4>: {</span><span style=color:#8fbcbb> enabled</span><span style=color:#eceff4>:</span><span style=color:#81a1c1> true</span><span style=color:#eceff4> }</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>processors</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  memory_limiter</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    check_interval</span><span style=color:#eceff4>:</span><span style=color:#a3be8c> 10s</span></span>
+<span class=giallo-l><span style=color:#616e88>    # hard limit</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    limit_mib</span><span style=color:#eceff4>:</span><span style=color:#b48ead> 500</span></span>
+<span class=giallo-l><span style=color:#616e88>    # sort limit 400</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    spike_limit_mib</span><span style=color:#eceff4>:</span><span style=color:#b48ead> 100</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  resourcedetection/system</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    detectors</span><span style=color:#eceff4>: ["</span><span style=color:#a3be8c>system</span><span style=color:#eceff4>"]</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    override</span><span style=color:#eceff4>:</span><span style=color:#81a1c1> false</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    attributes</span><span style=color:#eceff4>: ["</span><span style=color:#a3be8c>host.name</span><span style=color:#eceff4>"]</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    system</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      hostname_sources</span><span style=color:#eceff4>: ["</span><span style=color:#a3be8c>os</span><span style=color:#eceff4>"]</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  filter/metrics</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    error_mode</span><span style=color:#eceff4>:</span><span style=color:#a3be8c> propagate</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    metrics</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      datapoint</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#eceff4>        -</span><span style=color:#81a1c1> >-</span></span>
+<span class=giallo-l><span style=color:#a3be8c>          metric.name == "system.cpu.utilization" </span></span>
+<span class=giallo-l><span style=color:#a3be8c>          and </span></span>
+<span class=giallo-l><span style=color:#a3be8c>          ( </span></span>
+<span class=giallo-l><span style=color:#a3be8c>            attributes["state"] == "nice" </span></span>
+<span class=giallo-l><span style=color:#a3be8c>            or </span></span>
+<span class=giallo-l><span style=color:#a3be8c>            attributes["state"] == "softirq" </span></span>
+<span class=giallo-l><span style=color:#a3be8c>            or </span></span>
+<span class=giallo-l><span style=color:#a3be8c>            attributes["state"] == "steal" </span></span>
+<span class=giallo-l><span style=color:#a3be8c>            or </span></span>
+<span class=giallo-l><span style=color:#a3be8c>            attributes["state"] == "interrupt" </span></span>
+<span class=giallo-l><span style=color:#a3be8c>          ) </span></span>
+<span class=giallo-l><span style=color:#eceff4>        -</span><span style=color:#81a1c1> >-</span></span>
+<span class=giallo-l><span style=color:#a3be8c>          metric.name == "system.network.connections"</span></span>
+<span class=giallo-l><span style=color:#a3be8c>          and</span></span>
+<span class=giallo-l><span style=color:#a3be8c>          attributes["state"] != "ESTABLISHED"</span></span>
+<span class=giallo-l><span style=color:#a3be8c>          and</span></span>
+<span class=giallo-l><span style=color:#a3be8c>          attributes["state"] != "LISTEN"</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  batch/metrics</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    send_batch_size</span><span style=color:#eceff4>:</span><span style=color:#b48ead> 8192</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    timeout</span><span style=color:#eceff4>:</span><span style=color:#a3be8c> 3s</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    send_batch_max_size</span><span style=color:#eceff4>:</span><span style=color:#b48ead> 16384</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>exporters</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  logging</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    verbosity</span><span style=color:#eceff4>: "</span><span style=color:#a3be8c>normal</span><span style=color:#eceff4>"</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  prometheusremotewrite/openobserve</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    endpoint</span><span style=color:#eceff4>:</span><span style=color:#a3be8c> https://api.openobserve.ai/api/${env:OPEN_OBSERVE_ORG}/prometheus/api/v1/write</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    headers</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      Authorization</span><span style=color:#eceff4>:</span><span style=color:#a3be8c> Basic ${env:OPEN_OBSERVE_TOKEN}</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    resource_to_telemetry_conversion</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      enabled</span><span style=color:#eceff4>:</span><span style=color:#81a1c1> true</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>extensions</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  memory_ballast</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    size_mib</span><span style=color:#eceff4>:</span><span style=color:#b48ead> 64</span></span>
+<span class=giallo-l></span>
+<span class=giallo-l><span style=color:#8fbcbb>service</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  extensions</span><span style=color:#eceff4>: [</span><span style=color:#a3be8c>memory_ballast</span><span style=color:#eceff4>]</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  pipelines</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    metrics</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      receivers</span><span style=color:#eceff4>:</span><span> </span></span>
+<span class=giallo-l><span style=color:#eceff4>        -</span><span style=color:#a3be8c> hostmetrics</span></span>
+<span class=giallo-l><span style=color:#eceff4>        -</span><span style=color:#a3be8c> hostmetrics/fs</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      processors</span><span style=color:#eceff4>:</span><span> </span></span>
+<span class=giallo-l><span style=color:#eceff4>        -</span><span style=color:#a3be8c> memory_limiter</span></span>
+<span class=giallo-l><span style=color:#eceff4>        -</span><span style=color:#a3be8c> resourcedetection/system</span></span>
+<span class=giallo-l><span style=color:#eceff4>        -</span><span style=color:#a3be8c> filter/metrics</span></span>
+<span class=giallo-l><span style=color:#eceff4>        -</span><span style=color:#a3be8c> batch/metrics</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      exporters</span><span style=color:#eceff4>:</span><span> </span></span>
+<span class=giallo-l><span style=color:#eceff4>        -</span><span style=color:#a3be8c> logging</span></span>
+<span class=giallo-l><span style=color:#eceff4>        -</span><span style=color:#a3be8c> prometheusremotewrite/openobserve</span></span>
+<span class=giallo-l></span></code></pre><p>まずmetricsはhostmetricsを利用しました。<p>processorsに関しては<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=yaml><span class=giallo-l><span style=color:#8fbcbb>processors</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  memory_limiter</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    check_interval</span><span style=color:#eceff4>:</span><span style=color:#a3be8c> 10s</span></span>
+<span class=giallo-l><span style=color:#616e88>    # hard limit</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    limit_mib</span><span style=color:#eceff4>:</span><span style=color:#b48ead> 500</span></span>
+<span class=giallo-l><span style=color:#616e88>    # sort limit 400</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    spike_limit_mib</span><span style=color:#eceff4>:</span><span style=color:#b48ead> 100</span></span></code></pre><p>まずmemory_limiterを設定し<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=yaml><span class=giallo-l><span style=color:#8fbcbb>  resourcedetection/system</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    detectors</span><span style=color:#eceff4>: ["</span><span style=color:#a3be8c>system</span><span style=color:#eceff4>"]</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    override</span><span style=color:#eceff4>:</span><span style=color:#81a1c1> false</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    attributes</span><span style=color:#eceff4>: ["</span><span style=color:#a3be8c>host.name</span><span style=color:#eceff4>"]</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    system</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      hostname_sources</span><span style=color:#eceff4>: ["</span><span style=color:#a3be8c>os</span><span style=color:#eceff4>"]</span></span></code></pre><p>次にresourcedetectionで、metricsにhost情報を付与しました。<br> host名は、nixosの設定で定義しています。<br> 続いて<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=yaml><span class=giallo-l><span style=color:#8fbcbb>  filter/metrics</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    error_mode</span><span style=color:#eceff4>:</span><span style=color:#a3be8c> propagate</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    metrics</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      datapoint</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#eceff4>        -</span><span style=color:#81a1c1> >-</span></span>
+<span class=giallo-l><span style=color:#a3be8c>          metric.name == "system.cpu.utilization" </span></span>
+<span class=giallo-l><span style=color:#a3be8c>          and </span></span>
+<span class=giallo-l><span style=color:#a3be8c>          ( </span></span>
+<span class=giallo-l><span style=color:#a3be8c>            attributes["state"] == "nice" </span></span>
+<span class=giallo-l><span style=color:#a3be8c>            or </span></span>
+<span class=giallo-l><span style=color:#a3be8c>            attributes["state"] == "softirq" </span></span>
+<span class=giallo-l><span style=color:#a3be8c>            or </span></span>
+<span class=giallo-l><span style=color:#a3be8c>            attributes["state"] == "steal" </span></span>
+<span class=giallo-l><span style=color:#a3be8c>            or </span></span>
+<span class=giallo-l><span style=color:#a3be8c>            attributes["state"] == "interrupt" </span></span>
+<span class=giallo-l><span style=color:#a3be8c>          ) </span></span>
+<span class=giallo-l><span style=color:#eceff4>        -</span><span style=color:#81a1c1> >-</span></span>
+<span class=giallo-l><span style=color:#a3be8c>          metric.name == "system.network.connections"</span></span>
+<span class=giallo-l><span style=color:#a3be8c>          and</span></span>
+<span class=giallo-l><span style=color:#a3be8c>          attributes["state"] != "ESTABLISHED"</span></span>
+<span class=giallo-l><span style=color:#a3be8c>          and</span></span>
+<span class=giallo-l><span style=color:#a3be8c>          attributes["state"] != "LISTEN"</span></span></code></pre><p>filterでcpuのいくつかの状態とconnectionで知りたいものを取得するようにしました。<br> 最後にbatchを設定しました。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=yaml><span class=giallo-l><span style=color:#8fbcbb>  batch/metrics</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    send_batch_size</span><span style=color:#eceff4>:</span><span style=color:#b48ead> 8192</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    timeout</span><span style=color:#eceff4>:</span><span style=color:#a3be8c> 3s</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    send_batch_max_size</span><span style=color:#eceff4>:</span><span style=color:#b48ead> 16384</span></span></code></pre><p>exporterに関してはopenobserveはmetricsの書き込みにpromethesremotewriteを要求するので、指定された通りに行います。<pre class=giallo style=color:#d8dee9;background-color:#2e3440><code data-lang=yaml><span class=giallo-l><span style=color:#8fbcbb>exporters</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  logging</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    verbosity</span><span style=color:#eceff4>: "</span><span style=color:#a3be8c>normal</span><span style=color:#eceff4>"</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>  prometheusremotewrite/openobserve</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    endpoint</span><span style=color:#eceff4>:</span><span style=color:#a3be8c> https://api.openobserve.ai/api/${env:OPEN_OBSERVE_ORG}/prometheus/api/v1/write</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    headers</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      Authorization</span><span style=color:#eceff4>:</span><span style=color:#a3be8c> Basic ${env:OPEN_OBSERVE_TOKEN}</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>    resource_to_telemetry_conversion</span><span style=color:#eceff4>:</span></span>
+<span class=giallo-l><span style=color:#8fbcbb>      enabled</span><span style=color:#eceff4>:</span><span style=color:#81a1c1> true</span></span></code></pre><p><code>${env:OPEN_OBSERVE_ORG}</code>のように書くと環境変数で置換してくれます。<br> 環境変数は、systemdの<code>EnvironmentFile</code>経由で、復号したage fileを渡しています。<h2 id=matome><a aria-label="Anchor link for: matome" class=zola-anchor href=#matome>まとめ</a></h2><p>この設定をdeployし、openobserveでdashboardを設定することで以下のようなmetricsを確認できるようになりました。<p>openobserveではmetricsにPromQLが利用できるので、<code>sum without(cpu,state) (system_cpu_utilization_ratio{host_name=~"rpi4",state!="idle"}) * 100</code>のようにして簡単にdashboardが作れます。<figure><div class=fig-images-row><img , alt src=images/ss-openobserve-dashboard.png></div><figcaption>openobserveのdashboardの様子</figcaption></figure><p>ここまでで、NixOSの設定をraspi上に反映し、metricsを取得できるようになりました。<br> 次はRustでraspiのcpu温度を取得し、opentelemetryのmetricsとしてexportするようなapplicationを作ってみようと思っています。<p>ここまでお読みいただき、ありがとうございました。</div></article></main><footer class=blog-footer><p>© 2026 <a href=https://blog.ymgyt.io> ymgyt </a> | Made with <a href=https://www.getzola.org rel=noopener target=_blank>Zola</a> | <a href=https://github.com/ymgyt/blog>Repository</a> | <a href=https://blog.ymgyt.io/atom.xml target=_blank title=rss> <svg viewbox="0 0 24 24" class=icon fill=none height=24 stroke=currentColor stroke-linecap=round stroke-linejoin=round stroke-width=2 width=24 xmlns=http://www.w3.org/2000/svg><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx=5 cy=19 r=1></circle></svg> </a></footer></div></div>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="ja">
+    <title>Happy developing - linux</title>
+    <subtitle>楽しい開発ライフ</subtitle>
+    <link href="https://blog.ymgyt.io/tags/linux/atom.xml" rel="self" type="application/atom+xml"/>
+    <link href="https://blog.ymgyt.io/entry/"/>
+    <author><name>ymgyt</name></author>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2026-02-24T00:00:00+00:00</updated>
+    <id>https://blog.ymgyt.io/tags/linux/atom.xml</id>
+    <entry xml:lang="ja">
+        <title>🐧 Linuxデバイスドライバプログラミングを読んだ感想</title>
+        <published>2026-02-24T00:00:00+00:00</published>
+        <updated>2026-02-24T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/linux-device-driver-programming-book/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/linux-device-driver-programming-book/</id>
+        
+        <summary type="html">kernelのsamples&#x2F;rust&#x2F;rust_driver_*.rsを読めるようになりたい</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📗 Linux Service Management Made Easy with systemdを読んだ感想</title>
+        <published>2023-10-15T00:00:00+00:00</published>
+        <updated>2023-10-15T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/linux-service-management-made-easy-with-systemd/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/linux-service-management-made-easy-with-systemd/</id>
+        
+        <summary type="html">Linux Service Management Made Easy with systemd本の概要だったり良かったところについて</summary>
+        
+    </entry>
+</feed>
