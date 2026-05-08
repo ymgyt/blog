@@ -28,6 +28,13 @@ author = "ymgyt"
 
 taxonomies = [{ name = "tags", feed = true, render = true }]
 
+[languages.en]
+title = "Happy developing"
+description = "Happy developing"
+generate_feeds = true
+feed_filenames = ["atom.xml"]
+taxonomies = []
+
 
 [markdown]
 # When set to "true", emoji aliases translated to their corresponding
