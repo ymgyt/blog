@@ -2,51 +2,16 @@
 
 {% block content %}
 
-<h1>Tags</h1>
+<h1>{{ trans(key="tags_title", lang=lang) }}</h1>
 <div class="tags-list">
-  {# lang-serverがうまくtemplateを解釈できないので変数定義にわけておく。たぶんemojiがわるい #}
-  {% set terms_map = terms | group_by(attribute="name") %}
-  {% set rust_pages = terms_map["rust"][0].pages | length %}
-  {% set book_pages = terms_map["book"][0].pages | length %}
-  {% set nix_pages = terms_map["nix"][0].pages | length %}
-  {% set opentelemetry_pages = terms_map["opentelemetry"][0].pages | length %}
-  {% set event_pages = terms_map["event"][0].pages | length %}
   <ul>
+    {% for term in terms %}
     <li class="tags-list-item">
-      <a href="{{ config.base_url }}/tags/rust/">
-        🦀 Rust({{ rust_pages }}) Rust関連
+      <a href="{{ term.permalink | safe }}">
+        {{ term.name | capitalize }}({{ term.page_count }})
       </a>
     </li>
-
-    <li class="tags-list-item">
-      <a href="{{ config.base_url }}/tags/book/">
-        📗 Book({{ book_pages }}) 読んだ本やdocumentの感想
-      </a>
-    </li>
-
-    <li class="tags-list-item">
-      <a href="{{ config.base_url }}/tags/nix/">
-        ❄️  Nix({{ nix_pages }}) Nix関連
-      </a>
-    </li>
-
-    <li class="tags-list-item">
-      <a href="{{ config.base_url }}/tags/opentelemetry/">
-        🔭 OpenTelemetry({{ opentelemetry_pages }}) OpenTelemetry関連
-      </a>
-    </li>
-
-    <li class="tags-list-item">
-      <a href="{{ config.base_url }}/tags/event/">
-        🏃 Event({{ event_pages }}) 参加したevent
-      </a>
-    </li>
-
-    <li class="tags-list-item">
-      <a href="{{ config.base_url }}/tags/etc/">
-        🗂  Etc({{ event_pages }}) その他
-      </a>
-    </li>
+    {% endfor %}
   </ul>
 </div>
 

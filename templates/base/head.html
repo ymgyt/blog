@@ -9,6 +9,30 @@
 
 <link rel="stylesheet" href="{{ get_url(path='/style.css') }}" />
 <link rel="alternate" type="application/atom+xml" title="Atom"
-	href="{{ get_url(path=config.feed_filenames[0], trailing_slash=false) }}">
+	href="{{ get_url(path=config.feed_filenames[0], lang=lang, trailing_slash=false) }}">
+
+{% if current_url is defined %}
+<link rel="canonical" href="{{ current_url | safe }}">
+{% endif %}
+
+{% if page is defined %}
+{% set translations = page.translations %}
+{% elif section is defined %}
+{% set translations = section.translations %}
+{% else %}
+{% set translations = [] %}
+{% endif %}
+
+{% for translation in translations %}
+{% if translation.lang %}
+{% set translation_lang = translation.lang %}
+{% else %}
+{% set translation_lang = config.default_language %}
+{% endif %}
+<link rel="alternate" hreflang="{{ translation_lang }}" href="{{ translation.permalink | safe }}">
+{% if translation_lang == config.default_language %}
+<link rel="alternate" hreflang="x-default" href="{{ translation.permalink | safe }}">
+{% endif %}
+{% endfor %}
 
 {% include "base/google_tag.html" %}

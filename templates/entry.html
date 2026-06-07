@@ -2,6 +2,7 @@
 
 {% block content %}
 <h1>Entries</h1>
+{% include "base/language_switch.html" %}
 
 {% for year, pages in section.pages | group_by(attribute="year") %}
 <div class="entry-group">

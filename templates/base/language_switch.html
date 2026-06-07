@@ -1,0 +1,30 @@
+{% if page is defined %}
+{% set translations = page.translations %}
+{% elif section is defined %}
+{% set translations = section.translations %}
+{% else %}
+{% set translations = [] %}
+{% endif %}
+
+{% if translations | length > 1 %}
+<nav class="language-switch" aria-label="{{ trans(key='language_switch_label', lang=lang) }}">
+  {% for translation in translations %}
+  {% if translation.lang %}
+  {% set translation_lang = translation.lang %}
+  {% else %}
+  {% set translation_lang = config.default_language %}
+  {% endif %}
+  {% if translation_lang != lang %}
+  <a href="{{ translation.permalink | safe }}" hreflang="{{ translation_lang }}" lang="{{ translation_lang }}">
+    {% if translation_lang == "ja" %}
+    {{ trans(key="language_name_ja", lang=lang) }}
+    {% elif translation_lang == "en" %}
+    {{ trans(key="language_name_en", lang=lang) }}
+    {% else %}
+    {{ translation_lang }}
+    {% endif %}
+  </a>
+  {% endif %}
+  {% endfor %}
+</nav>
+{% endif %}

@@ -33,7 +33,27 @@ title = "Happy developing"
 description = "Happy developing"
 generate_feeds = true
 feed_filenames = ["atom.xml"]
-taxonomies = []
+taxonomies = [{ name = "tags", feed = true, render = true }]
+
+[translations]
+nav_entries = "Entries"
+nav_tags = "Tags"
+nav_about = "About"
+language_switch_label = "Translations"
+language_name_ja = "日本語"
+language_name_en = "English"
+tags_title = "Tags"
+tag_entries_title = "entries"
+
+[languages.en.translations]
+nav_entries = "Entries"
+nav_tags = "Tags"
+nav_about = "About"
+language_switch_label = "Translations"
+language_name_ja = "Japanese"
+language_name_en = "English"
+tags_title = "Tags"
+tag_entries_title = "entries"
 
 
 [markdown]

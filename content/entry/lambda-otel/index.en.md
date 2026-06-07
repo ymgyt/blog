@@ -4,6 +4,8 @@ slug = "instrument-opentelemetry-with-lambda"
 description = "How to design OpenTelemetry export around the Lambda lifecycle"
 date = "2026-05-07"
 draft = false
+[taxonomies]
+tags = ["rust","opentelemetry"]
 [extra]
 image = "images/emoji/telescope.png"
 +++

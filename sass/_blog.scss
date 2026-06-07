@@ -39,6 +39,12 @@
 
 .blog-nav {}
 
+.language-switch {
+  margin-block-end: $s0;
+  font-size: $s-1;
+  text-align: right;
+}
+
 .blog-main {
   // contentがないpageでもfooterを下の方に出したい
   min-height: 85%;
