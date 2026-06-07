@@ -131,6 +131,8 @@ $h_border_line: $color-p-3;
 	pre,
 	code {
 		font-family: $code-fonts;
+		font-variant-ligatures: none;
+		font-feature-settings: "liga" 0, "calt" 0;
 	}
 
 	pre {
@@ -138,8 +140,8 @@ $h_border_line: $color-p-3;
 		// codeblockの直後にlistがくる場合があるのでやはりmargin-endがほしい
 		margin-block-end: $s1;
 		padding: $s-1 $s-1;
-		font-size: 0.9em;
-		line-height: 1.2;
+		font-size: 0.95em;
+		line-height: 1.45;
 		letter-spacing: normal;
 
 		// white-spaceを無効にして,overflow:autoにしておくとscrollして表示される
