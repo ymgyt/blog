@@ -31,11 +31,8 @@ $color-inline-code-background: $color-p-3;
 $fonts: "Hiragino Kaku Gothic ProN", "Trebuchet MS", Verdana, "Verdana Ref", "Segoe UI", Candara,
   "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif;
 
-$code-fonts: Menlo, Consolas, "Andale Mono WT", "Andale Mono", Monaco,
-  "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono",
-  "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", "Courier New",
-  Courier, "YaHei Consolas Hybrid", monospace, "Segoe UI Emoji", "PingFang SC",
-  "Microsoft YaHei";
+$code-fonts: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
+  "Liberation Mono", "DejaVu Sans Mono", "Courier New", monospace;
 
 @mixin dimmed {
   opacity: 0.6;
