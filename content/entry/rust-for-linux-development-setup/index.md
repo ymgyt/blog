@@ -1,5 +1,5 @@
 +++
-title = "Rust で Kernel module をビルドして動かす環境を作る"
+title = "🦀 Rust で Kernel module をビルドして動かす環境を作る"
 slug = "rust-for-linux-development-setup"
 description = "Nix と libvirt で作る rust module 開発環境"
 date = "2026-08-11"
@@ -14,11 +14,7 @@ image = "images/emoji/crab.png"
 ## 概要
 
 本記事では、Rustで書いたLinux kernel moduleをビルドして動かすための環境を構築します。
-<!-- TODO: kernel はじめての人でも理解できるようにする -->
-ホストで kernel image および module をビルドして、KVM/QEMU による VM を libvirt 経由で動かします。
-KVM/QEMU という表記でピンとこなかったり、libvirt が初めてという方は [Mastering KVM Virtualization](https://www.packtpub.com/en-us/product/mastering-kvm-virtualization-9781784396916) がオススメです。KVM とはなにか、QEMUとどう協力して、"VM" を実現しているかの説明があります。
-
-ゴールは、以下の Rust module を `.ko` としてビルドして、VM上で、`insmod` するところまでです。
+ゴールは、以下の Rust module を `miscdrv.ko` としてビルドして、VM上で、`insmod` するところまでです。
 
 ```rust
 use kernel::prelude::*;
@@ -47,8 +43,22 @@ impl Drop for MiscDrv {
 }
 ```
 
-code は [ymgyt/drivers](https://github.com/ymgyt/drivers) repo で確認できます。
-qemuやlibvirtの依存は `flake.nix` で宣言しているので、`nix develop` で有効にします。
+最終的には、VM 上で以下のように module を load/unload できるようになります。
+
+```sh
+root@localhost:~# insmod /mnt/drivers/miscdrv.ko
+[ 5930.423638] miscdrv: loaded
+root@localhost:~# rmmod miscdrv
+[ 5982.685953] miscdrv: unloaded
+```
+
+ビルドはホストで行い、実行はVM 上で行います。
+VM は KVM/QEMU で動かし、libvirt で管理します。KVM/QEMU/libvirt については前提の節で簡単に触れますが、より詳しくは [Mastering KVM
+  Virtualization](https://www.packtpub.com/en-us/product/mastering-kvm-virtualization-9781784396916)がオススメです。
+
+kernel module を作るのが初めての方を想定しています。
+
+本記事のコードはすべて [ymgyt/drivers](https://github.com/ymgyt/drivers) repo で確認できます。
 
 ```sh
 git clone https://github.com/Rust-for-Linux/linux.git
@@ -57,27 +67,149 @@ cd drivers
 nix develop
 ```
 
+## 前提の確認
 
-## Base VMの作成
+### Kernel Module とは
 
-まず debian VM を作成します。ホストで kernel image をビルドする際の基準となる設定を取得するためです。
+Kernel module とは、実行中の kernel に実行コードを動的に追加する仕組みです。
+Kernel のビルドシステム(Makefile)に module を作成するためのレシピ(target)が用意されています。
+本記事では、`miscdrv.rs` から `miscdrv.ko` を生成します。
+`.ko` の実体は ELF Relocatable file(`ET_REL`) です。
 
-<!-- TODO: moduleがkernel imageを必要とする理由を説明したい -->
-
-<!-- TODO: poolについて補足 -->
 ```sh
-just vm pool define
+❯ readelf --file-header miscdrv.ko | rg Type:
+  Type:                              REL (Relocatable file)
+```
+
+`[f]init_module()` という module をロードするための system call があり、`insmod` も最終的に [`finit_module()`](https://github.com/kmod-project/kmod/blob/65ac890492c96b88d10d8c92342a1b00ff603dba/libkmod/libkmod-module.c#L650) を呼んでいます。
+
+kernel module は kernel と同じアドレス空間・同じ特権レベルで動作します。
+module からは kernel 本体が `EXPORT_SYMBOL[_GPL]` した関数を呼ぶことができます。
+
+これらのいわば内部APIには、メモリ割当処理(`kmalloc()`)や各種サブシステムへの登録処理(`misc_register()` など)が含まれています。
+ただし、互換性については、userspace(system call, ABI) とは異なり、一切保証されません([stable-api-nonsense](https://www.kernel.org/doc/html/latest/process/stable-api-nonsense.html))。
+したがって、ビルド時に想定していた `foo()` がロード時の kernel に同じ signature で存在する保証はありません。
+
+そのため、ビルド時に参照していた関数(symbol) のメタデータ(CRC) を `.ko` に埋め込んでおき、ロード時に、検証する仕組みがあります。
+このメタデータを埋め込むために、module のビルド前に、kernel image をビルドし、`Module.symvers` file を生成しておく必要があります。
+
+以下のように、実際に moduleに埋め込まれている、`printk` のCRC `0xca2eebaa` はビルド時に参照したkernel の`Module.symvers` の値と一致していました。
+
+```sh
+❯ modprobe --show-modversions  handson/miscdrv/module/miscdrv.ko
+0xca2eebaa      _RNvNtCse297zByDW5v_6kernel5print11call_printk
+0xd272d446      __x86_return_thunk
+0x7406cc83      module_layout
+
+❯ rg _RNvNtCse297zByDW5v_6kernel5print11call_printk .build/rust-next/Module.symvers
+4821:0xca2eebaa _RNvNtCse297zByDW5v_6kernel5print11call_printk  vmlinux EXPORT_SYMBOL_GPL
+```
+
+[`modprobe` の src](https://github.com/kmod-project/kmod/blob/65ac890492c96b88d10d8c92342a1b00ff603dba/libkmod/libkmod-elf.c#L542) をみると、ELF の [`__versions` section](https://github.com/kmod-project/kmod/blob/65ac890492c96b88d10d8c92342a1b00ff603dba/libkmod/libkmod-elf.c#L44) からこれらの情報を取得していることがわかります。
+
+以上より、kernel module をビルドするには、事前にその module が処理の対象とする、kernel image をビルドし、`Module.symvers` を生成しておく必要があることになります。
+
+### Kernel Config とは
+
+次にkernel をビルドする際の設定方法についてです。
+kernel のソースコードには以下のように `CONFIG_XXX` による conditional compile があります。
+
+```c
+struct task_struct {
+/* ... */
+#ifdef CONFIG_MEM_ALLOC_PROFILING
+	struct alloc_tag		*alloc_tag;
+#endif
+/* ... */
+```
+
+rust では`#[cfg()]` が使われます。
+以下は概要に載せた `module!` マクロの展開結果の一部([rust/macros/module.rs](https://github.com/Rust-for-Linux/linux/blob/rust-next/rust/macros/module.rs) が生成するコード)で、`MODULE` は「module としてビルドされているか」を表す cfg です。
+
+```rust
+#[cfg(MODULE)]
+static THIS_MODULE: ::kernel::ThisModule = unsafe {
+    extern "C" {
+        static __this_module: ::kernel::types::Opaque<::kernel::bindings::module>;
+    };
+
+    ::kernel::ThisModule::from_ptr(__this_module.get())
+};
+
+#[cfg(not(MODULE))]
+static THIS_MODULE: ::kernel::ThisModule = unsafe {
+    ::kernel::ThisModule::from_ptr(::core::ptr::null_mut())
+};
+```
+
+同じソースコードが、module としてビルドされる場合は kernel がロード時に用意する `__this_module` を参照し、kernel 本体に組み込まれる場合(built-in)は null を使う、というように分岐しています。
+
+kernel をビルドする際には、最終的には全ての設定を解決した`.config` を用意します。
+`.config` の項目は on/off だけではなく、多くの機能が `y`/`m`/`n` の 3 値(tristate)をとります。
+
+- `y`: kernel image に組み込む(built-in)
+- `m`: module(`.ko`)としてビルドし、実行時に load する
+- `n`: ビルドしない
+
+例えば virtio の block driver は、Debian の config では module ですが、本記事で最終的に使う config では kernel に組み込んでいます。
+
+```sh
+❯ rg '^CONFIG_VIRTIO_BLK=' dev/kernel/config/debian-13-amd64 .build/rust-next/.config
+
+.build/rust-next/.config
+1968:CONFIG_VIRTIO_BLK=y
+
+dev/kernel/config/debian-13-amd64
+2691:CONFIG_VIRTIO_BLK=m
+```
+
+Debian のような汎用 distro は、幅広いハードウェアに対応しつつ、使わない機能をメモリに載せないために、可能な限り `m` を選ぶ方針をとっています。実際、Debian の config では設定されている 6,896 項目のうち 4,049 項目が `=m` でした。
+どの機能を `y` にし、どれを `m` のままにするかは、後の Kernel config の設定の節で行う作業の中心になります。
+
+`.config` で設定できる項目は膨大でゼロから全てを設定して意図したビルドを実現するのは大変です。
+そこで本記事では debian-13 のVM を用意してそこで利用されている`.config` を出発点にするアプローチを採りました。
+
+### KVM/QEMU/libvirt
+
+<!-- TODO: 後で書く -->
+
+
+## 全体の流れ
+
+上述の通り、kernel module をビルドするには、load 先となる kernel を先にビルドしておく必要があります。
+まず、ビルドする kernel ですが、[Rust for Linux](https://rust-for-linux.com/) の開発 branch である [rust-next](https://github.com/Rust-for-Linux/linux) を利用します。Rust 関連の変更が mainline より先にここに取り込まれるため、常に最新の変更を試せるからです。
+ただし、mainline でも問題ありません。rust-next の変更は merge window ごとに mainline に取り込まれ、rust-next 自体も mainline の rc 版を base にしているため、両者に大きな乖離はありません。
+
+kernel のビルドに必要な `.config` は、Debian の config を出発点にします。このために、まず Debian VM(deb13)を作成し、config と lsmod を採取します。
+lsmod には実際に load されている module 一覧が含まれています。これを利用して、kernel ビルド時にビルドする module(driver) の数を減らします。
+
+ビルドした kernel は、VM に install する代わりに、QEMU の direct kernel boot で起動します。
+QEMU は disk 内の bootloader を経由せずに、ホスト上の kernel image を直接 load して boot できます。
+kernel を作り直すたびに VM 内での install 作業が不要になる一方、initramfs を使わない boot になるため、boot に必要な driver(virtio や ext4)は module ではなく `y` で kernel に組み込んでおきます。
+
+最後に、この kernel に対して miscdrv module をビルドし、virtiofs の共有 directory 経由で VM に渡して `insmod` します。
+
+{{ figure(images=["images/kernel-development-flow.svg"], caption="開発環境の全体像") }}
+
+## Debian VM(deb13)の作成
+
+まず debian VM を作成します。ホストで kernel image をビルドする際の基準となる設定(config と lsmod)を取得するためです。
+
+libvirt では、VM の disk などの storage を pool という単位で管理します。[`dir` type の pool](https://libvirt.org/storage.html#directory-pool) の実体はただの directory で、その中の file が volume として扱われます。ここでは repo 内の `vm/storage/` を `drivers` という名前の pool として登録します。
+
+```sh
+❯ just vm pool define
 
 command: virsh --connect qemu:///system pool-define-as drivers dir --target <repo>/vm/storage
 Pool drivers defined
-
 
 ❯ just vm pool start
 command: virsh --connect qemu:///system pool-start drivers
 Pool drivers started
 ```
 
-VM の base image として利用する debian image を取得します。
+VM の base image として利用する [debian cloud image](https://cloud.debian.org/images/cloud/) を取得します。
+image には nocloud variant を利用します。cloud-init が入っておらず、root にパスワードなしで serial console からログインできるため、実験用途に向いています。
 
 ```sh
 ❯ just vm image
@@ -97,6 +229,8 @@ Capacity:       3.00 GiB
 Allocation:     387.25 MiB
 ```
 
+取得した base image を VM の disk として直接使うのではなく、base image を backing file とする copy-on-write の volume(overlay)を VM ごとに作成します。書き込みは overlay 側にのみ記録され、base image は変更されません。後で作成する rust VM も同じ base image を共有し、それぞれ自分の overlay を持ちます。
+
 ```sh
 ❯ just vm overlay deb13
 
@@ -111,6 +245,8 @@ Type:           file
 Capacity:       3.00 GiB
 Allocation:     196.00 KiB
 ```
+
+作成直後の overlay は、Capacity 3.00 GiB に対して Allocation(実際に確保された容量)が 196.00 KiB しかないことから、まだほとんど何も書き込まれていないことが確認できます。
 
 ```sh
 ❯ just vm define deb13
@@ -156,7 +292,9 @@ root@localhost:~# uname -a
 Linux localhost 6.12.101+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.101-1 (2026-08-05) x86_64 GNU/Linux
 ```
 
-### Kernel configの取得
+### config と lsmod の採取
+
+ホストとの file のやりとりには virtiofs を利用します。domain XML で、ホストの `vm/shared/` directory を `drivers` という名前で guest に export しており、guest からは virtiofs として mount することでアクセスできます。
 
 ```sh
 root@localhost:~# mkdir -p /mnt/drivers
@@ -168,20 +306,30 @@ TARGET       SOURCE  FSTYPE   OPTIONS
 root@localhost:~# cp /boot/config-$(uname -r) /mnt/drivers/
 ```
 
-host 側で
+続けて、load されている module の一覧も採取します。これは後の Kernel config の作成で利用します。
+
+```sh
+lsmod > /mnt/drivers/lsmod-$(uname -r)
+```
+
+host 側で、採取した config を repo の管理下に copy します。
 
 ```sh
 ❯ file vm/shared/config-6.12.101+deb13-amd64
 vm/shared/config-6.12.101+deb13-amd64: Linux make config build file, ASCII text
 
 ❯ cp vm/shared/config-6.12.101+deb13-amd64 dev/kernel/config/debian-13-amd64
+```
 
+## Kernel configの作成
+
+採取した Debian の config を出発点に、rust-next 用の `.config` を作成します。まず seed となる config を build directory に copy します。
+
+```sh
 ❯ just kernel initconfig
 mkdir -p "<repo>/.build/rust-next"
 cp --force "<repo>/dev/kernel/config/debian-13-amd64" "<repo>/.build/rust-next/.config"
 ```
-
-### Kernel configの設定
 
 ```sh
 ❯ just kernel olddefconfig
@@ -218,15 +366,7 @@ VMに必要なdriverを有効化
 "/home/ymgyt/rs/drivers/../linux/scripts/config" --file "/home/ymgyt/rs/drivers/.build/rust-next/.config" --enable VIRTIO_MENU --enable VIRTIO_PCI --enable VIRTIO_BLK --enable EXT4_FS --enable EFI_PARTITION --enable FUSE_FS --enable VIRTIO_FS --enable SERIAL_8250 --enable SERIAL_8250_CONSOLE --enable VFAT_FS --enable NLS_CODEPAGE_437 --enable NLS_ASCII --enable EFIVAR_FS
 ```
 
-### lsmodの取得
-
-VM内で
-
-```sh
-lsmod > /mnt/drivers/lsmod-$(uname -r)
-```
-
-Hostで
+採取した lsmod を用いて、ビルドする module を実際に load されていたものに絞り込みます。
 
 ```sh
 ❯ just kernel localmodconfig vm/shared/lsmod-6.12.101+deb13-amd64
@@ -307,6 +447,8 @@ Security DOI:   0
 root@localhost:~# uname -a
 Linux localhost 7.2.0-rc1+ #4 SMP PREEMPT_DYNAMIC Sat Aug 15 13:21:42 JST 2026 x86_64 GNU/Linux
 ```
+
+kernel の version が `7.2.0-rc1+` となっているのは、rust-next が mainline の 7.2-rc1 を base にしているためです。`+` は、ビルド元の tree が release tag の commit と一致すると確認できなかった場合に付く印です。
 
 
 ## Module の build
