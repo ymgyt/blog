@@ -1,0 +1,96 @@
+// Generate the SVG with:
+// dot -Tsvg kernel-development-flow.dot -o kernel-development-flow.svg
+digraph kernel_development_flow {
+  graph [
+    bgcolor="#ffffff"
+    compound=true
+    fontname="sans-serif"
+    newrank=true
+    nodesep=0.65
+    pad=0.25
+    ranksep=0.8
+    splines=spline
+  ]
+
+  node [
+    shape=box
+    style="rounded,filled"
+    color="#64748b"
+    fillcolor="#ffffff"
+    fontname="monospace"
+    fontsize=12
+    margin="0.18,0.12"
+    penwidth=1.2
+  ]
+
+  edge [
+    color="#475569"
+    fontcolor="#334155"
+    fontname="sans-serif"
+    fontsize=10
+    arrowsize=0.8
+    penwidth=1.2
+  ]
+
+  subgraph cluster_host {
+    label="Host"
+    labelloc="t"
+    labeljust="l"
+    color="#94a3b8"
+    fillcolor="#f8fafc"
+    fontname="sans-serif"
+    fontsize=14
+    margin=20
+    penwidth=1.2
+    style="rounded,filled"
+
+    seed_config [label="dev/kernel/config\n(Debian config seed)"]
+    build_config [label=".build/rust-next/.config"]
+    bzimage [label="bzImage"]
+    module [label="miscdrv.ko"]
+
+    seed_config -> build_config [label="Rust を有効化\n+ 刈り込み"]
+    build_config -> bzimage [label="build"]
+    bzimage -> module [style=invis weight=10]
+  }
+
+  subgraph cluster_guest {
+    label="Guest"
+    labelloc="t"
+    labeljust="l"
+    color="#94a3b8"
+    fillcolor="#f8fafc"
+    fontname="sans-serif"
+    fontsize=14
+    margin=20
+    penwidth=1.2
+    style="rounded,filled"
+
+    deb13 [
+      label="deb13 VM\n(Debian kernel)"
+      fontname="sans-serif"
+    ]
+    rust_vm [
+      label="rust VM\n(host-built kernel)"
+      fontname="sans-serif"
+    ]
+
+    deb13 -> rust_vm [style=invis weight=10]
+  }
+
+  { rank=same; seed_config; deb13 }
+  { rank=same; bzimage; rust_vm }
+
+  deb13 -> seed_config [
+    label="① config / lsmod 採取"
+    constraint=false
+  ]
+  bzimage -> rust_vm [
+    label="② direct kernel boot"
+    constraint=false
+  ]
+  module -> rust_vm [
+    label="③ virtiofs 共有 directory\ninsmod"
+    constraint=false
+  ]
+}
