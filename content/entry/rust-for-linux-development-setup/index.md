@@ -697,4 +697,4 @@ DRM subsystem では 2025 年 12 月の段階で
 
 (それでもやはり驚きだったのは、DRM subsystem の maintainer である Airlie 氏が、C で書かれた新しい driver を受け入れず Rust の使用を必須とするのは「あと 1 年程度」先の話だ、と述べたことです。)
 
-という話が、[LWN](https://lwn.net/Articles/1050174/) で紹介されていました。
+という話が、Maintainers Summit の議論を紹介する LWN の記事 [The state of the kernel Rust experiment](https://lwn.net/Articles/1050174/) で紹介されていました。
