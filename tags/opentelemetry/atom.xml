@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="ja">
+    <title>Happy developing - opentelemetry</title>
+    <subtitle>楽しい開発ライフ</subtitle>
+    <link href="https://blog.ymgyt.io/tags/opentelemetry/atom.xml" rel="self" type="application/atom+xml"/>
+    <link href="https://blog.ymgyt.io/entry/"/>
+    <author><name>ymgyt</name></author>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2026-05-08T00:00:00+00:00</updated>
+    <id>https://blog.ymgyt.io/tags/opentelemetry/atom.xml</id>
+    <entry xml:lang="ja">
+        <title>🔭 OpenTelemetry を Lambda に計装する</title>
+        <published>2026-05-08T00:00:00+00:00</published>
+        <updated>2026-05-08T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/instrument-opentelemetry-with-lambda/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/instrument-opentelemetry-with-lambda/</id>
+        
+        <summary type="html">Lambda lifecycle を踏まえて OpenTelemetry export をどう設計するか</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📗 Learning OpenTelemetryを読んだ感想</title>
+        <published>2024-03-29T00:00:00+00:00</published>
+        <updated>2024-03-29T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/learning-opentelemetry/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/learning-opentelemetry/</id>
+        
+        <summary type="html">Observability is a commitment</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>❄️ NixOSとRaspberry Piで自宅server | Part 5 CPUの温度をmetricsとして取得</title>
+        <published>2023-10-22T00:00:00+00:00</published>
+        <updated>2023-10-22T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-get-cpu-temperature/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-get-cpu-temperature/</id>
+        
+        <summary type="html">CPUの温度を取得してopentelemetryのmetricsとして扱えるようにします</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>🔭 OpenTelemetry Meetup 2023-10にいってきました</title>
+        <published>2023-10-19T00:00:00+00:00</published>
+        <updated>2023-10-19T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/opentelemetry-meetup-2023-10/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/opentelemetry-meetup-2023-10/</id>
+        
+        <summary type="html">OpenTelemetry Meetupにいってきたので感想を書きます</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>❄️ NixOSとRaspberry Piで自宅server | Part 4 opentelemetry-collectorでmetricsを取得</title>
+        <published>2023-10-09T04:00:00+00:00</published>
+        <updated>2023-10-09T04:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-export-metrics-with-opentelemetry-collector/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-export-metrics-with-opentelemetry-collector/</id>
+        
+        <summary type="html">opentelemetry-collectorとopenobserveによるmetrics管理</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>🔭 tracingからAttributesを付与してmetricsを出力できるようにtracing-opentelemetryにPRを送った</title>
+        <published>2023-08-26T00:00:00+00:00</published>
+        <updated>2023-08-26T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/produce-measurement-with-attributes-from-tracing/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/produce-measurement-with-attributes-from-tracing/</id>
+        
+        <summary type="html">tracing-opentelemetryのMetricsLayerに機能を追加するPRを送った話</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>🔭 RustでOpenTelemetry: Tracerの設定を仕様から理解する</title>
+        <published>2023-07-18T00:00:00+00:00</published>
+        <updated>2023-07-18T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/understanding-opentelemetry-tracer-configuration-from-specifications/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/understanding-opentelemetry-tracer-configuration-from-specifications/</id>
+        
+        <summary type="html">RustにおけるOpenTelemetryの実装を見ながら仕様の理解を試みます。今回はTracerの設定について。</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>🔭 RustでOpenTelemetryをはじめよう</title>
+        <published>2022-12-18T00:00:00+00:00</published>
+        <updated>2022-12-18T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/starting_opentelemetry_with_rust/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/starting_opentelemetry_with_rust/</id>
+        
+        <summary type="html">RustではじめるOpenTelemetry</summary>
+        
+    </entry>
+</feed>

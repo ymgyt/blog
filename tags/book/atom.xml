@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="ja">
+    <title>Happy developing - book</title>
+    <subtitle>楽しい開発ライフ</subtitle>
+    <link href="https://blog.ymgyt.io/tags/book/atom.xml" rel="self" type="application/atom+xml"/>
+    <link href="https://blog.ymgyt.io/entry/"/>
+    <author><name>ymgyt</name></author>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2026-06-28T00:00:00+00:00</updated>
+    <id>https://blog.ymgyt.io/tags/book/atom.xml</id>
+    <entry xml:lang="ja">
+        <title>📕 Architecture and Design of the Linux Storage Stack を読んだ感想</title>
+        <published>2026-06-28T00:00:00+00:00</published>
+        <updated>2026-06-28T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/linux-storage-stack/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/linux-storage-stack/</id>
+        
+        <summary type="html">VFS から physical storage まで storage stack を 1 layer ずつおりていく本</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>🐧 Linuxデバイスドライバプログラミングを読んだ感想</title>
+        <published>2026-02-24T00:00:00+00:00</published>
+        <updated>2026-02-24T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/linux-device-driver-programming-book/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/linux-device-driver-programming-book/</id>
+        
+        <summary type="html">kernelのsamples&#x2F;rust&#x2F;rust_driver_*.rsを読めるようになりたい</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>⚙️ Ironies of Automationを読んだ感想</title>
+        <published>2024-09-28T00:00:00+00:00</published>
+        <updated>2024-09-28T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/ironies-of-automation/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/ironies-of-automation/</id>
+        
+        <summary type="html">自動化するほどつらいところだけ人に残されて逆に大変になる</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📗 なぜ依存を注入するのか DIの原理・原則とパターンを読んだ感想</title>
+        <published>2024-09-14T00:00:00+00:00</published>
+        <updated>2024-09-14T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/dependency-injection/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/dependency-injection/</id>
+        
+        <summary type="html">DIという観点からコードの設計を考える本</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📗 Write Powerful Rust Macrosを読んだ感想</title>
+        <published>2024-07-15T00:00:00+00:00</published>
+        <updated>2024-07-15T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/write-powerful-rust-macros/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/write-powerful-rust-macros/</id>
+        
+        <summary type="html">一冊まるごとMacroについての本</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📗 OSSライセンスを正しく理解するための本を読んだ感想</title>
+        <published>2024-05-17T00:00:00+00:00</published>
+        <updated>2024-05-17T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/understand-the-open-source-software-license-correctly/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/understand-the-open-source-software-license-correctly/</id>
+        
+        <summary type="html">OSSライセンスと著作権の関係</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📗 Learning OpenTelemetryを読んだ感想</title>
+        <published>2024-03-29T00:00:00+00:00</published>
+        <updated>2024-03-29T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/learning-opentelemetry/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/learning-opentelemetry/</id>
+        
+        <summary type="html">Observability is a commitment</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📕 Asynchronous Programming in Rustを読んだ感想</title>
+        <published>2024-03-14T00:00:00+00:00</published>
+        <updated>2024-03-14T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/asynchronous-programming-in-rust/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/asynchronous-programming-in-rust/</id>
+        
+        <summary type="html">CF Samson先生のFuture解説がついに本になった</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📕 詳解 Rustアトミック操作とロックを読んだ感想</title>
+        <published>2023-11-28T00:00:00+00:00</published>
+        <updated>2023-11-28T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/rust-atomics-and-locks-ja/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/rust-atomics-and-locks-ja/</id>
+        
+        <summary type="html">std::sync::atomic::{Ordering,fence}がわかる本</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📙 The Purely Functional Software Deployment Modelを読んだ感想</title>
+        <published>2023-11-06T00:00:00+00:00</published>
+        <updated>2023-11-06T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/the-purely-functional-software-deployment/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/the-purely-functional-software-deployment/</id>
+        
+        <summary type="html">Dolstra先生のNixの論文 The Purely Functional Software Deployment Modelを読んだ感想</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📗 Terraform: Up and Running, 3rd Editionを読んだ感想</title>
+        <published>2023-10-25T00:00:00+00:00</published>
+        <updated>2023-10-25T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/terraform-up-and-running/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/terraform-up-and-running/</id>
+        
+        <summary type="html">Terraform: Up and Runningを読んだ感想について</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📗 Linux Service Management Made Easy with systemdを読んだ感想</title>
+        <published>2023-10-15T00:00:00+00:00</published>
+        <updated>2023-10-15T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/linux-service-management-made-easy-with-systemd/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/linux-service-management-made-easy-with-systemd/</id>
+        
+        <summary type="html">Linux Service Management Made Easy with systemd本の概要だったり良かったところについて</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>🔧 Kustomizeで利用されるRFC6902 JSON Patchを読んでみる</title>
+        <published>2023-07-14T00:00:00+00:00</published>
+        <updated>2023-07-14T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/json-patch-in-kustomize/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/json-patch-in-kustomize/</id>
+        
+        <summary type="html">Kustomizeのpatchで用いられるJSON PatchについてRFCを読んで理解する</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📕 プログラマーのためのCPU入門を読んだ感想</title>
+        <published>2023-03-15T00:00:00+00:00</published>
+        <updated>2023-03-15T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/what-a-programmer-should-know-about-the-cpu/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/what-a-programmer-should-know-about-the-cpu/</id>
+        
+        <summary type="html">プログラマーのためのCPU入門がとてもわかりやすかったです</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📕 ハロー&quot;Hello, World&quot; OSと標準ライブラリのシゴトとしくみを読んだ感想</title>
+        <published>2023-02-21T00:00:00+00:00</published>
+        <updated>2023-02-21T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/helloworld-book/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/helloworld-book/</id>
+        
+        <summary type="html">ハロー&quot;Hello, World&quot;OSと標準ライブラリのシゴトとしくみを読んだ感想について</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📕 Rust Atomics and Locksを読んだ感想</title>
+        <published>2022-12-31T00:00:00+00:00</published>
+        <updated>2022-12-31T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/rust_atomics_and_locks/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/rust_atomics_and_locks/</id>
+        
+        <summary type="html">Rust Atomics and Locksが非常によかったので感想を書いた</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📗 もっとCPUの気持ちが知りたいですか？を読んだ感想</title>
+        <published>2022-11-27T00:00:00+00:00</published>
+        <updated>2022-11-27T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/cpu_no_kimochi/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/cpu_no_kimochi/</id>
+        
+        <summary type="html">CPUの気持ち本を読んだ感想</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>🕸  GraphQL Specificationを読んでみる</title>
+        <published>2022-11-04T00:00:00+00:00</published>
+        <updated>2022-11-04T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/graphql-specification-2021/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/graphql-specification-2021/</id>
+        
+        <summary type="html">GraphQLの仕様を読んでみた感想について</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📗 RabbitMQ Essentials 2nd Editionを読んだ感想</title>
+        <published>2022-08-17T00:00:00+00:00</published>
+        <updated>2022-08-17T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/rabbitmq_essentials_2nd_edition/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/rabbitmq_essentials_2nd_edition/</id>
+        
+        <content type="html">&lt;h2 id=&quot;du-ndaben-green-book&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#du-ndaben-green-book&quot; aria-label=&quot;Anchor link for: du-ndaben-green-book&quot;&gt;読んだ本📗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+
+&lt;figure class=&quot;&quot;&gt;
+  &lt;div class=&quot;fig-images-row&quot;&gt;
+    
+    &lt;img 
+      src=&quot;images&amp;#x2F;rabbitmq_essentials_book.png&quot; 
+      alt=&quot;&quot;, 
+       
+      
+    &gt;
+    
+  &lt;&#x2F;div&gt;
+  &lt;figcaption&gt;By Lovisa Johansson , David Dossot&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;&lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;www.packtpub.com&#x2F;product&#x2F;rabbitmq-essentials-second-edition&#x2F;9781789131666&quot;&gt;RabbitMQ Essentials - Second Edition&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;2020出版でRabbitMQ関連の本で比較的新しめだったのと、Taxi ApplicationにRabbitMQを組み込んでいくという形がおもしろそうだったので読んでみました。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;1-a-rabbit-springs-to-life&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#1-a-rabbit-springs-to-life&quot; aria-label=&quot;Anchor link for: 1-a-rabbit-springs-to-life&quot;&gt;1 A Rabbit Springs to Life&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;概要やインストールについて。&lt;br &#x2F;&gt;
+RabbitMQ&#x2F;AMQP 0-9-1のコンセプトについて紹介されています。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;2-creating-a-taxi-application&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#2-creating-a-taxi-application&quot; aria-label=&quot;Anchor link for: 2-creating-a-taxi-application&quot;&gt;2 Creating a Taxi Application&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Complete Car(CC)というタクシー予約システムを作りながらRabbitMQの使い方を学んでいきます。&lt;br &#x2F;&gt;
+最初はDirect exchangeを利用しつつ、機能拡張という形でTopic exchangeを導入します。
+その中で、Connection&#x2F;Channelの説明や、基本的なPublish&#x2F;Consumer APIの説明があります。&lt;br &#x2F;&gt;
+RabbitMQ Serverのrestartをまたいでmessageを永続化させるには、queueのdurableとmessageのpersistentの両方が必要になります。&lt;br &#x2F;&gt;
+messageの信頼性とパフォーマンスのトレードオフを見極めて利用する必要があるので、導入に際してはシステムに要求される信頼性を定義することが重要そうだなと考えました。&lt;br &#x2F;&gt;
+サンプルコードはRubyでした。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;3-sending-messages-to-multiple-taxi-drivers&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#3-sending-messages-to-multiple-taxi-drivers&quot; aria-label=&quot;Anchor link for: 3-sending-messages-to-multiple-taxi-drivers&quot;&gt;3 Sending Messages to Multiple Taxi Drivers&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Consumerに一度に送られるmessage数を制御するためのprefetch countとacknowledgeについて説明されます。messageの性質にもよりますが、prefetch countを1にしてmanual acknowledgeにしておくのが一番安全そう。
+prefetch countはdefault値にたよらず明示的に指定しておくことも大事だなと思いました。&lt;&#x2F;p&gt;
+&lt;p&gt;また、全taxiにback officeからメッセージを送りたいという機能要望に答えるためにFanout exchangeがCCに導入されました。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;4-tweaking-message-delivery&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#4-tweaking-message-delivery&quot; aria-label=&quot;Anchor link for: 4-tweaking-message-delivery&quot;&gt;4 Tweaking Message Delivery&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;taxiのdriverにmessageを送るfanout exchangeをchapter3で導入した。&lt;br &#x2F;&gt;
+ところが運用してみるとmessageをまったくconsumeしないdriverが存在しており、queueにmessageが溜まり続けてしまう。そこで一定期間経過後にmessageを削除し、その際messageが重要であればdriverにメール送る機能を実装したい。というシナリオでtime to live(TTL)やDead letter Queueについて学んでいきます。&lt;&#x2F;p&gt;
+&lt;p&gt;messageのexpirationについては以下の3つの選択肢がある。&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Standard AMQP message expiration property&lt;&#x2F;li&gt;
+&lt;li&gt;QueueごとにmessageのTTLを定義できるRabbitMQ extension&lt;&#x2F;li&gt;
+&lt;li&gt;Queue自体のTTLを定義できるRabbitMQ extension&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;1についてはAMQP標準ということで魅力的だが、落とし穴があり、messageがqueueの先頭にきてはじめてTTLがチェックされるという仕様でTTLが過ぎていてもqueue自体には残ってしまう。&lt;br &#x2F;&gt;
+また、queue自体は削除したくないので3も除外。ということで選択肢2を採用することとなる。
+TTLが過ぎたmessageはdead letterと判断される。RabbitMQはこうしたdead letterをDLXというexchangeにroutingする機能をもつ。&lt;&#x2F;p&gt;
+&lt;p&gt;QueueにTTLやDLXを設定するには、queue declare時のargumentsに&lt;code&gt;x-message-ttl&lt;&#x2F;code&gt;や&lt;code&gt;x-dead-letter-{exchange,routing-key}&lt;&#x2F;code&gt;を指定するのですが、既存のqueueに対して宣言してしまうとargumentsが一致せずexceptionが発生してしまいます。&lt;br &#x2F;&gt;
+そこで、RabbitMQにはpolicyという仕組みがあり、policyを通して既存のqueueやexchangeに変更を適用できます。&lt;&#x2F;p&gt;
+&lt;p&gt;PolicyはAMQPの仕様ではないのでclientにAPIがありません。(あるlibもあるかもしれませんが)&lt;br &#x2F;&gt;
+そこで、rabbitmqctlという専用のcliを利用します。&lt;br &#x2F;&gt;
+dockerでRabbitMQをたちあげている場合は&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo&quot; style=&quot;color: #D8DEE9; background-color: #2E3440;&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #88C0D0;&quot;&gt;docker&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A3BE8C;&quot;&gt; exec rabbitmq-rabbitmq-1 -it &#x2F;bin&#x2F;bash&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #88C0D0;&quot;&gt;rabbitmqctl&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A3BE8C;&quot;&gt; set_policy -p &#x2F; Q_TTL_DLX&lt;&#x2F;span&gt;&lt;span style=&quot;color: #ECEFF4;&quot;&gt; &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A3BE8C;&quot;&gt;.*&lt;&#x2F;span&gt;&lt;span style=&quot;color: #ECEFF4;&quot;&gt;&amp;#39; &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A3BE8C;&quot;&gt;{&amp;quot;message-ttl&amp;quot;: 1000, &amp;quot;dead-letter-exchange&amp;quot;: &amp;quot;dlx&amp;quot;}&lt;&#x2F;span&gt;&lt;span style=&quot;color: #ECEFF4;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A3BE8C;&quot;&gt; --apply-to queues&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;のようにします。&lt;br &#x2F;&gt;
+&lt;code&gt;-p&lt;&#x2F;code&gt;はvirtual hostの指定(なぜp?), &lt;code&gt;Q_TTL_DLX&lt;&#x2F;code&gt;はpolicyの名前。&lt;code&gt;&#x27;.*&#x27;&lt;&#x2F;code&gt;は適用するリソースの正規表現。jsonはpolicyのbody, &lt;code&gt;--apply-to&lt;&#x2F;code&gt;で適用対象をqueueかexchangeか指定といった感じです。&lt;&#x2F;p&gt;
+&lt;p&gt;続いての機能拡張は、backofficeからtaxi driverにメッセージを送る際に、driver用のqueueがセットアップされていなければemailを送るようにしたいというものです。ここで利用できるのが、publish時の&lt;code&gt;mandatory&lt;&#x2F;code&gt; flagです。これはexchangeに送られたmessageがどのqueueにも送られなかった場合にpublisherにmessageを送り返す機能を有効にします。&lt;br &#x2F;&gt;
+lapinの&lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;amqp-rs&#x2F;lapin&#x2F;blob&#x2F;lapin-1.x&#x2F;examples&#x2F;publisher_confirms.rs&quot;&gt;publisher_confirms example&lt;&#x2F;a&gt;で実際の利用例がみれます。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;5-message-routing&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#5-message-routing&quot; aria-label=&quot;Anchor link for: 5-message-routing&quot;&gt;5 Message Routing&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;ConsumerからPublisherにresponseを返すRPCを実装します。やり方はRabbitMQ TutorialsのRPCと同じで、messageのbasic propertiesにあるreply-toにresponse用のqueueを指定するだけです。request-response毎にqueueを生成するか事前に作成しておくかの方法があります。&lt;&#x2F;p&gt;
+&lt;p&gt;また、Single Text-Oriented Message Protocol(STOMP)用のpluginを利用して、browserからRabbitMQ Serverにwebsocketで接続してqueueをsubscribeする例も紹介されています。&lt;&#x2F;p&gt;
+&lt;p&gt;最後にheaders exchangeを導入します。topic exchangeではユースケースに対応できない場合にはheaders exchangeを利用する感じなのでしょうか。紹介されている事例は新しくqueueをたててbindingすれば対応できるように思えたのでいまいち使い所がわかっていません。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;6-taking-rabbitmq-to-production&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#6-taking-rabbitmq-to-production&quot; aria-label=&quot;Anchor link for: 6-taking-rabbitmq-to-production&quot;&gt;6 Taking RabbitMQ to Production&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;今まではRabbitMQをsingle nodeで動かしていましたがこの章ではclusterを導入します。RabbitMQはErlangで実装されているらしく、clusterもErlang clustering featureを利用して実装されているみたいです。&lt;&#x2F;p&gt;
+&lt;p&gt;Client libraryの実装によるかとは思うのですがcluster化した際にclient側でclusterを構成するnodeを把握してそれぞれの接続情報を保持しておく必要がありそうでした。Rustの実装であるlapinでは複数の接続先を渡せるようになっていないように見えるので、どう対応するかが課題です。(deadpool_lapinでConnection生成処理が隠蔽されているので、自分でurlをrotateするとかもできないので困りました)&lt;&#x2F;p&gt;
+&lt;p&gt;RabbitMQのclusterではexchangeやqueueはnode間でsyncされるが、queueのmessageに関してはいくつか選択肢があるようです。&lt;br &#x2F;&gt;
+まず、Mirroring queuesという選択肢があります。これはmaster, replica構成でmessageを冗長化する方式のようです。&lt;&#x2F;p&gt;
+&lt;p&gt;次に、quorum queuesという方式があります。これもmaster replicaベースですが、queueの内容についてleaderとreplication間で合意をとることで信頼性を高めているようです。過半数のnode間でqueueの内容がsyncできたらclientにconfirmを返すことで実現されています。&lt;&#x2F;p&gt;
+&lt;p&gt;最後にLazy queuesが紹介されます。
+この機能が有効かされたqueueではmessageはdistに保存され、queueにmessageが大量に溜まる場合でもRAMの使用量が抑えられるみたいです。durableを有効にするのと違ってそもそもメモリにmessageを保持しなくなる点が特徴という理解でよいのでしょうか。&lt;&#x2F;p&gt;
+&lt;p&gt;Clusterに続いてはlogのaggregationを実現するためのfederationについても説明がありました。RabbitMQをfluentdのagentのように位置付けることもでき柔軟性が高いなと思いました。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;7-best-practices-and-broker-monitoring&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#7-best-practices-and-broker-monitoring&quot; aria-label=&quot;Anchor link for: 7-best-practices-and-broker-monitoring&quot;&gt;7 Best Practices and Broker Monitoring&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;RabbitMQを運用していくにあたってのBest Practicesについての紹介です。&lt;br &#x2F;&gt;
+まずは、messageを失わないためのBest practicesについて。&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;最低3台以上でclusterを組む&lt;&#x2F;li&gt;
+&lt;li&gt;quorum queueを使う&lt;&#x2F;li&gt;
+&lt;li&gt;queueをdurableにしてmessage publish時にpersistent delivery modeを有効にする&lt;&#x2F;li&gt;
+&lt;li&gt;transient messageを利用してもLazy queuesの場合にはperformance上のtrade-offが発生する。また、queueがdurableであってもmessageが失われる可能性があることを理解しておく&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;また、当然ではありますがdead letter exchangeを利用することも挙げられています。&lt;br &#x2F;&gt;
+messageのTTLやqueueのmax length, nack等でmessageが処理されないケースがあるのでエラーハンドリングもプログラム的につくっておきましょうと言われています。&lt;&#x2F;p&gt;
+&lt;p&gt;performance的な問題がない限りはpublisher&#x2F;consumerともにconfirmも有効にすることをまずは検討したほうがよさそうです。&lt;&#x2F;p&gt;
+&lt;p&gt;Messageのhandlingに関しては以下の点が挙げられています。&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;message sizeは大き過ぎても小さ過ぎても問題
+&lt;ul&gt;
+&lt;li&gt;小さすぎるiterableなdataはchunk化してみる&lt;&#x2F;li&gt;
+&lt;li&gt;大きすぎる場合は別のcomponentにoffloadできるか試みる&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;consumerの処理時間に応じてprefetching valueを調整する&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;queueとbrokersをcleanに保とうという点について指摘されています。&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;queueにはTTL(&lt;code&gt;x-message-ttl&lt;&#x2F;code&gt;)を設定する&lt;&#x2F;li&gt;
+&lt;li&gt;queueにはmax-lengthを指定する&lt;&#x2F;li&gt;
+&lt;li&gt;使われていないqueueを削除する
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;x-expires&lt;&#x2F;code&gt;で利用されなくなってから削除されるまでの期間を指定しておく&lt;&#x2F;li&gt;
+&lt;li&gt;queueのauto-delete propertyを有効にする&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;その他、messageのrouting keyに応じてqueueを分散させるためのpluginが紹介されています。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;monitoring&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#monitoring&quot; aria-label=&quot;Anchor link for: monitoring&quot;&gt;Monitoring&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;現在のRabbitMQ serverの情報を取得する方法としてはrabbitmqctlとREST APIの二つの手段がある。監視に有用なmetricsが紹介されています。&lt;br &#x2F;&gt;
+node&#x2F;clusterの状態からqueueごとの処理状況、file descriptorやsocketの利用状況もAPIで取得できるのは助かりそうです。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;matome&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#matome&quot; aria-label=&quot;Anchor link for: matome&quot;&gt;まとめ&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;本書を読んだ感想を簡単に書いていきました。&lt;br &#x2F;&gt;
+RabbitMQの各機能について具体例をふまえて紹介されており概要を把握するのに適していると思いました。&lt;br &#x2F;&gt;
+&lt;a rel=&quot;external&quot; href=&quot;https:&#x2F;&#x2F;www.manning.com&#x2F;books&#x2F;rabbitmq-in-depth&quot;&gt;RabbitMQ in Depth&lt;&#x2F;a&gt;という本を見つけたので次はこちらを読んでみようかなと思ってます。&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    
+    
+    
+    
+    
+    
+</feed>

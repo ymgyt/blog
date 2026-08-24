@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="ja">
+    <title>Happy developing - nix</title>
+    <subtitle>楽しい開発ライフ</subtitle>
+    <link href="https://blog.ymgyt.io/tags/nix/atom.xml" rel="self" type="application/atom+xml"/>
+    <link href="https://blog.ymgyt.io/entry/"/>
+    <author><name>ymgyt</name></author>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2023-11-06T00:00:00+00:00</updated>
+    <id>https://blog.ymgyt.io/tags/nix/atom.xml</id>
+    <entry xml:lang="ja">
+        <title>📙 The Purely Functional Software Deployment Modelを読んだ感想</title>
+        <published>2023-11-06T00:00:00+00:00</published>
+        <updated>2023-11-06T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/the-purely-functional-software-deployment/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/the-purely-functional-software-deployment/</id>
+        
+        <summary type="html">Dolstra先生のNixの論文 The Purely Functional Software Deployment Modelを読んだ感想</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>❄️ NixOSとRaspberry Piで自宅server | Part 5 CPUの温度をmetricsとして取得</title>
+        <published>2023-10-22T00:00:00+00:00</published>
+        <updated>2023-10-22T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-get-cpu-temperature/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-get-cpu-temperature/</id>
+        
+        <summary type="html">CPUの温度を取得してopentelemetryのmetricsとして扱えるようにします</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>❄️ NixOSとRaspberry Piで自宅server | Part 4 opentelemetry-collectorでmetricsを取得</title>
+        <published>2023-10-09T04:00:00+00:00</published>
+        <updated>2023-10-09T04:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-export-metrics-with-opentelemetry-collector/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-export-metrics-with-opentelemetry-collector/</id>
+        
+        <summary type="html">opentelemetry-collectorとopenobserveによるmetrics管理</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>❄️ NixOSとRaspberry Piで自宅server | Part 3 ragenixでsecret管理</title>
+        <published>2023-10-09T03:00:00+00:00</published>
+        <updated>2023-10-09T03:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-secret-management-with-ragenix/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-secret-management-with-ragenix/</id>
+        
+        <summary type="html">ragenixによるsecretの管理について</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>❄️ NixOSとRaspberry Piで自宅server | Part 2 deploy-rsでdeploy</title>
+        <published>2023-10-09T01:00:00+00:00</published>
+        <updated>2023-10-09T01:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-deploy-with-deploy-rs/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-deploy-with-deploy-rs/</id>
+        
+        <summary type="html">deploy-rsを使ってRaspberry Piにdeploy</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>❄️ NixOSとRaspberry Piで自宅server | Part 1 NixOSをinstall</title>
+        <published>2023-10-09T00:00:00+00:00</published>
+        <updated>2023-10-09T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-install-nixos/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/homeserver-with-nixos-and-raspberrypi-install-nixos/</id>
+        
+        <summary type="html">Raspberry PiへのNixOSのinstallについて</summary>
+        
+    </entry>
+    <entry xml:lang="ja">
+        <title>📦 Nixでlinuxとmacの環境を管理してみる</title>
+        <published>2023-06-13T00:00:00+00:00</published>
+        <updated>2023-06-13T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/" type="text/html"/>
+        <id>https://blog.ymgyt.io/entry/declarative-environment-management-with-nix/</id>
+        
+        <summary type="html">Nixを利用してlinuxとmacの開発環境を宣言的に管理する。</summary>
+        
+    </entry>
+</feed>

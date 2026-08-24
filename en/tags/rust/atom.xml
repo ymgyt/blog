@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Happy developing - rust</title>
+    <subtitle>Happy developing</subtitle>
+    <link href="https://blog.ymgyt.io/en/tags/rust/atom.xml" rel="self" type="application/atom+xml"/>
+    <link href="https://blog.ymgyt.io/entry/"/>
+    <author><name>ymgyt</name></author>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2026-08-18T00:00:00+00:00</updated>
+    <id>https://blog.ymgyt.io/en/tags/rust/atom.xml</id>
+    <entry xml:lang="en">
+        <title>🦀 Setting Up an Environment to Build and Run Rust Kernel Modules</title>
+        <published>2026-08-18T00:00:00+00:00</published>
+        <updated>2026-08-18T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/en/entry/rust-for-linux-development-setup/" type="text/html"/>
+        <id>https://blog.ymgyt.io/en/entry/rust-for-linux-development-setup/</id>
+        
+        <summary type="html">A ground-up guide to setting up a Rust for Linux development environment</summary>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>🔭 Instrumenting OpenTelemetry with Lambda</title>
+        <published>2026-05-07T00:00:00+00:00</published>
+        <updated>2026-05-07T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/en/entry/instrument-opentelemetry-with-lambda/" type="text/html"/>
+        <id>https://blog.ymgyt.io/en/entry/instrument-opentelemetry-with-lambda/</id>
+        
+        <summary type="html">How to design OpenTelemetry export around the Lambda lifecycle</summary>
+        
+    </entry>
+</feed>

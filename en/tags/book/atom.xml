@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Happy developing - book</title>
+    <subtitle>Happy developing</subtitle>
+    <link href="https://blog.ymgyt.io/en/tags/book/atom.xml" rel="self" type="application/atom+xml"/>
+    <link href="https://blog.ymgyt.io/entry/"/>
+    <author><name>ymgyt</name></author>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2026-06-28T00:00:00+00:00</updated>
+    <id>https://blog.ymgyt.io/en/tags/book/atom.xml</id>
+    <entry xml:lang="en">
+        <title>📕 Thoughts on Architecture and Design of the Linux Storage Stack</title>
+        <published>2026-06-28T00:00:00+00:00</published>
+        <updated>2026-06-28T00:00:00+00:00</updated>
+        <author>
+          <name>ymgyt</name>
+        </author>
+        <link rel="alternate" href="https://blog.ymgyt.io/en/entry/linux-storage-stack/" type="text/html"/>
+        <id>https://blog.ymgyt.io/en/entry/linux-storage-stack/</id>
+        
+        <summary type="html">A book that descends through the storage stack one layer at a time, from VFS to physical storage</summary>
+        
+    </entry>
+</feed>
